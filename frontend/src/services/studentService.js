@@ -1,25 +1,13 @@
-import { useAuthStore } from '@/stores/auth'
+import { getHeaders } from '../utils/api'
 
 const API_URL = 'http://127.0.0.1:8000/api/students'
-
-// Helper function to get the token securely
-const getHeaders = () => {
-  const authStore = useAuthStore()
-  // Grab the token from Pinia (or localStorage as a fallback)
-  const token = authStore.token || localStorage.getItem('access_token')
-  
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}` // This is our VIP pass for the FastAPI bouncer
-  }
-}
 
 export default {
   // 1. READ: Fetch all students
   async getAllStudents() {
     const response = await fetch(`${API_URL}/`, {
       method: 'GET',
-      headers: getHeaders()
+      headers: getHeaders(),
     })
     if (!response.ok) throw new Error('Failed to fetch students')
     return await response.json()
@@ -30,7 +18,7 @@ export default {
     const response = await fetch(`${API_URL}/`, {
       method: 'POST',
       headers: getHeaders(),
-      body: JSON.stringify(studentData)
+      body: JSON.stringify(studentData),
     })
     if (!response.ok) throw new Error('Failed to create student')
     return await response.json()
@@ -41,7 +29,7 @@ export default {
     const response = await fetch(`${API_URL}/${studentId}`, {
       method: 'PUT',
       headers: getHeaders(),
-      body: JSON.stringify(updateData)
+      body: JSON.stringify(updateData),
     })
     if (!response.ok) throw new Error('Failed to update student')
     return await response.json()
@@ -51,9 +39,9 @@ export default {
   async deleteStudent(studentId) {
     const response = await fetch(`${API_URL}/${studentId}`, {
       method: 'DELETE',
-      headers: getHeaders()
+      headers: getHeaders(),
     })
     if (!response.ok) throw new Error('Failed to delete student')
     return await response.json()
-  }
+  },
 }

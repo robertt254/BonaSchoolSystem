@@ -16,13 +16,30 @@ def record_scores(
     if current_user.role not in ["teacher", "admin", "principal"]:
         raise HTTPException(status_code=403, detail="Not authorized to alter academic records")
 
+    if not scores:
+        return {"message": "Academic scores updated successfully"}
+
+    # Gather conditions for a single query
+    student_ids = list(set(s.student_id for s in scores))
+    terms = list(set(s.term for s in scores))
+    learning_areas = list(set(s.learning_area for s in scores))
+
+    # Fetch all existing records that could match
+    existing_records = db.query(models.Assessment).filter(
+        models.Assessment.student_id.in_(student_ids),
+        models.Assessment.term.in_(terms),
+        models.Assessment.learning_area.in_(learning_areas)
+    ).all()
+
+    # Build a lookup dictionary
+    existing_map = {
+        (rec.student_id, rec.term, rec.learning_area): rec
+        for rec in existing_records
+    }
+
     for score in scores:
-        # Check if a score for this subject/term already exists for this student
-        existing = db.query(models.Assessment).filter(
-            models.Assessment.student_id == score.student_id,
-            models.Assessment.term == score.term,
-            models.Assessment.learning_area == score.learning_area
-        ).first()
+        key = (score.student_id, score.term, score.learning_area)
+        existing = existing_map.get(key)
 
         if existing:
             existing.score = score.score
@@ -30,6 +47,8 @@ def record_scores(
         else:
             new_score = models.Assessment(**score.model_dump())
             db.add(new_score)
+            # Add to map so subsequent duplicates in this batch don't create multiple new records
+            existing_map[key] = new_score
             
     db.commit()
     return {"message": "Academic scores updated successfully"}

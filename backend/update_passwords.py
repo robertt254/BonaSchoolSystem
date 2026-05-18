@@ -1,8 +1,9 @@
 """
 Script to update user passwords in the database with proper hashing
 """
+import os
 import sys
-sys.path.insert(0, '/Users/user/BonaSchoolSystem/backend')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from passlib.context import CryptContext
 from sqlalchemy import create_engine
@@ -44,14 +45,18 @@ users_to_update = [
     ("admin", "password"),
 ]
 
+usernames = [u[0] for u in users_to_update]
+users = db.query(models.User).filter(models.User.username.in_(usernames)).all()
+user_map = {user.username: user for user in users}
+
 for username, password in users_to_update:
-    user = db.query(models.User).filter(models.User.username == username).first()
+    user = user_map.get(username)
     if user:
         user.hashed_password = pwd_context.hash(password)
-        db.commit()
         print(f"Updated password for {username}")
     else:
         print(f"User {username} not found")
+db.commit()
 
 db.close()
 print("Done!")

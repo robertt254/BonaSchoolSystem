@@ -1,15 +1,14 @@
-﻿from datetime import datetime, timedelta
+from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
 # Import our database tools and models
 from database import get_db
 import models
-import os
+import schemas
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
@@ -29,15 +28,9 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-# --- DATA MODELS ---
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-    user_info: dict
-
 # --- ROUTES ---
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=schemas.Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     # 1. Look for the user in the real PostgreSQL database
     user = db.query(models.User).filter(models.User.username == form_data.username).first()
@@ -59,29 +52,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         "token_type": "bearer",
         "user_info": {"name": user.name, "role": user.role}
     }
-
-# --- TEMPORARY BOOTSTRAP ROUTE ---
-# Run this ONCE to fill your empty database with the initial staff
-@router.post("/setup-users")
-def setup_initial_users(db: Session = Depends(get_db)):
-    # Check if we already have users so we don't duplicate them
-    existing_user = db.query(models.User).first()
-    if existing_user:
-        return {"message": "Users already exist! Setup skipped."}
-
-    # Create our initial school staff with securely hashed passwords
-    initial_users = [
-        models.User(username="admin", hashed_password=get_password_hash("password"), role="admin", name="System Admin"),
-        models.User(username="principal", hashed_password=get_password_hash("password"), role="principal", name="Jane Principal"),
-        models.User(username="accountant", hashed_password=get_password_hash("password"), role="accountant", name="Mary Finance"),
-    ]
-    
-    # Add them to the database and save (commit)
-    db.add_all(initial_users)
-    db.commit()
-    
-    return {"message": "Database successfully seeded with Admin, Principal, and Accountant!"}
-
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """This is our bouncer. It checks the token and returns the logged-in user."""

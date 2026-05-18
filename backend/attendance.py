@@ -16,11 +16,18 @@ def log_bulk_attendance(
     if current_user.role not in ["teacher", "principal", "admin"]:
         raise HTTPException(status_code=403, detail="Not authorized to mark attendance")
 
+    student_ids = [record.student_id for record in records]
+    today = date.today()
+
+    existing_records = db.query(models.Attendance).filter(
+        models.Attendance.student_id.in_(student_ids),
+        models.Attendance.date == today
+    ).all()
+
+    existing_map = {r.student_id: r for r in existing_records}
+
     for record in records:
-        existing = db.query(models.Attendance).filter(
-            models.Attendance.student_id == record.student_id,
-            models.Attendance.date == date.today()
-        ).first()
+        existing = existing_map.get(record.student_id)
 
         if existing:
             existing.is_present = record.is_present
@@ -43,12 +50,18 @@ def get_today_attendance(
         models.Student.grade_level == grade
     ).all()
     
+    student_ids = [s.id for s in students]
+
+    attendances = db.query(models.Attendance).filter(
+        models.Attendance.student_id.in_(student_ids),
+        models.Attendance.date == date.today()
+    ).all()
+
+    att_map = {att.student_id: att for att in attendances}
+
     results = []
     for s in students:
-        att = db.query(models.Attendance).filter(
-            models.Attendance.student_id == s.id,
-            models.Attendance.date == date.today()
-        ).first()
+        att = att_map.get(s.id)
         
         results.append({
             "student_id": s.id,
