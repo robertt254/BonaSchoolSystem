@@ -2,13 +2,13 @@
 from jose import jwt, JWTError
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
 # Import our database tools and models
 from database import get_db
 import models
+import schemas
 
 SECRET_KEY = "bona_school_super_secret_key"
 ALGORITHM = "HS256"
@@ -28,15 +28,9 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-# --- DATA MODELS ---
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-    user_info: dict
-
 # --- ROUTES ---
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=schemas.Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     # 1. Look for the user in the real PostgreSQL database
     user = db.query(models.User).filter(models.User.username == form_data.username).first()

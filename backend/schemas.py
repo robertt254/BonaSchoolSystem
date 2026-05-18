@@ -54,6 +54,13 @@ class FeeResponse(FeeBase):
         from_attributes = True
 
 
+# --- AUTH SCHEMAS ---
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    user_info: dict
+
+
 # --- HR & STAFF SCHEMAS ---
 class UserBase(BaseModel):
     username: str
