@@ -9,8 +9,9 @@ from passlib.context import CryptContext
 # Import our database tools and models
 from database import get_db
 import models
+import os
 
-SECRET_KEY = "bona_school_super_secret_key"
+SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
 
 router = APIRouter()
