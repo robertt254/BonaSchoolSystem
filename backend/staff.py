@@ -12,8 +12,13 @@ def verify_admin(current_user: models.User = Depends(auth.get_current_user)):
     return current_user
 
 @router.get("/", response_model=list[schemas.UserResponse])
-def get_all_staff(db: Session = Depends(get_db), admin: models.User = Depends(verify_admin)):
-    return db.query(models.User).all()
+def get_all_staff(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    admin: models.User = Depends(verify_admin)
+):
+    return db.query(models.User).offset(skip).limit(limit).all()
 
 @router.post("/", response_model=schemas.UserResponse)
 def create_staff(
