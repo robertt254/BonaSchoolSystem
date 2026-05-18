@@ -11,7 +11,8 @@ import { RouterView } from 'vue-router'
 
 <style>
 /* Global reset to ensure no unwanted margins cause laggy scrolling */
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;

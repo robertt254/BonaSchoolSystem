@@ -10,9 +10,7 @@ import attendance
 from database import engine
 
 # Tell SQLAlchemy to build all our tables in the database
-import os
-if not os.environ.get("TESTING"):
-    models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Bona School Management API")
 
@@ -21,8 +19,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:5174"], 
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "Accept"],
 )
 
 # Attach the login routes
