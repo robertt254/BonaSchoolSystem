@@ -1,97 +1,187 @@
 <template>
-  <div class="p-8 bg-slate-50 min-h-screen">
+  <div class="max-w-7xl mx-auto space-y-8 animate-fade-in pb-12">
+    <!-- Welcome Banner -->
     <div
-      class="bg-school-navy rounded-2xl p-8 text-white shadow-lg mb-8 flex justify-between items-center bg-opacity-95"
+      class="bg-school-navy rounded-2xl p-8 sm:p-10 text-white shadow-xl flex justify-between items-center relative overflow-hidden"
     >
-      <div>
-        <h1 class="text-3xl font-black tracking-wide mb-2">Welcome to The Bona School</h1>
-        <p class="text-school-grey text-lg">Competency-Based Curriculum (CBC) Management System</p>
-      </div>
-      <div class="hidden md:block text-5xl">🎓</div>
-    </div>
-
-    <div v-if="loading" class="flex justify-center items-center py-12 text-slate-500">
-      <span class="animate-pulse text-lg font-medium">Compiling school analytics...</span>
-    </div>
-
-    <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- Decorative background element -->
       <div
-        class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 border-t-4 border-t-school-grey/500"
-      >
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">
-              Total Enrolled
-            </p>
-            <h2 class="text-4xl font-black text-slate-800">{{ totalStudents }}</h2>
-          </div>
-          <div class="p-3 bg-school-grey/50 rounded-lg text-school-navy/70 text-xl">👨‍🎓</div>
-        </div>
-        <p class="text-sm text-slate-500 mt-4 font-medium">Across all CBC grades</p>
-      </div>
+        class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-10 -mt-10"
+      ></div>
 
-      <div
-        class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 border-t-4 border-t-emerald-500"
-      >
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">
-              Total Revenue
-            </p>
-            <h2 class="text-3xl font-black text-slate-800">{{ formatCurrency(totalRevenue) }}</h2>
-          </div>
-          <div class="p-3 bg-emerald-50 rounded-lg text-emerald-600 text-xl">💰</div>
-        </div>
-        <p class="text-sm text-slate-500 mt-4 font-medium">All historical payments</p>
+      <div class="relative z-10">
+        <h1 class="text-3xl sm:text-4xl font-black tracking-tight mb-3">
+          Welcome to The Bona School
+        </h1>
+        <p class="text-slate-300 text-lg max-w-2xl">
+          Competency-Based Curriculum (CBC) Management System
+        </p>
       </div>
-
       <div
-        class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 border-t-4 border-t-school-grey/500"
+        class="hidden md:flex items-center justify-center w-20 h-20 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10 relative z-10"
       >
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">
-              Active Staff
-            </p>
-            <h2 class="text-4xl font-black text-slate-800">{{ totalStaff }}</h2>
-          </div>
-          <div class="p-3 bg-school-grey/50 rounded-lg text-school-navy/80 text-xl">🧑‍🏫</div>
-        </div>
-        <p class="text-sm text-slate-500 mt-4 font-medium">Teachers & Administrators</p>
+        <span class="text-4xl drop-shadow-md">🎓</span>
       </div>
     </div>
 
-    <div v-if="!loading" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-      <h3 class="text-lg font-bold text-slate-800 mb-4">Quick Actions</h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <router-link
-          to="/academics/attendance"
-          class="p-4 border border-slate-100 rounded-lg hover:bg-slate-50 transition text-center group"
+    <!-- Loading State -->
+    <div
+      v-if="loading"
+      class="flex flex-col justify-center items-center py-20 text-slate-400 space-y-4"
+    >
+      <div
+        class="w-10 h-10 border-4 border-slate-200 border-t-school-navy rounded-full animate-spin"
+      ></div>
+      <span class="text-sm font-medium tracking-widest uppercase">Compiling analytics...</span>
+    </div>
+
+    <div v-else class="space-y-8">
+      <!-- Key Metrics -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Students Card -->
+        <div
+          class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group"
         >
-          <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">📋</div>
-          <p class="font-medium text-slate-700">Roll Call</p>
-        </router-link>
-        <router-link
-          to="/finance"
-          class="p-4 border border-slate-100 rounded-lg hover:bg-slate-50 transition text-center group"
+          <div
+            class="absolute top-0 left-0 w-1 h-full bg-school-navy group-hover:w-2 transition-all duration-300"
+          ></div>
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+                Total Enrolled
+              </p>
+              <h2 class="text-4xl font-black text-slate-800 tracking-tight">{{ totalStudents }}</h2>
+            </div>
+            <div
+              class="p-3.5 bg-slate-50 rounded-xl text-school-navy/80 text-xl border border-slate-100 shadow-sm group-hover:bg-school-navy group-hover:text-white transition-colors duration-300"
+            >
+              👨‍🎓
+            </div>
+          </div>
+          <p class="text-[13px] text-slate-500 mt-5 font-medium flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Across all CBC grades
+          </p>
+        </div>
+
+        <!-- Revenue Card -->
+        <div
+          class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group"
         >
-          <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">💵</div>
-          <p class="font-medium text-slate-700">Log Payment</p>
-        </router-link>
-        <router-link
-          to="/academics"
-          class="p-4 border border-slate-100 rounded-lg hover:bg-slate-50 transition text-center group"
+          <div
+            class="absolute top-0 left-0 w-1 h-full bg-school-red group-hover:w-2 transition-all duration-300"
+          ></div>
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+                Total Revenue
+              </p>
+              <h2 class="text-3xl font-black text-slate-800 tracking-tight mt-1">
+                {{ formatCurrency(totalRevenue) }}
+              </h2>
+            </div>
+            <div
+              class="p-3.5 bg-slate-50 rounded-xl text-school-red/80 text-xl border border-slate-100 shadow-sm group-hover:bg-school-red group-hover:text-white transition-colors duration-300"
+            >
+              💰
+            </div>
+          </div>
+          <p class="text-[13px] text-slate-500 mt-5 font-medium flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            All historical payments
+          </p>
+        </div>
+
+        <!-- Staff Card -->
+        <div
+          class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group"
         >
-          <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">📝</div>
-          <p class="font-medium text-slate-700">Enter Grades</p>
-        </router-link>
-        <router-link
-          to="/office"
-          class="p-4 border border-slate-100 rounded-lg hover:bg-slate-50 transition text-center group"
-        >
-          <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">➕</div>
-          <p class="font-medium text-slate-700">Admit Student</p>
-        </router-link>
+          <div
+            class="absolute top-0 left-0 w-1 h-full bg-slate-400 group-hover:w-2 transition-all duration-300"
+          ></div>
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+                Active Staff
+              </p>
+              <h2 class="text-4xl font-black text-slate-800 tracking-tight">{{ totalStaff }}</h2>
+            </div>
+            <div
+              class="p-3.5 bg-slate-50 rounded-xl text-slate-600 text-xl border border-slate-100 shadow-sm group-hover:bg-slate-600 group-hover:text-white transition-colors duration-300"
+            >
+              🧑‍🏫
+            </div>
+          </div>
+          <p class="text-[13px] text-slate-500 mt-5 font-medium flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Teachers & Administrators
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-black text-slate-800 tracking-tight">Quick Actions</h3>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+            >Common Tasks</span
+          >
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <router-link
+            to="/academics/attendance"
+            class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-navy/20 transition-all duration-200 group text-center bg-white shadow-sm hover:shadow"
+          >
+            <div
+              class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-navy/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100"
+            >
+              <span class="text-2xl">📋</span>
+            </div>
+            <p class="font-bold text-sm text-slate-700 group-hover:text-school-navy">Roll Call</p>
+            <p class="text-xs text-slate-400 mt-1">Mark daily attendance</p>
+          </router-link>
+
+          <router-link
+            to="/finance"
+            class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-red/20 transition-all duration-200 group text-center bg-white shadow-sm hover:shadow"
+          >
+            <div
+              class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-red/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100"
+            >
+              <span class="text-2xl">💵</span>
+            </div>
+            <p class="font-bold text-sm text-slate-700 group-hover:text-school-red">Log Payment</p>
+            <p class="text-xs text-slate-400 mt-1">Record fee collection</p>
+          </router-link>
+
+          <router-link
+            to="/academics"
+            class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-navy/20 transition-all duration-200 group text-center bg-white shadow-sm hover:shadow"
+          >
+            <div
+              class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-navy/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100"
+            >
+              <span class="text-2xl">📝</span>
+            </div>
+            <p class="font-bold text-sm text-slate-700 group-hover:text-school-navy">
+              Enter Grades
+            </p>
+            <p class="text-xs text-slate-400 mt-1">Update CBC scores</p>
+          </router-link>
+
+          <router-link
+            to="/office"
+            class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 group text-center bg-white shadow-sm hover:shadow"
+          >
+            <div
+              class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-slate-200 group-hover:scale-110 transition-transform duration-300 border border-slate-100"
+            >
+              <span class="text-2xl">➕</span>
+            </div>
+            <p class="font-bold text-sm text-slate-700 group-hover:text-slate-900">Admit Student</p>
+            <p class="text-xs text-slate-400 mt-1">New enrollment</p>
+          </router-link>
+        </div>
       </div>
     </div>
   </div>

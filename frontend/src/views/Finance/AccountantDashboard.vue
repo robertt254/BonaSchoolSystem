@@ -1,80 +1,193 @@
 <template>
-  <div class="p-8 bg-gray-50 min-h-screen">
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold text-gray-800">Finance & Fees</h1>
+  <div class="max-w-7xl mx-auto space-y-6 animate-fade-in pb-12">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          Finance Overview
+        </h1>
+        <p class="text-sm text-slate-500 mt-1 font-medium">{{ appStore.currentTerm }} Collection</p>
+      </div>
       <button
         @click="openModal"
-        class="bg-emerald-700 text-white px-4 py-2 rounded shadow hover:bg-emerald-600 transition"
+        class="bg-school-navy text-white px-5 py-2.5 rounded-lg shadow-sm hover:shadow-md hover:bg-school-navy/90 transition-all font-medium flex items-center gap-2"
       >
-        + Record Payment
+        <span class="text-lg">➕</span> Record Payment
       </button>
     </div>
 
-    <div v-if="loading" class="flex justify-center items-center py-12 text-gray-500">
-      <span class="animate-pulse text-lg">Loading financial ledger...</span>
+    <!-- Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Total Collected (Current Term) -->
+      <div
+        class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between"
+      >
+        <div>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            Term Collection
+          </p>
+          <h2 class="text-3xl font-black text-slate-800">{{ formatCurrency(termCollected) }}</h2>
+        </div>
+        <div class="mt-6">
+          <div class="flex justify-between text-xs font-bold text-slate-500 mb-2">
+            <span>Progress</span>
+            <span>{{ collectionPercentage }}%</span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div
+              class="bg-emerald-500 h-2 rounded-full transition-all duration-1000 ease-out"
+              :style="{ width: `${collectionPercentage}%` }"
+            ></div>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-2 font-medium">
+            Target: {{ formatCurrency(termGoal) }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Total Outstanding (Current Term) -->
+      <div
+        class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between"
+      >
+        <div>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            Term Outstanding
+          </p>
+          <h2 class="text-3xl font-black text-school-red">{{ formatCurrency(termOutstanding) }}</h2>
+        </div>
+        <div
+          class="mt-6 p-3 bg-school-red/5 rounded-xl border border-school-red/10 flex items-start gap-3"
+        >
+          <span class="text-school-red">⚠️</span>
+          <p class="text-xs text-school-red/80 font-medium leading-relaxed">
+            Pending balances from {{ studentsWithBalancesCount }} students for
+            {{ appStore.currentTerm }}.
+          </p>
+        </div>
+      </div>
+
+      <!-- Total Revenue (All Time) -->
+      <div
+        class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between hidden lg:flex"
+      >
+        <div>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            Total Revenue
+          </p>
+          <h2 class="text-3xl font-black text-slate-800">{{ formatCurrency(totalRevenue) }}</h2>
+        </div>
+        <div class="mt-6 p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-start gap-3">
+          <span class="text-slate-500">💰</span>
+          <p class="text-xs text-slate-500 font-medium leading-relaxed">
+            Cumulative revenue across all academic terms.
+          </p>
+        </div>
+      </div>
     </div>
 
-    <div v-else class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr
-            class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider border-b border-gray-200"
-          >
-            <th class="p-4 font-semibold">Date</th>
-            <th class="p-4 font-semibold">Student Name</th>
-            <th class="p-4 font-semibold">Payment Type</th>
-            <th class="p-4 font-semibold text-right">Amount</th>
-            <th class="p-4 font-semibold">Recorded By</th>
-          </tr>
-        </thead>
-
-        <tbody class="text-gray-700">
-          <tr
-            v-for="fee in fees"
-            :key="fee.id"
-            class="border-b border-gray-50 hover:bg-gray-50 transition duration-150"
-          >
-            <td class="p-4 text-sm text-gray-500">{{ formatDate(fee.payment_date) }}</td>
-            <td class="p-4 font-medium text-school-navy">{{ getStudentName(fee.student_id) }}</td>
-            <td class="p-4">
-              <span class="px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-700">
-                {{ fee.payment_type }}
-              </span>
-            </td>
-            <td class="p-4 text-right font-bold text-emerald-700">
-              {{ formatCurrency(fee.amount) }}
-            </td>
-            <td class="p-4 text-sm text-gray-500">{{ fee.recorded_by }}</td>
-          </tr>
-
-          <tr v-if="fees.length === 0">
-            <td colspan="5" class="p-8 text-center text-gray-500 italic">
-              No payments have been recorded yet.
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Ledger Table -->
+    <div
+      v-if="loading"
+      class="flex flex-col justify-center items-center py-20 text-slate-400 space-y-4"
+    >
+      <div
+        class="w-10 h-10 border-4 border-slate-200 border-t-school-navy rounded-full animate-spin"
+      ></div>
+      <span class="text-sm font-medium tracking-widest uppercase">Loading ledger...</span>
     </div>
 
+    <div v-else class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mt-8">
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <h3 class="text-lg font-bold text-slate-800 tracking-tight">Recent Transactions</h3>
+        <span
+          class="text-xs font-bold text-slate-400 uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm"
+          >{{ filteredFees.length }} Records</span
+        >
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr
+              class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-100"
+            >
+              <th class="p-4 font-bold">Date</th>
+              <th class="p-4 font-bold">Student Name</th>
+              <th class="p-4 font-bold">Type</th>
+              <th class="p-4 font-bold">Term</th>
+              <th class="p-4 font-bold text-right">Amount</th>
+              <th class="p-4 font-bold text-right">Recorded By</th>
+            </tr>
+          </thead>
+
+          <tbody class="text-slate-700 text-sm">
+            <tr
+              v-for="fee in filteredFees"
+              :key="fee.id"
+              class="border-b border-slate-50 hover:bg-slate-50/50 transition duration-150"
+            >
+              <td class="p-4 font-medium text-slate-500">{{ formatDate(fee.payment_date) }}</td>
+              <td class="p-4 font-bold text-slate-800">{{ getStudentName(fee.student_id) }}</td>
+              <td class="p-4">
+                <span
+                  class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-slate-100 text-slate-600 border border-slate-200"
+                >
+                  {{ fee.payment_type }}
+                </span>
+              </td>
+              <td class="p-4 text-slate-500 text-xs font-medium">{{ fee.term }}</td>
+              <td class="p-4 text-right font-bold text-emerald-600">
+                {{ formatCurrency(fee.amount) }}
+              </td>
+              <td class="p-4 text-right text-slate-400 text-xs">{{ fee.recorded_by }}</td>
+            </tr>
+
+            <tr v-if="filteredFees.length === 0">
+              <td colspan="6" class="p-12 text-center">
+                <div class="flex flex-col items-center justify-center text-slate-400">
+                  <span class="text-4xl mb-3">📄</span>
+                  <p class="font-medium text-sm">No transactions found for this term.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal overlay -->
     <div
       v-if="showModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in"
     >
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h2 class="text-xl font-bold text-gray-800">Record New Payment</h2>
-          <button @click="closeModal" class="text-gray-400 hover:text-gray-600 font-bold text-xl">
-            &times;
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform scale-100 transition-transform duration-200 border border-slate-100"
+      >
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <h2 class="text-xl font-black text-slate-800 tracking-tight">Record Payment</h2>
+          <button
+            @click="closeModal"
+            class="text-slate-400 hover:text-school-red hover:bg-school-red/10 h-8 w-8 rounded-full flex items-center justify-center transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
           </button>
         </div>
 
-        <form @submit.prevent="submitFee" class="p-6 space-y-4">
+        <form @submit.prevent="submitFee" class="p-6 space-y-5">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Select Student</label>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+              >Select Student</label
+            >
             <select
               v-model="formData.student_id"
               required
-              class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-600 outline-none"
+              class="w-full border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
             >
               <option disabled value="">-- Choose a student --</option>
               <option v-for="student in students" :key="student.id" :value="student.id">
@@ -85,55 +198,60 @@
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                >Category</label
+              >
               <select
                 v-model="formData.payment_type"
                 required
-                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-600 outline-none"
+                class="w-full border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
               >
                 <option value="Tuition">Tuition</option>
-                <option value="Uniforms & Industrial Wear">Uniforms & Industrial Wear</option>
+                <option value="Uniforms & Industrial Wear">Uniforms</option>
                 <option value="Transport">Transport</option>
                 <option value="Exam Fees">Exam Fees</option>
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Amount (Ksh)</label>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                >Amount (Ksh)</label
+              >
               <input
                 v-model.number="formData.amount"
                 type="number"
                 step="0.01"
                 min="0"
                 required
-                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-600 outline-none"
+                class="w-full border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-bold text-slate-800 transition-all"
+                placeholder="0.00"
               />
             </div>
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Term</label>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+              >Term</label
+            >
             <select
               v-model="formData.term"
               required
-              class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-600 outline-none"
+              class="w-full border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
             >
-              <option value="Term 1">Term 1</option>
-              <option value="Term 2">Term 2</option>
-              <option value="Term 3">Term 3</option>
+              <option v-for="term in appStore.terms" :key="term" :value="term">{{ term }}</option>
             </select>
           </div>
 
-          <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100 mt-6">
+          <div class="flex justify-end space-x-3 pt-6 mt-6">
             <button
               type="button"
               @click="closeModal"
-              class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition"
+              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl font-bold transition-colors text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              class="px-4 py-2 bg-emerald-700 text-white rounded-lg font-medium hover:bg-emerald-600 transition"
+              class="px-5 py-2.5 bg-school-navy text-white rounded-xl font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
             >
               Save Payment
             </button>
@@ -145,9 +263,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import feeService from '@/services/feeService'
-import studentService from '@/services/studentService' // Needed for the dropdown!
+import studentService from '@/services/studentService'
+import { useAppStore } from '@/stores/app'
+
+const appStore = useAppStore()
 
 const fees = ref([])
 const students = ref([])
@@ -158,16 +279,15 @@ const formData = reactive({
   student_id: '',
   amount: null,
   payment_type: 'Tuition',
-  term: 'Term 1',
+  term: appStore.currentTerm,
 })
 
 const loadData = async () => {
   loading.value = true
   try {
-    // Fetch both simultaneously to save time
     const [fetchedFees, fetchedStudents] = await Promise.all([
-      feeService.getAllFees(),
-      studentService.getAllStudents(),
+      feeService.getAllFees().catch(() => []),
+      studentService.getAllStudents().catch(() => []),
     ])
     fees.value = fetchedFees
     students.value = fetchedStudents
@@ -180,6 +300,45 @@ const loadData = async () => {
 
 onMounted(loadData)
 
+// --- COMPUTED FINANCE METRICS ---
+
+const filteredFees = computed(() => {
+  // Display fees for the current selected term
+  return fees.value
+    .filter((fee) => fee.term === appStore.currentTerm)
+    .sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date))
+})
+
+const totalRevenue = computed(() => {
+  return fees.value.reduce((sum, fee) => sum + (fee.amount || 0), 0)
+})
+
+const termCollected = computed(() => {
+  return filteredFees.value.reduce((sum, fee) => sum + (fee.amount || 0), 0)
+})
+
+// Simplified goal logic: Assuming an average term fee of 15000 per active student
+const termGoal = computed(() => {
+  const activeStudents = students.value.filter((s) => s.status === 'Active').length
+  return activeStudents * 15000
+})
+
+const collectionPercentage = computed(() => {
+  if (termGoal.value === 0) return 0
+  const pct = (termCollected.value / termGoal.value) * 100
+  return Math.min(Math.round(pct), 100)
+})
+
+const termOutstanding = computed(() => {
+  return Math.max(0, termGoal.value - termCollected.value)
+})
+
+const studentsWithBalancesCount = computed(() => {
+  // A simplistic estimate for visual purposes. In a real system, you'd calculate per-student balances.
+  if (termGoal.value === 0) return 0
+  return Math.ceil(termOutstanding.value / 15000)
+})
+
 // --- HELPER FUNCTIONS ---
 const getStudentName = (studentId) => {
   const student = students.value.find((s) => s.id === studentId)
@@ -187,11 +346,19 @@ const getStudentName = (studentId) => {
 }
 
 const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(amount)
+  return new Intl.NumberFormat('en-KE', {
+    style: 'currency',
+    currency: 'KES',
+    maximumFractionDigits: 0,
+  }).format(amount)
 }
 
 const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('en-GB')
+  return new Date(dateString).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
 }
 
 // --- MODAL LOGIC ---
@@ -199,7 +366,7 @@ const openModal = () => {
   formData.student_id = ''
   formData.amount = null
   formData.payment_type = 'Tuition'
-  formData.term = 'Term 1'
+  formData.term = appStore.currentTerm
   showModal.value = true
 }
 
