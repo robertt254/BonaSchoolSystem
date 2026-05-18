@@ -8,11 +8,11 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
         <div class="text-sm font-semibold text-slate-500 uppercase">My Classes</div>
-        <div class="mt-2 text-2xl font-bold text-bona-navy">Form 3A, 4B</div>
+        <div class="mt-2 text-2xl font-bold text-school-navy">Form 3A, 4B</div>
       </div>
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
         <div class="text-sm font-semibold text-slate-500 uppercase">Pending Grades</div>
-        <div class="mt-2 text-2xl font-bold text-bona-red">2 Sets</div>
+        <div class="mt-2 text-2xl font-bold text-school-red">2 Sets</div>
       </div>
     </div>
 

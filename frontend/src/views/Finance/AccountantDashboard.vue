@@ -35,7 +35,7 @@
             class="border-b border-gray-50 hover:bg-gray-50 transition duration-150"
           >
             <td class="p-4 text-sm text-gray-500">{{ formatDate(fee.payment_date) }}</td>
-            <td class="p-4 font-medium text-blue-900">{{ getStudentName(fee.student_id) }}</td>
+            <td class="p-4 font-medium text-school-navy">{{ getStudentName(fee.student_id) }}</td>
             <td class="p-4">
               <span class="px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-700">
                 {{ fee.payment_type }}

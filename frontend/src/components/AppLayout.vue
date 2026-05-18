@@ -10,7 +10,7 @@
         <router-link
           to="/"
           class="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors duration-150"
-          active-class="bg-blue-900 text-white shadow-lg"
+          active-class="bg-school-navy text-white shadow-lg"
         >
           <span class="mr-3">🏠</span> Dashboard
         </router-link>
@@ -22,21 +22,21 @@
           <router-link
             to="/academics/attendance"
             class="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors duration-150"
-            active-class="bg-blue-900 text-white shadow-lg"
+            active-class="bg-school-navy text-white shadow-lg"
           >
             <span class="mr-3">📋</span> Roll Call
           </router-link>
           <router-link
             to="/academics"
             class="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors duration-150"
-            active-class="bg-blue-900 text-white shadow-lg"
+            active-class="bg-school-navy text-white shadow-lg"
           >
             <span class="mr-3">📝</span> Grading
           </router-link>
           <router-link
             to="/academics/report-card"
             class="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors duration-150"
-            active-class="bg-blue-900 text-white shadow-lg"
+            active-class="bg-school-navy text-white shadow-lg"
           >
             <span class="mr-3">🎓</span> Report Cards
           </router-link>
@@ -51,7 +51,7 @@
           <router-link
             to="/office"
             class="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors duration-150"
-            active-class="bg-blue-900 text-white shadow-lg"
+            active-class="bg-school-navy text-white shadow-lg"
           >
             <span class="mr-3">👨‍🎓</span> Office & Admissions
           </router-link>
@@ -64,14 +64,14 @@
           <router-link
             to="/finance"
             class="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors duration-150"
-            active-class="bg-blue-900 text-white shadow-lg"
+            active-class="bg-school-navy text-white shadow-lg"
           >
             <span class="mr-3">💰</span> Fee Ledger
           </router-link>
           <router-link
             to="/finance/statements"
             class="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors duration-150"
-            active-class="bg-blue-900 text-white shadow-lg"
+            active-class="bg-school-navy text-white shadow-lg"
           >
             <span class="mr-3">📄</span> Statements
           </router-link>
@@ -84,14 +84,14 @@
           <router-link
             to="/admin"
             class="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors duration-150"
-            active-class="bg-blue-900 text-white shadow-lg"
+            active-class="bg-school-navy text-white shadow-lg"
           >
             <span class="mr-3">⚙️</span> Admin Console
           </router-link>
           <router-link
             to="/admin/staff"
             class="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors duration-150"
-            active-class="bg-blue-900 text-white shadow-lg"
+            active-class="bg-school-navy text-white shadow-lg"
           >
             <span class="mr-3">🛡️</span> Staff & HR
           </router-link>
@@ -101,7 +101,7 @@
       <div class="p-4 border-t border-slate-800 bg-slate-950">
         <div class="flex items-center mb-4 px-2">
           <div
-            class="h-8 w-8 rounded-full bg-blue-900 flex items-center justify-center text-white font-bold uppercase mr-3"
+            class="h-8 w-8 rounded-full bg-school-navy flex items-center justify-center text-white font-bold uppercase mr-3"
           >
             {{ userNameInitial }}
           </div>

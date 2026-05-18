@@ -8,7 +8,7 @@
           <label class="block text-sm font-medium text-slate-700 mb-1">Select Student</label>
           <select
             v-model="selectedStudent"
-            class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-900 outline-none"
+            class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
           >
             <option disabled value="">-- Choose a student --</option>
             <option v-for="student in students" :key="student.id" :value="student.id">
@@ -21,7 +21,7 @@
           <label class="block text-sm font-medium text-slate-700 mb-1">Academic Term</label>
           <select
             v-model="selectedTerm"
-            class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-900 outline-none"
+            class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
           >
             <option value="Term 1">Term 1</option>
             <option value="Term 2">Term 2</option>
@@ -32,7 +32,7 @@
         <button
           @click="loadReport"
           :disabled="!selectedStudent"
-          class="bg-blue-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-800 transition disabled:bg-gray-300"
+          class="bg-school-navy text-white px-6 py-2 rounded-lg font-medium hover:bg-school-navy/90 transition disabled:bg-gray-300"
         >
           Generate Report
         </button>
@@ -43,7 +43,7 @@
       v-if="reportData"
       class="bg-white max-w-4xl mx-auto p-12 rounded-xl shadow-lg border border-gray-200 print:shadow-none print:border-none print:m-0 print:p-0"
     >
-      <div class="text-center border-b-4 border-blue-900 pb-6 mb-8">
+      <div class="text-center border-b-4 border-school-navy pb-6 mb-8">
         <h1 class="text-4xl font-black text-gray-900 uppercase tracking-wider">The Bona School</h1>
         <p class="text-lg text-gray-700 font-medium mt-2">
           Competency-Based Curriculum (CBC) Performance Report
@@ -51,14 +51,14 @@
       </div>
 
       <div
-        class="flex justify-between items-center bg-blue-50 p-6 rounded-lg mb-8 border border-blue-100"
+        class="flex justify-between items-center bg-school-grey/50 p-6 rounded-lg mb-8 border border-school-grey/80"
       >
         <div>
-          <p class="text-sm text-blue-800 font-bold uppercase tracking-wider">Student Name</p>
+          <p class="text-sm text-school-navy/90 font-bold uppercase tracking-wider">Student Name</p>
           <p class="text-2xl font-black text-gray-900">{{ reportData.student_name }}</p>
         </div>
         <div class="text-right">
-          <p class="text-sm text-blue-800 font-bold uppercase tracking-wider">Details</p>
+          <p class="text-sm text-school-navy/90 font-bold uppercase tracking-wider">Details</p>
           <p class="text-lg font-bold text-gray-900">
             {{ reportData.grade_level }} • {{ reportData.term }}
           </p>
@@ -95,7 +95,7 @@
               class="border border-gray-300 p-3 text-center font-black text-lg"
               :class="{
                 'text-green-600': result.score === 'EE',
-                'text-blue-600': result.score === 'ME',
+                'text-school-navy/70': result.score === 'ME',
                 'text-orange-500': result.score === 'AE',
                 'text-red-600': result.score === 'BE',
               }"
@@ -120,7 +120,7 @@
         </h4>
         <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
           <p><span class="font-bold text-green-600">EE (4):</span> Exceeding Expectations</p>
-          <p><span class="font-bold text-blue-600">ME (3):</span> Meeting Expectations</p>
+          <p><span class="font-bold text-school-navy/70">ME (3):</span> Meeting Expectations</p>
           <p><span class="font-bold text-orange-500">AE (2):</span> Approaching Expectations</p>
           <p><span class="font-bold text-red-600">BE (1):</span> Below Expectations</p>
         </div>

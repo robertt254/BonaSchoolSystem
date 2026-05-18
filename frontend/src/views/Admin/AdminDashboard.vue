@@ -13,7 +13,7 @@
         <div class="text-sm font-semibold text-slate-500 uppercase tracking-wider">
           Total Students
         </div>
-        <div class="mt-2 text-3xl font-bold text-bona-navy">1,248</div>
+        <div class="mt-2 text-3xl font-bold text-school-navy">1,248</div>
       </div>
 
       <!-- Card 2 -->
@@ -21,7 +21,7 @@
         <div class="text-sm font-semibold text-slate-500 uppercase tracking-wider">
           Active Staff
         </div>
-        <div class="mt-2 text-3xl font-bold text-bona-navy">84</div>
+        <div class="mt-2 text-3xl font-bold text-school-navy">84</div>
       </div>
 
       <!-- Card 3 -->

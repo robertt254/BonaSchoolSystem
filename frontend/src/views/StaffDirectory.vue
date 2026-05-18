@@ -7,7 +7,7 @@
       </div>
       <button
         @click="openAddModal"
-        class="bg-indigo-700 text-white px-5 py-2 rounded-lg shadow hover:bg-indigo-600 transition font-medium"
+        class="bg-school-navy text-white px-5 py-2 rounded-lg shadow hover:bg-school-navy/80 transition font-medium"
       >
         + Hire New Staff
       </button>
@@ -38,7 +38,7 @@
                 class="px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wide"
                 :class="{
                   'bg-purple-100 text-purple-700': user.role === 'admin',
-                  'bg-blue-100 text-blue-700': user.role === 'principal',
+                  'bg-school-grey/80 text-blue-700': user.role === 'principal',
                   'bg-emerald-100 text-emerald-700': user.role === 'accountant',
                   'bg-orange-100 text-orange-700': user.role === 'teacher',
                 }"
@@ -49,7 +49,7 @@
             <td class="p-4 text-right space-x-4">
               <button
                 @click="openEditModal(user)"
-                class="text-indigo-600 hover:text-indigo-800 font-medium"
+                class="text-school-navy/80 hover:text-indigo-800 font-medium"
               >
                 Edit
               </button>
@@ -86,7 +86,7 @@
               v-model="formData.name"
               required
               type="text"
-              class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-600 outline-none"
+              class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-school-navy/80 outline-none"
             />
           </div>
 
@@ -97,7 +97,7 @@
                 v-model="formData.username"
                 required
                 type="text"
-                class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-600 outline-none font-mono text-sm"
+                class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-school-navy/80 outline-none font-mono text-sm"
               />
             </div>
             <div>
@@ -105,7 +105,7 @@
               <select
                 v-model="formData.role"
                 required
-                class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-600 outline-none"
+                class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-school-navy/80 outline-none"
               >
                 <option value="teacher">Teacher</option>
                 <option value="accountant">Accountant</option>
@@ -123,7 +123,7 @@
               v-model="formData.password"
               :required="!isEditing"
               type="password"
-              class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-600 outline-none"
+              class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-school-navy/80 outline-none"
             />
           </div>
 
@@ -137,7 +137,7 @@
             </button>
             <button
               type="submit"
-              class="px-4 py-2 bg-indigo-700 text-white rounded-lg font-medium hover:bg-indigo-600 transition"
+              class="px-4 py-2 bg-school-navy text-white rounded-lg font-medium hover:bg-school-navy/80 transition"
             >
               {{ isEditing ? 'Update Access' : 'Create Account' }}
             </button>

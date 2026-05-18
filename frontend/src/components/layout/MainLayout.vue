@@ -61,11 +61,11 @@ const handleLogout = () => {
     <aside
       :class="[
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        'fixed inset-y-0 left-0 z-30 w-64 bg-bona-navy text-bona-white transition duration-300 transform md:relative md:translate-x-0 flex flex-col shadow-xl',
+        'fixed inset-y-0 left-0 z-30 w-64 bg-school-navy text-white transition duration-300 transform md:relative md:translate-x-0 flex flex-col shadow-xl',
       ]"
     >
       <!-- Sidebar Header (Logo Area) -->
-      <div class="flex items-center justify-center h-16 border-b border-blue-800 px-4">
+      <div class="flex items-center justify-center h-16 border-b border-school-navy/90 px-4">
         <h1 class="text-xl font-bold tracking-wider">THE BONA SCHOOL</h1>
       </div>
 
@@ -77,8 +77,8 @@ const handleLogout = () => {
           :to="item.path"
           :class="[
             route.path === item.path
-              ? 'bg-blue-800 text-white font-medium'
-              : 'text-blue-200 hover:bg-blue-800/50 hover:text-white transition-colors',
+              ? 'bg-school-navy/90 text-white font-medium'
+              : 'text-school-grey hover:bg-school-navy/90/50 hover:text-white transition-colors',
             'flex items-center gap-3 px-4 py-3 rounded-lg',
           ]"
         >
@@ -88,10 +88,10 @@ const handleLogout = () => {
       </nav>
 
       <!-- Sidebar Footer (Logout) -->
-      <div class="p-4 border-t border-blue-800">
+      <div class="p-4 border-t border-school-navy/90">
         <button
           @click="handleLogout"
-          class="flex items-center gap-3 w-full px-4 py-2 text-sm font-medium text-blue-200 rounded-lg hover:bg-bona-red hover:text-white transition-colors"
+          class="flex items-center gap-3 w-full px-4 py-2 text-sm font-medium text-school-grey rounded-lg hover:bg-school-red hover:text-white transition-colors"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -110,7 +110,7 @@ const handleLogout = () => {
     <div class="flex-1 flex flex-col min-w-0">
       <!-- TOP NAVIGATION BAR -->
       <header
-        class="bg-bona-white shadow-sm h-16 flex items-center justify-between px-4 sm:px-6 z-10"
+        class="bg-white shadow-sm h-16 flex items-center justify-between px-4 sm:px-6 z-10"
       >
         <!-- Mobile Menu Button -->
         <button
@@ -140,7 +140,7 @@ const handleLogout = () => {
           </div>
           <!-- Avatar -->
           <div
-            class="h-10 w-10 rounded-full bg-bona-navy flex items-center justify-center text-white font-bold shadow-md ring-2 ring-blue-100"
+            class="h-10 w-10 rounded-full bg-school-navy flex items-center justify-center text-white font-bold shadow-md ring-2 ring-school-grey/80"
           >
             AU
           </div>
