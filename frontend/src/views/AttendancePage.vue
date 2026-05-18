@@ -120,7 +120,7 @@ const loadClassList = async () => {
   const token = localStorage.getItem('access_token')
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/api/attendance/today/${selectedGrade.value}`,
+      `${import.meta.env.VITE_API_BASE_URL}/attendance/today/${selectedGrade.value}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       },
