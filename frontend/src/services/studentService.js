@@ -1,6 +1,6 @@
 import { getHeaders } from '../utils/api'
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/students`
+const API_URL = `/api/students`
 
 export default {
   // 1. READ: Fetch all students

@@ -120,7 +120,7 @@ const loadClassList = async () => {
   const token = localStorage.getItem('access_token')
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/attendance/today/${selectedGrade.value}`,
+      `/api/attendance/today/${selectedGrade.value}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       },
@@ -136,7 +136,7 @@ const loadClassList = async () => {
 const saveAttendance = async () => {
   const token = localStorage.getItem('access_token')
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/attendance/bulk`, {
+    const response = await fetch(`/api/attendance/bulk`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
