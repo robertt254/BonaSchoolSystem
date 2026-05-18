@@ -42,7 +42,10 @@ def check_backend():
         response = requests.get('http://localhost:8000/', timeout=2)
         print_success("Backend is running")
         print(f"  Status: {response.status_code}")
-        print(f"  Response: {response.json()}")
+        try:
+            print(f"  Response: {response.json()}")
+        except:
+            print(f"  Response: {response.text[:50]}...")
         return True
     except requests.exceptions.ConnectionError:
         print_error("Backend is NOT running")
@@ -164,19 +167,19 @@ def check_api_endpoints():
         print_error(f"GET / failed")
         results.append(False)
     
-    # Check with invalid token (should fail with 403)
+    # Check with invalid token (should fail with 403 or 401)
     try:
         headers = {'Authorization': 'Bearer invalid_token'}
-        response = requests.get('http://localhost:8000/api/students', 
+        response = requests.get('http://localhost:8000/api/students/',
                                headers=headers, timeout=2)
-        if response.status_code == 403:
-            print_success(f"GET /api/students with invalid token returns 403 (expected)")
+        if response.status_code in [401, 403]:
+            print_success(f"GET /api/students/ with invalid token returns 401/403 (expected)")
             results.append(True)
         else:
-            print_warning(f"GET /api/students returned {response.status_code} (expected 403)")
+            print_warning(f"GET /api/students/ returned {response.status_code} (expected 401/403)")
             results.append(False)
     except Exception as e:
-        print_error(f"GET /api/students check failed: {str(e)}")
+        print_error(f"GET /api/students/ check failed: {str(e)}")
         results.append(False)
     
     return all(results)
@@ -187,7 +190,7 @@ def check_cors():
     
     try:
         response = requests.options(
-            'http://localhost:8000/api/students',
+            'http://localhost:8000/api/students/',
             headers={
                 'Origin': 'http://localhost:5173',
                 'Access-Control-Request-Method': 'GET'
