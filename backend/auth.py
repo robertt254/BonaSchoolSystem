@@ -38,7 +38,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     # 2. Check if user exists AND if the hashed password matches
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="Incorrect username or password"
         )
     
@@ -56,7 +56,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """This is our bouncer. It checks the token and returns the logged-in user."""
     credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
+        status_code=status.HTTP_403_FORBIDDEN,
         detail="Could not validate credentials - Please log in again",
         headers={"WWW-Authenticate": "Bearer"},
     )

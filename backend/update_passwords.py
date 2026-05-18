@@ -60,3 +60,7 @@ db.commit()
 
 db.close()
 print("Done!")
+import models
+new_admin = models.User(username='admin', name='Admin', role='admin', hashed_password=hashed_password)
+db.add(new_admin)
+db.commit()
