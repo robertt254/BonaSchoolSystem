@@ -10,16 +10,14 @@ import attendance
 from database import engine
 
 # Tell SQLAlchemy to build all our tables in the database
-import os
-if not os.environ.get("TESTING"):
-    models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Bona School Management API")
 
 # Crucial: This allows your Vite frontend to talk to this Python backend securely
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174"], 
+    allow_origins=["http://localhost:5173", "http://localhost:5174"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

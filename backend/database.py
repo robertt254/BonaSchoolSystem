@@ -1,12 +1,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+import os
 
 # The Connection String: Tells Python exactly where the database lives
 # Format: postgresql://username:password@localhost/database_name
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:root@localhost/bona_school_db"
-
-# The Engine: The actual worker that handles the physical connection
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+if os.environ.get("TESTING"):
+    SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+    engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+else:
+    SQLALCHEMY_DATABASE_URL = "postgresql://postgres:root@localhost/bona_school_db"
+    # The Engine: The actual worker that handles the physical connection
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 # The Session: What we use to actually talk to the database (add rows, delete rows)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

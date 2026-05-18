@@ -1,0 +1,17 @@
+--- database.py
++++ database.py
+@@ -1,9 +1,13 @@
+ from sqlalchemy import create_engine
+ from sqlalchemy.orm import sessionmaker, declarative_base
++import os
+
+ # The Connection String: Tells Python exactly where the database lives
+ # Format: postgresql://username:password@localhost/database_name
+-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:root@localhost/bona_school_db"
++if os.environ.get("TESTING"):
++    SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
++else:
++    SQLALCHEMY_DATABASE_URL = "postgresql://postgres:root@localhost/bona_school_db"
+
+ # The Engine: The actual worker that handles the physical connection
+ engine = create_engine(SQLALCHEMY_DATABASE_URL)

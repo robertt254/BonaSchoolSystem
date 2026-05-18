@@ -1,0 +1,13 @@
+--- backend/database.py
++++ backend/database.py
+@@ -6,9 +6,10 @@
+ # Format: postgresql://username:password@localhost/database_name
+ if os.environ.get("TESTING"):
+     SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
++    engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+ else:
+     SQLALCHEMY_DATABASE_URL = "postgresql://postgres:root@localhost/bona_school_db"
+-
+-# The Engine: The actual worker that handles the physical connection
+-engine = create_engine(SQLALCHEMY_DATABASE_URL)
++    engine = create_engine(SQLALCHEMY_DATABASE_URL)

@@ -1,0 +1,204 @@
+import pytest
+from fastapi.testclient import TestClient
+from main import app
+from database import get_db
+import auth
+import models
+from datetime import datetime
+
+client = TestClient(app)
+
+# Helper function to mock different user roles
+def get_mock_user_by_role(role="admin"):
+    def mock_user():
+        return models.User(id=1, username="testuser", name="Test User", role=role)
+    return mock_user
+
+# --- Test setup and mocks ---
+
+@pytest.fixture(autouse=True)
+def setup_db(db_session):
+    # Add a test student
+    student1 = models.Student(
+        id=1,
+        first_name="John",
+        last_name="Doe",
+        admission_number="ADM001",
+        grade_level="Grade 1",
+        status="Active"
+    )
+    student2 = models.Student(
+        id=2,
+        first_name="Jane",
+        last_name="Smith",
+        admission_number="ADM002",
+        grade_level="Play Group",
+        status="Active"
+    )
+    db_session.add(student1)
+    db_session.add(student2)
+    db_session.commit()
+
+    # Reset overrides before each test
+    app.dependency_overrides = {}
+    yield
+
+# --- Tests for POST /api/fees/ ---
+
+def test_record_payment_success_admin(db_session):
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("admin")
+
+    payload = {
+        "student_id": 1,
+        "amount": 5000.0,
+        "payment_type": "Tuition",
+        "term": "Term 1"
+    }
+
+    response = client.post("/api/fees/", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["amount"] == 5000.0
+    assert data["student_id"] == 1
+    assert data["payment_type"] == "Tuition"
+    assert data["term"] == "Term 1"
+    assert data["recorded_by"] == "Test User"
+    assert "id" in data
+    assert "payment_date" in data
+
+def test_record_payment_success_accountant(db_session):
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("accountant")
+
+    payload = {
+        "student_id": 2,
+        "amount": 3000.0,
+        "payment_type": "Uniforms",
+        "term": "Term 2"
+    }
+
+    response = client.post("/api/fees/", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["amount"] == 3000.0
+
+def test_record_payment_unauthorized_teacher(db_session):
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("teacher")
+
+    payload = {
+        "student_id": 1,
+        "amount": 5000.0,
+        "payment_type": "Tuition",
+        "term": "Term 1"
+    }
+
+    response = client.post("/api/fees/", json=payload)
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Not authorized to record payments"
+
+def test_record_payment_unauthorized_principal(db_session):
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("principal")
+
+    payload = {
+        "student_id": 1,
+        "amount": 5000.0,
+        "payment_type": "Tuition",
+        "term": "Term 1"
+    }
+
+    response = client.post("/api/fees/", json=payload)
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Not authorized to record payments"
+
+def test_record_payment_student_not_found(db_session):
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("admin")
+
+    payload = {
+        "student_id": 999, # Non-existent
+        "amount": 5000.0,
+        "payment_type": "Tuition",
+        "term": "Term 1"
+    }
+
+    response = client.post("/api/fees/", json=payload)
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Student not found"
+
+
+# --- Tests for GET /api/fees/ ---
+
+def test_get_all_payments_success(db_session):
+    # Add a mock payment directly to db
+    payment = models.FeePayment(
+        student_id=1,
+        amount=5000.0,
+        payment_type="Tuition",
+        term="Term 1",
+        recorded_by="Test User"
+    )
+    db_session.add(payment)
+    db_session.commit()
+
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("admin")
+    response = client.get("/api/fees/")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) >= 1
+    assert data[0]["amount"] == 5000.0
+
+def test_get_all_payments_unauthorized_teacher(db_session):
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("teacher")
+    response = client.get("/api/fees/")
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Not authorized to view financials"
+
+# --- Tests for GET /api/fees/balance/{student_id}/{term} ---
+
+def test_get_balance_no_payments(db_session):
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("admin")
+
+    # student 1 is Grade 1 -> Expected fee is 18000.00
+    response = client.get("/api/fees/balance/1/Term 1")
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["student_id"] == 1
+    assert data["expected_term_fee"] == 18000.0
+    assert data["total_paid_this_term"] == 0.0
+    assert data["outstanding_balance"] == 18000.0
+
+def test_get_balance_partial_payment(db_session):
+    # Add a partial payment
+    payment = models.FeePayment(
+        student_id=1,
+        amount=5000.0,
+        payment_type="Tuition",
+        term="Term 1",
+        recorded_by="Test User"
+    )
+    db_session.add(payment)
+    db_session.commit()
+
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("admin")
+
+    # student 1 is Grade 1 -> Expected fee is 18000.00
+    response = client.get("/api/fees/balance/1/Term 1")
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["expected_term_fee"] == 18000.0
+    assert data["total_paid_this_term"] == 5000.0
+    assert data["outstanding_balance"] == 13000.0
+
+def test_get_balance_student_not_found(db_session):
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("admin")
+
+    response = client.get("/api/fees/balance/999/Term 1")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Student not found"
+
+def test_get_balance_unauthorized(db_session):
+    app.dependency_overrides[auth.get_current_user] = get_mock_user_by_role("teacher")
+
+    response = client.get("/api/fees/balance/1/Term 1")
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Not authorized to view financials"
