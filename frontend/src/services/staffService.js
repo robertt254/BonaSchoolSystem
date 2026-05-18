@@ -1,6 +1,6 @@
 import { getHeaders } from '../utils/api'
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/staff`
+const API_URL = `/api/staff`
 
 export default {
   async getAllStaff() {

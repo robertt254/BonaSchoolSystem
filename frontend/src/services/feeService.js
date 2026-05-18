@@ -1,6 +1,6 @@
 import { getHeaders } from '../utils/api'
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/fees`
+const API_URL = `/api/fees`
 
 export default {
   // Fetch the full ledger
