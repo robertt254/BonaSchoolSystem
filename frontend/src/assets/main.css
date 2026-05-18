@@ -1,5 +1,5 @@
-/* Tailwind CSS temporarily disabled for Vite compatibility */
-/* @import "tailwindcss"; */
+@import "tailwindcss";
+@config "../../tailwind.config.js";
 
 /* Basic styling for testing */
 * {
