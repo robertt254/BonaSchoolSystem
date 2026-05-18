@@ -26,7 +26,7 @@ def record_payment(
     current_user: models.User = Depends(auth.get_current_user)
 ):
     # Security Check: Ensure only Accountants or Admins can log money
-    if current_user.role not in ["accountant", "admin"]:
+    if current_user.role not in ["accountant", "admin", "principal", "secretary"]:
         raise HTTPException(status_code=403, detail="Not authorized to record payments")
 
     # Verify the student actually exists
@@ -51,7 +51,7 @@ def get_all_payments(
     current_user: models.User = Depends(auth.get_current_user)
 ):
     # Only Finance and Admin/Principal should see the full ledger
-    if current_user.role not in ["accountant", "admin", "principal"]:
+    if current_user.role not in ["accountant", "admin", "principal", "secretary"]:
          raise HTTPException(status_code=403, detail="Not authorized to view financials")
          
     return db.query(models.FeePayment).all()
@@ -65,7 +65,7 @@ def get_student_balance(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    if current_user.role not in ["accountant", "admin", "principal"]:
+    if current_user.role not in ["accountant", "admin", "principal", "secretary"]:
          raise HTTPException(status_code=403, detail="Not authorized to view financials")
 
     student = db.query(models.Student).filter(models.Student.id == student_id).first()
