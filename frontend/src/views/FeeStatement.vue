@@ -1,13 +1,15 @@
 <template>
   <div class="p-8 bg-gray-50 min-h-screen print:p-0 print:bg-white">
-    
     <div class="mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100 print:hidden">
       <h1 class="text-2xl font-bold text-gray-800 mb-4">Generate Fee Statement</h1>
-      
+
       <div class="flex space-x-4 items-end">
         <div class="flex-1">
           <label class="block text-sm font-medium text-gray-700 mb-1">Select Student</label>
-          <select v-model="selectedStudent" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-600 outline-none">
+          <select
+            v-model="selectedStudent"
+            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-600 outline-none"
+          >
             <option disabled value="">-- Choose a student --</option>
             <option v-for="student in students" :key="student.id" :value="student.id">
               {{ student.first_name }} {{ student.last_name }} ({{ student.admission_number }})
@@ -17,14 +19,17 @@
 
         <div class="w-48">
           <label class="block text-sm font-medium text-gray-700 mb-1">Academic Term</label>
-          <select v-model="selectedTerm" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-600 outline-none">
+          <select
+            v-model="selectedTerm"
+            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-600 outline-none"
+          >
             <option value="Term 1">Term 1</option>
             <option value="Term 2">Term 2</option>
             <option value="Term 3">Term 3</option>
           </select>
         </div>
 
-        <button 
+        <button
           @click="generateStatement"
           :disabled="!selectedStudent"
           class="bg-emerald-700 text-white px-6 py-2 rounded-lg shadow hover:bg-emerald-600 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
@@ -38,8 +43,8 @@
       <span class="animate-pulse">Calculating balances...</span>
     </div>
 
-    <div 
-      v-if="statementData && !loading" 
+    <div
+      v-if="statementData && !loading"
       class="bg-white max-w-3xl mx-auto p-10 rounded-xl shadow-lg border border-gray-200 print:shadow-none print:border-none print:m-0 print:p-0"
     >
       <div class="text-center border-b-2 border-gray-800 pb-6 mb-6">
@@ -49,7 +54,9 @@
       </div>
 
       <div class="flex justify-between items-center mb-8">
-        <h3 class="text-xl font-bold text-gray-800 bg-gray-100 px-4 py-2 rounded">OFFICIAL FEE STATEMENT</h3>
+        <h3 class="text-xl font-bold text-gray-800 bg-gray-100 px-4 py-2 rounded">
+          OFFICIAL FEE STATEMENT
+        </h3>
         <p class="text-gray-600 font-medium">Date: {{ currentDate }}</p>
       </div>
 
@@ -71,12 +78,18 @@
       <table class="w-full mb-8">
         <tbody>
           <tr class="border-b border-gray-200">
-            <td class="py-4 text-gray-600 font-medium">Expected Fee for {{ statementData.term_checked }}</td>
-            <td class="py-4 text-right font-bold text-gray-900">{{ formatCurrency(statementData.expected_term_fee) }}</td>
+            <td class="py-4 text-gray-600 font-medium">
+              Expected Fee for {{ statementData.term_checked }}
+            </td>
+            <td class="py-4 text-right font-bold text-gray-900">
+              {{ formatCurrency(statementData.expected_term_fee) }}
+            </td>
           </tr>
           <tr class="border-b border-gray-200 bg-emerald-50">
             <td class="py-4 px-2 text-emerald-800 font-medium">Total Installments Paid</td>
-            <td class="py-4 px-2 text-right font-bold text-emerald-800">- {{ formatCurrency(statementData.total_paid_this_term) }}</td>
+            <td class="py-4 px-2 text-right font-bold text-emerald-800">
+              - {{ formatCurrency(statementData.total_paid_this_term) }}
+            </td>
           </tr>
           <tr class="border-b-4 border-gray-800">
             <td class="py-6 text-xl font-black text-gray-900 uppercase">Outstanding Balance</td>
@@ -97,15 +110,14 @@
       </div>
 
       <div class="mt-12 text-center print:hidden">
-        <button 
-          @click="printDocument" 
+        <button
+          @click="printDocument"
           class="bg-gray-800 text-white px-8 py-3 rounded-lg shadow-lg hover:bg-black transition font-bold"
         >
           🖨️ Print Statement
         </button>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -123,8 +135,10 @@ const loading = ref(false)
 
 // Get today's date formatted
 const currentDate = computed(() => {
-  return new Date().toLocaleDateString('en-GB', { 
-    day: 'numeric', month: 'long', year: 'numeric' 
+  return new Date().toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   })
 })
 
@@ -138,7 +152,7 @@ onMounted(async () => {
   try {
     students.value = await studentService.getAllStudents()
   } catch (error) {
-    console.error("Failed to load students", error)
+    console.error('Failed to load students', error)
   }
 })
 
@@ -146,9 +160,12 @@ onMounted(async () => {
 const generateStatement = async () => {
   loading.value = true
   try {
-    statementData.value = await feeService.getStudentBalance(selectedStudent.value, selectedTerm.value)
+    statementData.value = await feeService.getStudentBalance(
+      selectedStudent.value,
+      selectedTerm.value,
+    )
   } catch (error) {
-    alert("Failed to generate statement. Make sure the backend is running.")
+    alert('Failed to generate statement. Make sure the backend is running.')
     console.error(error)
   } finally {
     loading.value = false
