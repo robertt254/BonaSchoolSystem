@@ -34,6 +34,9 @@ COPY backend/ ./backend/
 # Copy built frontend assets
 COPY --from=build-frontend /app/frontend/dist ./frontend/dist
 
+# Set PYTHONPATH so absolute imports like 'import auth' work inside /app/backend
+ENV PYTHONPATH=/app/backend
+
 # Expose port (Render sets PORT env variable)
 EXPOSE 8000
 
