@@ -9,7 +9,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'Login',
-      component: LoginView,
+      component: LoginView
     },
     {
       path: '/',
@@ -17,54 +17,18 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [
         { path: '', name: 'dashboard', component: DashboardHome },
-        {
-          path: 'admin',
-          name: 'admin-dash',
-          component: () => import('../views/Admin/AdminDashboard.vue'),
-        },
-        {
-          path: 'admin/staff',
-          name: 'staff-directory',
-          component: () => import('../views/StaffDirectory.vue'),
-        },
-        {
-          path: 'principal',
-          name: 'principal-dash',
-          component: () => import('../views/Principal/PrincipalDashboard.vue'),
-        },
-        {
-          path: 'office',
-          name: 'secretary-dash',
-          component: () => import('../views/Office/SecretaryDash.vue'),
-        },
-        {
-          path: 'finance',
-          name: 'accountant-dash',
-          component: () => import('../views/Finance/AccountantDashboard.vue'),
-        },
-        {
-          path: 'finance/statements',
-          name: 'fee-statement',
-          component: () => import('../views/FeeStatement.vue'),
-        },
-        {
-          path: 'academics',
-          name: 'teacher-dash',
-          component: () => import('../views/Academics/SeniorTeacherDash.vue'),
-        },
-        {
-          path: 'academics/report-card',
-          name: 'report-card',
-          component: () => import('../views/ReportCard.vue'),
-        },
-        {
-          path: 'academics/attendance',
-          name: 'attendance-page',
-          component: () => import('../views/AttendancePage.vue'),
-        },
-      ],
-    },
-  ],
+        { path: 'admin', name: 'admin-dash', component: () => import('../views/Admin/AdminDashboard.vue') },
+        { path: 'admin/staff', name: 'staff-directory', component: () => import('../views/StaffDirectory.vue') },
+        { path: 'principal', name: 'principal-dash', component: () => import('../views/Principal/PrincipalDashboard.vue') },
+        { path: 'office', name: 'secretary-dash', component: () => import('../views/Office/SecretaryDash.vue') },
+        { path: 'finance', name: 'accountant-dash', component: () => import('../views/Finance/AccountantDashboard.vue') },
+        { path: 'finance/statements', name: 'fee-statement', component: () => import('../views/FeeStatement.vue') },
+        { path: 'academics', name: 'teacher-dash', component: () => import('../views/Academics/SeniorTeacherDash.vue') },
+        { path: 'academics/report-card', name: 'report-card', component: () => import('../views/ReportCard.vue') },
+        { path: 'academics/attendance', name: 'attendance-page', component: () => import('../views/AttendancePage.vue') }
+      ]
+    }
+  ]
 })
 
 // THE SECURITY GUARD

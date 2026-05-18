@@ -7,7 +7,7 @@ const getHeaders = () => {
   const token = authStore.token || localStorage.getItem('access_token')
   return {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
+    'Authorization': `Bearer ${token}`
   }
 }
 
@@ -16,7 +16,7 @@ export default {
   async getAllFees() {
     const response = await fetch(`${API_URL}/`, {
       method: 'GET',
-      headers: getHeaders(),
+      headers: getHeaders()
     })
     if (!response.ok) throw new Error('Failed to fetch fees')
     return await response.json()
@@ -27,7 +27,7 @@ export default {
     const response = await fetch(`${API_URL}/`, {
       method: 'POST',
       headers: getHeaders(),
-      body: JSON.stringify(feeData),
+      body: JSON.stringify(feeData)
     })
     if (!response.ok) throw new Error('Failed to record fee')
     return await response.json()
@@ -37,9 +37,9 @@ export default {
   async getStudentBalance(studentId, term) {
     const response = await fetch(`${API_URL}/balance/${studentId}/${term}`, {
       method: 'GET',
-      headers: getHeaders(),
+      headers: getHeaders()
     })
     if (!response.ok) throw new Error('Failed to fetch balance')
     return await response.json()
-  },
+  }
 }

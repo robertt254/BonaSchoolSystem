@@ -7,9 +7,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-        <div class="text-sm font-semibold text-slate-500 uppercase">
-          New Enrollments (This Term)
-        </div>
+        <div class="text-sm font-semibold text-slate-500 uppercase">New Enrollments (This Term)</div>
         <div class="mt-2 text-3xl font-bold text-bona-navy">42</div>
       </div>
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">

@@ -76,12 +76,12 @@ const handleLogin = async () => {
 <template>
   <!-- Main Container: Uses bona-bg for overall cleanliness -->
   <div class="min-h-screen bg-bona-bg flex items-center justify-center p-4 font-sans antialiased">
+
     <!-- Login Card: Two-column layout on larger screens -->
     <div class="bg-bona-white w-full max-w-4xl rounded-2xl shadow-xl flex overflow-hidden">
+
       <!-- Left Column: School Branding (Visible on md screens and up) -->
-      <div
-        class="hidden md:flex md:w-1/2 bg-bona-navy p-12 flex-col justify-between text-bona-white"
-      >
+      <div class="hidden md:flex md:w-1/2 bg-bona-navy p-12 flex-col justify-between text-bona-white">
         <div>
           <h1 class="text-3xl font-extrabold tracking-tight">The Bona School</h1>
           <p class="mt-2 text-blue-100 opacity-90">Student Management System</p>
@@ -89,18 +89,17 @@ const handleLogin = async () => {
 
         <div class="border-t border-blue-800 pt-6">
           <p class="text-sm text-blue-200">Secure access for staff and administration only.</p>
-          <p class="text-xs mt-2 text-blue-300">
-            In case of access issues, contact the IT Administrator.
-          </p>
+          <p class="text-xs mt-2 text-blue-300">In case of access issues, contact the IT Administrator.</p>
         </div>
       </div>
 
       <!-- Right Column: Login Form -->
       <div class="w-full md:w-1/2 p-8 sm:p-12">
+
         <!-- Mobile Logo (Only visible on small screens) -->
         <div class="md:hidden text-center mb-8">
-          <h1 class="text-3xl font-extrabold text-bona-navy">The Bona School</h1>
-          <p class="text-slate-600">SMS Login</p>
+            <h1 class="text-3xl font-extrabold text-bona-navy">The Bona School</h1>
+            <p class="text-slate-600">SMS Login</p>
         </div>
 
         <div class="mb-10 hidden md:block">
@@ -109,10 +108,7 @@ const handleLogin = async () => {
         </div>
 
         <!-- Error Alert (Accent Red applied here) -->
-        <div
-          v-if="loginError"
-          class="mb-6 bg-red-50 border border-bona-red/30 text-bona-red p-4 rounded-lg text-sm font-medium"
-        >
+        <div v-if="loginError" class="mb-6 bg-red-50 border border-bona-red/30 text-bona-red p-4 rounded-lg text-sm font-medium">
           The username or password provided is incorrect. Please try again.
         </div>
 
@@ -153,7 +149,7 @@ const handleLogin = async () => {
         </form>
 
         <div class="mt-10 text-center text-xs text-slate-500">
-          Powered by The Bona School IT Dept | &copy; 2024
+            Powered by The Bona School IT Dept | &copy; 2024
         </div>
       </div>
     </div>

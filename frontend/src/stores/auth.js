@@ -6,7 +6,7 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref({
     name: localStorage.getItem('user_name') || null,
     role: localStorage.getItem('user_role') || null,
-    username: localStorage.getItem('username') || null,
+    username: localStorage.getItem('username') || null
   })
 
   const login = async (username, password) => {
@@ -18,9 +18,9 @@ export const useAuthStore = defineStore('auth', () => {
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: formData,
+      body: formData
     })
 
     if (!response.ok) {
