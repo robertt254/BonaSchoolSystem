@@ -1,53 +1,97 @@
 <template>
-  <div class="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-      <div class="bg-school-navy p-8 text-center">
+  <!-- Main Container: Uses bona-bg for overall cleanliness -->
+  <div class="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans antialiased">
+    <!-- Login Card: Two-column layout on larger screens -->
+    <div
+      class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl flex overflow-hidden border border-slate-100"
+    >
+      <!-- Left Column: School Branding (Visible on md screens and up) -->
+      <div
+        class="hidden md:flex md:w-1/2 bg-school-navy p-12 flex-col justify-between text-white relative overflow-hidden"
+      >
+        <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-white/5 blur-3xl"></div>
         <div
-          class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner"
-        >
-          <span class="text-3xl">🎓</span>
+          class="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-school-red/10 blur-2xl"
+        ></div>
+        <div class="relative z-10">
+          <h1 class="text-4xl font-extrabold tracking-tight uppercase mb-2">The Bona School</h1>
+          <p class="text-school-grey/80 font-medium">Student Management System</p>
         </div>
-        <h1 class="text-2xl font-black text-white tracking-widest uppercase">The Bona School</h1>
-        <p class="text-school-grey text-sm mt-1 uppercase tracking-widest">Authorized Access Only</p>
+
+        <div class="border-t border-slate-700 pt-6 relative z-10">
+          <p class="text-sm text-slate-300">Secure access for staff and administration only.</p>
+          <p class="text-xs mt-2 text-slate-400">
+            In case of access issues, contact the IT Administrator.
+          </p>
+        </div>
       </div>
 
-      <div class="p-8">
-        <form @submit.prevent="handleLogin" class="space-y-6">
-          <div v-if="errorMessage" class="bg-red-50 border-l-4 border-red-600 p-4 rounded-r">
-            <p class="text-sm text-red-700 font-medium">{{ errorMessage }}</p>
-          </div>
+      <!-- Right Column: Login Form -->
+      <div class="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
+        <!-- Mobile Logo (Only visible on small screens) -->
+        <div class="md:hidden text-center mb-10">
+          <h1 class="text-3xl font-extrabold text-school-navy uppercase tracking-tight">
+            The Bona School
+          </h1>
+          <p class="text-slate-500 font-medium mt-1">SMS Login</p>
+        </div>
 
+        <div class="mb-10 hidden md:block">
+          <h2 class="text-3xl font-bold text-slate-900 tracking-tight">Welcome Back</h2>
+          <p class="text-slate-500 mt-2 font-medium">
+            Please enter your credentials to access your dashboard.
+          </p>
+        </div>
+
+        <!-- Error Alert (Accent Red applied here) -->
+        <div
+          v-if="errorMessage"
+          class="mb-6 bg-red-50 border border-school-red/30 text-school-red p-4 rounded-lg text-sm font-medium"
+        >
+          {{ errorMessage }}
+        </div>
+
+        <form @submit.prevent="handleLogin" class="space-y-6">
+          <!-- Username Input -->
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-2">System Username</label>
+            <label class="block text-sm font-semibold text-slate-800 mb-1.5">Username</label>
             <input
               v-model="username"
               type="text"
               required
-              class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-school-navy focus:border-school-navy outline-none transition font-mono text-sm"
-              placeholder="e.g., admin_user"
+              placeholder="e.g. j.doe"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy transition duration-150 outline-none"
             />
           </div>
 
+          <!-- Password Input -->
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-2">Password</label>
+            <label class="block text-sm font-semibold text-slate-800 mb-1.5">Password</label>
             <input
               v-model="password"
               type="password"
               required
-              class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-school-navy focus:border-school-navy outline-none transition"
               placeholder="••••••••"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy transition duration-150 outline-none"
             />
           </div>
 
-          <button
-            type="submit"
-            :disabled="isLoading"
-            class="w-full bg-school-navy text-white font-bold py-3 rounded-lg shadow-lg hover:bg-school-navy/90 transition disabled:bg-school-grey flex justify-center items-center"
-          >
-            <span v-if="isLoading" class="animate-pulse">Authenticating...</span>
-            <span v-else>Secure Login</span>
-          </button>
+          <!-- Submit Button (Accent Red applied for call-to-action) -->
+          <div>
+            <button
+              type="submit"
+              :disabled="isLoading"
+              class="w-full bg-school-red text-white font-semibold py-3.5 px-4 rounded-lg shadow-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 active:scale-[0.98] disabled:bg-school-grey disabled:text-slate-500 flex justify-center items-center"
+            >
+              <span v-if="isLoading" class="animate-pulse">Authenticating...</span>
+              <span v-else>Sign In</span>
+            </button>
+          </div>
         </form>
+
+        <div class="mt-10 text-center text-xs text-slate-500">
+          Powered by The Bona School IT Dept | &copy; 2024
+        </div>
       </div>
     </div>
   </div>

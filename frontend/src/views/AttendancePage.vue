@@ -30,7 +30,9 @@
       v-if="classList.length > 0"
       class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
     >
-      <div class="bg-school-grey/50 p-4 border-b border-school-grey/80 flex justify-between items-center">
+      <div
+        class="bg-school-grey/50 p-4 border-b border-school-grey/80 flex justify-between items-center"
+      >
         <h2 class="font-bold text-school-navy">{{ selectedGrade }} Roster</h2>
         <span class="text-sm font-medium text-blue-700 bg-school-grey px-3 py-1 rounded-full"
           >{{ classList.length }} Students</span
@@ -119,12 +121,9 @@ const loadClassList = async () => {
   hasSearched.value = true
   const token = localStorage.getItem('access_token')
   try {
-    const response = await fetch(
-      `/api/attendance/today/${selectedGrade.value}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    )
+    const response = await fetch(`/api/attendance/today/${selectedGrade.value}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
     if (!response.ok) throw new Error('Failed to fetch class list')
     classList.value = await response.json()
   } catch (error) {

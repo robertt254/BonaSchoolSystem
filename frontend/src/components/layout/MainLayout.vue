@@ -61,37 +61,37 @@ const handleLogout = () => {
     <aside
       :class="[
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        'fixed inset-y-0 left-0 z-30 w-64 bg-school-navy text-white transition duration-300 transform md:relative md:translate-x-0 flex flex-col shadow-xl',
+        'fixed inset-y-0 left-0 z-30 w-72 bg-school-navy text-white transition duration-300 transform md:relative md:translate-x-0 flex flex-col shadow-2xl border-r border-slate-800',
       ]"
     >
       <!-- Sidebar Header (Logo Area) -->
-      <div class="flex items-center justify-center h-16 border-b border-school-navy/90 px-4">
-        <h1 class="text-xl font-bold tracking-wider">THE BONA SCHOOL</h1>
+      <div class="flex items-center h-20 border-b border-slate-800 px-8">
+        <h1 class="text-xl font-extrabold tracking-wide text-white uppercase">The Bona School</h1>
       </div>
 
       <!-- Navigation Links -->
-      <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+      <nav class="flex-1 px-4 py-8 space-y-3 overflow-y-auto">
         <RouterLink
           v-for="item in visibleMenuItems"
           :key="item.path"
           :to="item.path"
           :class="[
             route.path === item.path
-              ? 'bg-school-navy/90 text-white font-medium'
-              : 'text-school-grey hover:bg-school-navy/90/50 hover:text-white transition-colors',
-            'flex items-center gap-3 px-4 py-3 rounded-lg',
+              ? 'text-white border-l-4 border-school-red bg-white/5 font-semibold'
+              : 'text-slate-400 hover:text-white hover:bg-white/5 border-l-4 border-transparent font-medium',
+            'flex items-center gap-4 px-6 py-3.5 rounded-r-lg transition-all duration-200',
           ]"
         >
-          <span class="text-xl">{{ item.icon }}</span>
-          {{ item.name }}
+          <span class="text-2xl">{{ item.icon }}</span>
+          <span class="text-[15px]">{{ item.name }}</span>
         </RouterLink>
       </nav>
 
       <!-- Sidebar Footer (Logout) -->
-      <div class="p-4 border-t border-school-navy/90">
+      <div class="p-6 border-t border-slate-800">
         <button
           @click="handleLogout"
-          class="flex items-center gap-3 w-full px-4 py-2 text-sm font-medium text-school-grey rounded-lg hover:bg-school-red hover:text-white transition-colors"
+          class="flex items-center justify-center gap-3 w-full px-4 py-3 text-sm font-medium text-slate-300 rounded-lg hover:bg-school-red hover:text-white hover:shadow-lg transition-all duration-200"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -107,15 +107,15 @@ const handleLogout = () => {
     </aside>
 
     <!-- MAIN CONTENT WRAPPER -->
-    <div class="flex-1 flex flex-col min-w-0">
+    <div class="flex-1 flex flex-col min-w-0 bg-slate-50">
       <!-- TOP NAVIGATION BAR -->
       <header
-        class="bg-white shadow-sm h-16 flex items-center justify-between px-4 sm:px-6 z-10"
+        class="bg-white border-b border-slate-200 h-20 flex items-center justify-between px-6 sm:px-10 z-10 sticky top-0"
       >
         <!-- Mobile Menu Button -->
         <button
           @click="isSidebarOpen = true"
-          class="md:hidden text-slate-500 hover:text-slate-700 focus:outline-none"
+          class="md:hidden text-slate-500 hover:text-slate-800 focus:outline-none transition-colors"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -128,21 +128,28 @@ const handleLogout = () => {
         </button>
 
         <!-- Page Title Placeholder -->
-        <div class="hidden md:block">
-          <h2 class="text-xl font-semibold text-slate-800">Overview</h2>
+        <div class="hidden md:flex items-center gap-4">
+          <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Overview</h2>
         </div>
 
         <!-- User Profile Area -->
-        <div class="flex items-center gap-4 ml-auto">
+        <div class="flex items-center gap-5 ml-auto">
           <div class="text-right hidden sm:block">
             <p class="text-sm font-bold text-slate-800">{{ currentUser.name }}</p>
-            <p class="text-xs text-slate-500">{{ currentUser.role }}</p>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">
+              {{ currentUser.role }}
+            </p>
           </div>
           <!-- Avatar -->
           <div
-            class="h-10 w-10 rounded-full bg-school-navy flex items-center justify-center text-white font-bold shadow-md ring-2 ring-school-grey/80"
+            class="h-11 w-11 rounded-full bg-school-navy flex items-center justify-center text-white font-bold shadow-sm ring-4 ring-slate-50"
           >
-            AU
+            {{
+              currentUser.name
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+            }}
           </div>
         </div>
       </header>
