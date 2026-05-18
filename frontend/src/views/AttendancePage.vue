@@ -12,7 +12,7 @@
         <label class="block text-sm font-medium text-gray-700 mb-1">Select CBC Grade</label>
         <select
           v-model="selectedGrade"
-          class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-900 outline-none"
+          class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
         >
           <option v-for="g in grades" :key="g" :value="g">{{ g }}</option>
         </select>
@@ -20,7 +20,7 @@
 
       <button
         @click="loadClassList"
-        class="bg-blue-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-800 transition shadow"
+        class="bg-school-navy text-white px-6 py-2 rounded-lg font-medium hover:bg-school-navy/90 transition shadow"
       >
         Load Students
       </button>
@@ -30,9 +30,9 @@
       v-if="classList.length > 0"
       class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
     >
-      <div class="bg-blue-50 p-4 border-b border-blue-100 flex justify-between items-center">
-        <h2 class="font-bold text-blue-900">{{ selectedGrade }} Roster</h2>
-        <span class="text-sm font-medium text-blue-700 bg-blue-200 px-3 py-1 rounded-full"
+      <div class="bg-school-grey/50 p-4 border-b border-school-grey/80 flex justify-between items-center">
+        <h2 class="font-bold text-school-navy">{{ selectedGrade }} Roster</h2>
+        <span class="text-sm font-medium text-blue-700 bg-school-grey px-3 py-1 rounded-full"
           >{{ classList.length }} Students</span
         >
       </div>
@@ -57,7 +57,7 @@
                 <input
                   type="checkbox"
                   v-model="s.is_present"
-                  class="form-checkbox h-6 w-6 text-blue-900 rounded focus:ring-blue-900 cursor-pointer"
+                  class="form-checkbox h-6 w-6 text-school-navy rounded focus:ring-school-navy cursor-pointer"
                 />
                 <span
                   class="ml-3 font-bold"
@@ -71,7 +71,7 @@
               <input
                 v-model="s.remarks"
                 placeholder="E.g., Sick, Sent home for fees..."
-                class="border border-gray-300 p-2 rounded-lg w-full text-sm focus:ring-2 focus:ring-blue-900 outline-none"
+                class="border border-gray-300 p-2 rounded-lg w-full text-sm focus:ring-2 focus:ring-school-navy outline-none"
               />
             </td>
           </tr>

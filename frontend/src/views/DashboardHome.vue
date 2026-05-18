@@ -1,11 +1,11 @@
 <template>
   <div class="p-8 bg-slate-50 min-h-screen">
     <div
-      class="bg-blue-900 rounded-2xl p-8 text-white shadow-lg mb-8 flex justify-between items-center bg-opacity-95"
+      class="bg-school-navy rounded-2xl p-8 text-white shadow-lg mb-8 flex justify-between items-center bg-opacity-95"
     >
       <div>
         <h1 class="text-3xl font-black tracking-wide mb-2">Welcome to The Bona School</h1>
-        <p class="text-blue-200 text-lg">Competency-Based Curriculum (CBC) Management System</p>
+        <p class="text-school-grey text-lg">Competency-Based Curriculum (CBC) Management System</p>
       </div>
       <div class="hidden md:block text-5xl">🎓</div>
     </div>
@@ -16,7 +16,7 @@
 
     <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       <div
-        class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 border-t-4 border-t-blue-500"
+        class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 border-t-4 border-t-school-grey/500"
       >
         <div class="flex justify-between items-start">
           <div>
@@ -25,7 +25,7 @@
             </p>
             <h2 class="text-4xl font-black text-slate-800">{{ totalStudents }}</h2>
           </div>
-          <div class="p-3 bg-blue-50 rounded-lg text-blue-600 text-xl">👨‍🎓</div>
+          <div class="p-3 bg-school-grey/50 rounded-lg text-school-navy/70 text-xl">👨‍🎓</div>
         </div>
         <p class="text-sm text-slate-500 mt-4 font-medium">Across all CBC grades</p>
       </div>
@@ -46,7 +46,7 @@
       </div>
 
       <div
-        class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 border-t-4 border-t-indigo-500"
+        class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 border-t-4 border-t-school-grey/500"
       >
         <div class="flex justify-between items-start">
           <div>
@@ -55,7 +55,7 @@
             </p>
             <h2 class="text-4xl font-black text-slate-800">{{ totalStaff }}</h2>
           </div>
-          <div class="p-3 bg-indigo-50 rounded-lg text-indigo-600 text-xl">🧑‍🏫</div>
+          <div class="p-3 bg-school-grey/50 rounded-lg text-school-navy/80 text-xl">🧑‍🏫</div>
         </div>
         <p class="text-sm text-slate-500 mt-4 font-medium">Teachers & Administrators</p>
       </div>

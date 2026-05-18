@@ -77,18 +77,18 @@ const handleLogin = async () => {
   <!-- Main Container: Uses bona-bg for overall cleanliness -->
   <div class="min-h-screen bg-bona-bg flex items-center justify-center p-4 font-sans antialiased">
     <!-- Login Card: Two-column layout on larger screens -->
-    <div class="bg-bona-white w-full max-w-4xl rounded-2xl shadow-xl flex overflow-hidden">
+    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-xl flex overflow-hidden">
       <!-- Left Column: School Branding (Visible on md screens and up) -->
       <div
-        class="hidden md:flex md:w-1/2 bg-bona-navy p-12 flex-col justify-between text-bona-white"
+        class="hidden md:flex md:w-1/2 bg-school-navy p-12 flex-col justify-between text-white"
       >
         <div>
           <h1 class="text-3xl font-extrabold tracking-tight">The Bona School</h1>
-          <p class="mt-2 text-blue-100 opacity-90">Student Management System</p>
+          <p class="mt-2 text-school-grey/80 opacity-90">Student Management System</p>
         </div>
 
-        <div class="border-t border-blue-800 pt-6">
-          <p class="text-sm text-blue-200">Secure access for staff and administration only.</p>
+        <div class="border-t border-school-navy/90 pt-6">
+          <p class="text-sm text-school-grey">Secure access for staff and administration only.</p>
           <p class="text-xs mt-2 text-blue-300">
             In case of access issues, contact the IT Administrator.
           </p>
@@ -99,7 +99,7 @@ const handleLogin = async () => {
       <div class="w-full md:w-1/2 p-8 sm:p-12">
         <!-- Mobile Logo (Only visible on small screens) -->
         <div class="md:hidden text-center mb-8">
-          <h1 class="text-3xl font-extrabold text-bona-navy">The Bona School</h1>
+          <h1 class="text-3xl font-extrabold text-school-navy">The Bona School</h1>
           <p class="text-slate-600">SMS Login</p>
         </div>
 
@@ -111,7 +111,7 @@ const handleLogin = async () => {
         <!-- Error Alert (Accent Red applied here) -->
         <div
           v-if="loginError"
-          class="mb-6 bg-red-50 border border-bona-red/30 text-bona-red p-4 rounded-lg text-sm font-medium"
+          class="mb-6 bg-red-50 border border-school-red/30 text-school-red p-4 rounded-lg text-sm font-medium"
         >
           The username or password provided is incorrect. Please try again.
         </div>
@@ -125,7 +125,7 @@ const handleLogin = async () => {
               type="text"
               required
               placeholder="e.g. j.doe"
-              class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-bona-navy/20 focus:border-bona-navy transition duration-150 outline-none"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy transition duration-150 outline-none"
             />
           </div>
 
@@ -137,7 +137,7 @@ const handleLogin = async () => {
               type="password"
               required
               placeholder="••••••••"
-              class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-bona-navy/20 focus:border-bona-navy transition duration-150 outline-none"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy transition duration-150 outline-none"
             />
           </div>
 
@@ -145,7 +145,7 @@ const handleLogin = async () => {
           <div>
             <button
               type="submit"
-              class="w-full bg-bona-red text-bona-white font-semibold py-3.5 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 active:scale-[0.98]"
+              class="w-full bg-school-red text-white font-semibold py-3.5 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 active:scale-[0.98]"
             >
               Sign In
             </button>

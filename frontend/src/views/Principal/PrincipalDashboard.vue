@@ -4,7 +4,7 @@
       <h1 class="text-3xl font-bold text-gray-800">Student Directory</h1>
       <button
         @click="openAddModal"
-        class="bg-blue-900 text-white px-4 py-2 rounded shadow hover:bg-blue-800 transition"
+        class="bg-school-navy text-white px-4 py-2 rounded shadow hover:bg-school-navy/90 transition"
       >
         + Add New Student
       </button>
@@ -51,7 +51,7 @@
             <td class="p-4 text-right space-x-4">
               <button
                 @click="openEditModal(student)"
-                class="text-blue-600 hover:text-blue-800 font-medium"
+                class="text-school-navy/70 hover:text-school-navy/90 font-medium"
               >
                 Edit
               </button>
@@ -95,7 +95,7 @@
                 v-model="formData.first_name"
                 required
                 type="text"
-                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-900 outline-none"
+                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-school-navy outline-none"
               />
             </div>
             <div>
@@ -104,7 +104,7 @@
                 v-model="formData.last_name"
                 required
                 type="text"
-                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-900 outline-none"
+                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-school-navy outline-none"
               />
             </div>
           </div>
@@ -116,7 +116,7 @@
               :disabled="isEditing"
               required
               type="text"
-              class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-900 outline-none disabled:bg-gray-100 disabled:text-gray-500"
+              class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-school-navy outline-none disabled:bg-gray-100 disabled:text-gray-500"
             />
             <p v-if="isEditing" class="text-xs text-gray-500 mt-1">
               Admission numbers cannot be changed.
@@ -129,7 +129,7 @@
               <select
                 v-model="formData.grade_level"
                 required
-                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-900 outline-none"
+                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-school-navy outline-none"
               >
                 <option value="Play Group">Play Group</option>
                 <option value="PP1">PP1</option>
@@ -147,7 +147,7 @@
               <select
                 v-model="formData.status"
                 required
-                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-900 outline-none"
+                class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-school-navy outline-none"
               >
                 <option value="Active">Active</option>
                 <option value="Graduated">Graduated</option>
@@ -166,7 +166,7 @@
             </button>
             <button
               type="submit"
-              class="px-4 py-2 bg-blue-900 text-white rounded-lg font-medium hover:bg-blue-800 transition"
+              class="px-4 py-2 bg-school-navy text-white rounded-lg font-medium hover:bg-school-navy/90 transition"
             >
               {{ isEditing ? 'Save Changes' : 'Enroll Student' }}
             </button>

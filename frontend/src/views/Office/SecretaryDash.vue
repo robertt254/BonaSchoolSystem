@@ -10,11 +10,11 @@
         <div class="text-sm font-semibold text-slate-500 uppercase">
           New Enrollments (This Term)
         </div>
-        <div class="mt-2 text-3xl font-bold text-bona-navy">42</div>
+        <div class="mt-2 text-3xl font-bold text-school-navy">42</div>
       </div>
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
         <div class="text-sm font-semibold text-slate-500 uppercase">Parent Messages</div>
-        <div class="mt-2 text-3xl font-bold text-bona-red">5 Unread</div>
+        <div class="mt-2 text-3xl font-bold text-school-red">5 Unread</div>
       </div>
     </div>
   </div>

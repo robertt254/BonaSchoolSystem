@@ -15,6 +15,37 @@ from database import engine
 # Tell SQLAlchemy to build all our tables in the database
 models.Base.metadata.create_all(bind=engine)
 
+# Function to seed initial users into the database
+def seed_users():
+    from database import SessionLocal
+    from auth import pwd_context
+    db = SessionLocal()
+    try:
+        users_to_seed = [
+            {"username": "admin", "password": "password", "name": "System Admin", "role": "admin"},
+            {"username": "principal", "password": "password", "name": "School Principal", "role": "principal"},
+            {"username": "teacher", "password": "password", "name": "Class Teacher", "role": "senior_teacher"},
+            {"username": "accountant", "password": "password", "name": "Finance Officer", "role": "accountant"},
+            {"username": "secretary", "password": "password", "name": "School Secretary", "role": "secretary"},
+        ]
+
+        for u in users_to_seed:
+            existing = db.query(models.User).filter(models.User.username == u["username"]).first()
+            if not existing:
+                new_user = models.User(
+                    username=u["username"],
+                    name=u["name"],
+                    role=u["role"],
+                    hashed_password=pwd_context.hash(u["password"])
+                )
+                db.add(new_user)
+        db.commit()
+    finally:
+        db.close()
+
+# Seed users on startup
+seed_users()
+
 app = FastAPI(title="Bona School Management API")
 
 # Crucial: This allows your Vite frontend to talk to this Python backend securely

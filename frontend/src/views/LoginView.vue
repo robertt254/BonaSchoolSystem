@@ -1,14 +1,14 @@
 <template>
   <div class="min-h-screen bg-slate-900 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-      <div class="bg-blue-900 p-8 text-center">
+      <div class="bg-school-navy p-8 text-center">
         <div
           class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner"
         >
           <span class="text-3xl">🎓</span>
         </div>
         <h1 class="text-2xl font-black text-white tracking-widest uppercase">The Bona School</h1>
-        <p class="text-blue-200 text-sm mt-1 uppercase tracking-widest">Authorized Access Only</p>
+        <p class="text-school-grey text-sm mt-1 uppercase tracking-widest">Authorized Access Only</p>
       </div>
 
       <div class="p-8">
@@ -23,7 +23,7 @@
               v-model="username"
               type="text"
               required
-              class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition font-mono text-sm"
+              class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-school-navy focus:border-school-navy outline-none transition font-mono text-sm"
               placeholder="e.g., admin_user"
             />
           </div>
@@ -34,7 +34,7 @@
               v-model="password"
               type="password"
               required
-              class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition"
+              class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-school-navy focus:border-school-navy outline-none transition"
               placeholder="••••••••"
             />
           </div>
@@ -42,7 +42,7 @@
           <button
             type="submit"
             :disabled="isLoading"
-            class="w-full bg-blue-900 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-blue-800 transition disabled:bg-blue-400 flex justify-center items-center"
+            class="w-full bg-school-navy text-white font-bold py-3 rounded-lg shadow-lg hover:bg-school-navy/90 transition disabled:bg-school-grey flex justify-center items-center"
           >
             <span v-if="isLoading" class="animate-pulse">Authenticating...</span>
             <span v-else>Secure Login</span>
