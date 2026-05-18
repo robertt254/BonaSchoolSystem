@@ -6,7 +6,7 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref({
     name: localStorage.getItem('user_name') || null,
     role: localStorage.getItem('user_role') || null,
-    username: localStorage.getItem('username') || null
+    username: localStorage.getItem('username') || null,
   })
 
   const login = async (username, password) => {
@@ -18,9 +18,9 @@ export const useAuthStore = defineStore('auth', () => {
     const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: formData
+      body: formData,
     })
 
     if (!response.ok) {
@@ -28,7 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const data = await response.json()
-    
+
     // Save token
     token.value = data.access_token
     localStorage.setItem('access_token', data.access_token)
@@ -37,14 +37,14 @@ export const useAuthStore = defineStore('auth', () => {
     // A JWT has 3 parts separated by dots. The middle part is the data (payload).
     const payloadBase64 = data.access_token.split('.')[1]
     const decodedPayload = JSON.parse(atob(payloadBase64))
-    
+
     // Update state (assuming your backend puts sub/role in the token)
     // If your backend doesn't put role in the token, we will map it temporarily
     const assignedRole = decodedPayload.role || determineRoleFromUsername(username)
     const assignedName = decodedPayload.name || username
 
     user.value = { username: decodedPayload.sub, role: assignedRole, name: assignedName }
-    
+
     localStorage.setItem('user_role', assignedRole)
     localStorage.setItem('user_name', assignedName)
     localStorage.setItem('username', decodedPayload.sub)

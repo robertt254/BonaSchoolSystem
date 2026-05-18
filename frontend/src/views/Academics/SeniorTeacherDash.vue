@@ -18,7 +18,9 @@
 
     <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
       <h3 class="text-lg font-bold text-slate-800 mb-4">Today's Timetable</h3>
-      <div class="text-slate-500 text-center py-8 border-2 border-dashed border-slate-200 rounded-lg">
+      <div
+        class="text-slate-500 text-center py-8 border-2 border-dashed border-slate-200 rounded-lg"
+      >
         Timetable module loading...
       </div>
     </div>
