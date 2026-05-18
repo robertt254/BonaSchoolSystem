@@ -1,6 +1,6 @@
 import { getHeaders } from '../utils/api'
 
-const API_URL = 'http://127.0.0.1:8000/api/academics'
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/academics`
 
 export default {
   // To fetch the report card data
