@@ -1,14 +1,14 @@
 <template>
-  <div class="p-8 bg-gray-50 min-h-screen print:p-0 print:bg-white">
-    <div class="mb-8 bg-white p-6 rounded-[12px] shadow-sm border border-gray-100 print:hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-gray-50 min-h-screen print:p-0 print:bg-white">
+    <div class="mb-8 bg-white p-8 rounded-[12px] shadow-sm border border-gray-100 print:hidden">
       <h1 class="text-2xl font-bold text-gray-800 mb-4">Generate Fee Statement</h1>
 
-      <div class="flex space-x-4 items-end">
+      <div class="flex gap-8 items-end">
         <div class="flex-1">
           <label class="block text-sm font-medium text-gray-700 mb-1">Select Student</label>
           <select
             v-model="selectedStudent"
-            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-600 outline-none"
+            class="w-full border border-gray-300 px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-emerald-600 outline-none"
           >
             <option disabled value="">-- Choose a student --</option>
             <option v-for="student in students" :key="student.id" :value="student.id">
@@ -21,7 +21,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Academic Term</label>
           <select
             v-model="selectedTerm"
-            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-600 outline-none"
+            class="w-full border border-gray-300 px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-emerald-600 outline-none"
           >
             <option value="Term 1">Term 1</option>
             <option value="Term 2">Term 2</option>
@@ -32,7 +32,7 @@
         <button
           @click="generateStatement"
           :disabled="!selectedStudent"
-          class="bg-emerald-700 text-white px-6 py-2 rounded-lg shadow hover:bg-emerald-600 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+          class="bg-emerald-700 text-white px-6 py-3.5 rounded-lg shadow hover:bg-emerald-600 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           Generate Report
         </button>
@@ -60,7 +60,7 @@
         <p class="text-gray-600 font-medium">Date: {{ currentDate }}</p>
       </div>
 
-      <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8 grid grid-cols-2 gap-4">
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-8 mb-8 grid grid-cols-2 gap-4">
         <div>
           <p class="text-sm text-gray-500 uppercase tracking-wider">Student Name</p>
           <p class="text-lg font-bold text-gray-900">{{ statementData.student_name }}</p>
@@ -78,22 +78,22 @@
       <table class="w-full mb-8">
         <tbody>
           <tr class="border-b border-gray-200">
-            <td class="py-4 text-gray-600 font-medium">
+            <td class="py-6 px-8 text-gray-600 font-medium">
               Expected Fee for {{ statementData.term_checked }}
             </td>
-            <td class="py-4 text-right font-bold text-gray-900">
+            <td class="py-6 px-8 text-right font-bold text-gray-900">
               {{ formatCurrency(statementData.expected_term_fee) }}
             </td>
           </tr>
           <tr class="border-b border-gray-200 bg-emerald-50">
-            <td class="py-4 px-2 text-emerald-800 font-medium">Total Installments Paid</td>
-            <td class="py-4 px-2 text-right font-bold text-emerald-800">
+            <td class="py-6 px-8 text-emerald-800 font-medium">Total Installments Paid</td>
+            <td class="py-6 px-8 text-right font-bold text-emerald-800">
               - {{ formatCurrency(statementData.total_paid_this_term) }}
             </td>
           </tr>
           <tr class="border-b-4 border-gray-800">
-            <td class="py-6 text-xl font-black text-gray-900 uppercase">Outstanding Balance</td>
-            <td class="py-6 text-right text-2xl font-black text-red-600">
+            <td class="py-8 px-8 text-xl font-black text-gray-900 uppercase">Outstanding Balance</td>
+            <td class="py-8 px-8 text-right text-2xl font-black text-red-600">
               {{ formatCurrency(statementData.outstanding_balance) }}
             </td>
           </tr>
@@ -112,7 +112,7 @@
       <div class="mt-12 text-center print:hidden">
         <button
           @click="printDocument"
-          class="bg-gray-800 text-white px-8 py-3 rounded-lg shadow-lg hover:bg-black transition font-bold"
+          class="bg-gray-800 text-white px-8 py-4 rounded-lg shadow-lg hover:bg-black transition font-bold"
         >
           🖨️ Print Statement
         </button>

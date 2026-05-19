@@ -3,18 +3,18 @@
   <div class="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans antialiased">
     <!-- Login Card: Two-column layout on larger screens -->
     <div
-      class="bg-white w-full max-w-4xl rounded-[18px] shadow-2xl flex overflow-hidden border border-slate-100"
+      class="bg-white w-full max-w-4xl rounded-[18px] shadow-2xl flex min-h-[600px] overflow-hidden border border-slate-100"
     >
       <!-- Left Column: School Branding (Visible on md screens and up) -->
       <div
-        class="hidden md:flex md:w-1/2 bg-school-navy p-12 flex-col justify-between text-white relative overflow-hidden"
+        class="hidden md:flex md:w-1/2 bg-school-navy p-12 flex-col justify-center gap-8 text-white relative overflow-hidden"
       >
         <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-white/5 blur-3xl"></div>
         <div
           class="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-school-red/10 blur-2xl"
         ></div>
         <div class="relative z-10">
-          <h1 class="text-4xl font-extrabold font-heading tracking-tight uppercase mb-2">
+          <h1 class="text-3xl font-extrabold font-heading tracking-tight uppercase mb-2">
             The Bona School
           </h1>
           <p class="text-school-grey/80 font-medium">Student Management System</p>
@@ -29,7 +29,7 @@
       </div>
 
       <!-- Right Column: Login Form -->
-      <div class="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
+      <div class="w-full md:w-1/2 p-12 flex flex-col justify-center">
         <!-- Mobile Logo (Only visible on small screens) -->
         <div class="md:hidden text-center mb-10">
           <h1
@@ -40,7 +40,7 @@
           <p class="text-slate-500 font-medium mt-1">SMS Login</p>
         </div>
 
-        <div class="mb-10 hidden md:block">
+        <div class="mb-8 hidden md:block">
           <h2 class="text-3xl font-bold font-heading text-slate-900 tracking-tight">
             Welcome Back
           </h2>
@@ -66,7 +66,7 @@
               type="text"
               required
               placeholder="e.g. j.doe"
-              class="w-full px-4 py-3 rounded-[9px] border border-slate-300 focus:ring-2 focus:ring-school-red/10 focus:border-school-red transition duration-150 outline-none"
+              class="w-full px-4 py-3.5 rounded-[9px] border border-slate-300 focus:ring-2 focus:ring-school-red/10 focus:border-school-red transition duration-150 outline-none"
             />
           </div>
 
@@ -78,7 +78,7 @@
               type="password"
               required
               placeholder="••••••••"
-              class="w-full px-4 py-3 rounded-[9px] border border-slate-300 focus:ring-2 focus:ring-school-red/10 focus:border-school-red transition duration-150 outline-none"
+              class="w-full px-4 py-3.5 rounded-[9px] border border-slate-300 focus:ring-2 focus:ring-school-red/10 focus:border-school-red transition duration-150 outline-none"
             />
           </div>
 
@@ -87,7 +87,7 @@
             <button
               type="submit"
               :disabled="isLoading"
-              class="w-full bg-school-red text-white font-semibold py-3.5 px-4 rounded-[9px] shadow-none hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 active:scale-[0.98] disabled:bg-school-grey disabled:text-slate-500 flex justify-center items-center"
+              class="w-full bg-school-red text-white font-semibold px-8 py-4 rounded-[9px] shadow-none hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 active:scale-[0.98] disabled:bg-school-grey disabled:text-slate-500 flex justify-center items-center"
             >
               <span v-if="isLoading" class="animate-spin mr-2">
                 <!-- simple SVG spinner inline -->
@@ -106,7 +106,7 @@
           </div>
         </form>
 
-        <div class="mt-10 text-center text-[11px] text-[#94A3B8]">
+        <div class="mt-8 text-center text-[11px] text-[#94A3B8]">
           Powered by The Bona School IT Dept | &copy; 2025
         </div>
       </div>
