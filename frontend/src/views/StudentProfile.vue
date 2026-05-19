@@ -3,7 +3,9 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Student Profile</h1>
+        <h1 class="font-heading text-[22px] font-bold text-[#0F172A] tracking-tight">
+          Student Profile
+        </h1>
         <p class="text-slate-500 mt-1 text-sm font-medium">Detailed student record</p>
       </div>
       <button
@@ -20,7 +22,7 @@
       class="flex flex-col justify-center items-center py-20 text-slate-400 space-y-4"
     >
       <div
-        class="w-8 h-8 border-4 border-slate-200 border-t-school-navy rounded-full animate-spin"
+        class="w-8 h-8 border-4 border-[#E2E8F0] border-t-school-navy rounded-full animate-spin mx-auto"
       ></div>
       <span class="text-xs font-bold tracking-widest uppercase">Loading Profile...</span>
     </div>
@@ -29,7 +31,7 @@
     <div v-else-if="profile" class="space-y-6">
       <!-- Profile Card -->
       <div
-        class="bg-white rounded-2xl shadow-sm border border-slate-200/60 p-6 flex flex-col sm:flex-row sm:items-center gap-6 relative overflow-hidden group"
+        class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] p-6 flex flex-col sm:flex-row sm:items-center gap-6 relative overflow-hidden group"
       >
         <div
           class="absolute right-0 top-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"
@@ -75,13 +77,13 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <!-- Attendance -->
         <div
-          class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 relative overflow-hidden group"
+          class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
         >
           <div
             class="absolute right-0 top-0 w-24 h-24 bg-purple-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
           ></div>
           <div class="relative z-10">
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <div class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1">
               Attendance Rate
             </div>
             <div class="text-3xl font-extrabold text-slate-800 flex items-baseline gap-1">
@@ -98,13 +100,13 @@
 
         <!-- Finance -->
         <div
-          class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 relative overflow-hidden group"
+          class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
         >
           <div
             class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
           ></div>
           <div class="relative z-10">
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <div class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1">
               Fee Balance
             </div>
             <div
@@ -128,7 +130,9 @@
       </div>
 
       <!-- Assessments -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
+      <div
+        class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
+      >
         <div class="border-b border-slate-100 px-6 py-5">
           <h3 class="text-lg font-bold text-slate-800 tracking-tight">CBC Assessments</h3>
           <p class="text-xs text-slate-500 mt-0.5">Academic progress and scores.</p>
@@ -137,7 +141,7 @@
           <table class="w-full text-left border-collapse">
             <thead>
               <tr
-                class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-100"
+                class="bg-school-grey border-b border-[#E2E8F0] text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
               >
                 <th class="p-4 pl-6 font-bold">Term</th>
                 <th class="p-4 font-bold">Learning Area</th>

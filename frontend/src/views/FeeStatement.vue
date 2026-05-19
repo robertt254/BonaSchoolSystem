@@ -1,6 +1,6 @@
 <template>
   <div class="p-8 bg-gray-50 min-h-screen print:p-0 print:bg-white">
-    <div class="mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100 print:hidden">
+    <div class="mb-8 bg-white p-6 rounded-[12px] shadow-sm border border-gray-100 print:hidden">
       <h1 class="text-2xl font-bold text-gray-800 mb-4">Generate Fee Statement</h1>
 
       <div class="flex space-x-4 items-end">
@@ -45,7 +45,7 @@
 
     <div
       v-if="statementData && !loading"
-      class="bg-white max-w-3xl mx-auto p-10 rounded-xl shadow-lg border border-gray-200 print:shadow-none print:border-none print:m-0 print:p-0"
+      class="bg-white max-w-3xl mx-auto p-10 rounded-[12px] shadow-lg border border-gray-200 print:shadow-none print:border-none print:m-0 print:p-0"
     >
       <div class="text-center border-b-2 border-gray-800 pb-6 mb-6">
         <h2 class="text-3xl font-black text-gray-900 uppercase tracking-widest">The Bona School</h2>

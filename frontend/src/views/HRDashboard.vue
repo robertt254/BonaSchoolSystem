@@ -2,14 +2,16 @@
   <div class="max-w-7xl mx-auto space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
       <div>
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">HR & Staff Management</h1>
-        <p class="text-slate-500 mt-2 text-lg">
+        <h1 class="font-heading text-[22px] font-bold text-[#0F172A] tracking-tight">
+          HR & Staff Management
+        </h1>
+        <p class="text-[13px] text-[#94A3B8] mt-1">
           Manage school personnel, compliance, and employment records.
         </p>
       </div>
       <button
         @click="openModal()"
-        class="bg-school-navy hover:bg-school-navy/90 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow flex items-center gap-2 text-sm"
+        class="bg-school-navy hover:bg-school-navy/90 text-white px-5 py-2.5 rounded-[12px] font-bold transition-all shadow-sm hover:shadow flex items-center gap-2 text-sm"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -29,18 +31,21 @@
       class="flex flex-col justify-center items-center py-20 text-slate-400 space-y-4"
     >
       <div
-        class="w-8 h-8 border-4 border-slate-200 border-t-school-navy rounded-full animate-spin"
+        class="w-8 h-8 border-4 border-[#E2E8F0] border-t-school-navy rounded-full animate-spin mx-auto"
       ></div>
       <span class="text-xs font-bold tracking-widest uppercase">Loading Staff Records...</span>
     </div>
 
     <!-- Staff Table -->
-    <div v-else class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
+    <div
+      v-else
+      class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
+    >
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr
-              class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-100"
+              class="bg-school-grey border-b border-[#E2E8F0] text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
             >
               <th class="p-4 pl-6 font-bold">Staff Member</th>
               <th class="p-4 font-bold">Role & Title</th>
@@ -107,9 +112,9 @@
     <!-- Hire / Edit Modal -->
     <div
       v-if="showModal"
-      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in overflow-y-auto"
+      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in overflow-y-auto"
     >
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden my-8">
+      <div class="bg-white rounded-[12px] shadow-2xl w-full max-w-2xl overflow-hidden my-8">
         <div
           class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 sticky top-0 z-10"
         >
@@ -140,19 +145,19 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >Full Name</label
                 >
                 <input
                   v-model="formData.name"
                   required
                   type="text"
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
               <div>
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >Username</label
                 >
                 <input
@@ -160,30 +165,30 @@
                   required
                   type="text"
                   :disabled="isEditing"
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium disabled:opacity-50"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium disabled:opacity-50"
                 />
               </div>
               <div v-if="!isEditing">
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >Password</label
                 >
                 <input
                   v-model="formData.password"
                   required
                   type="password"
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
               <div>
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >System Role</label
                 >
                 <select
                   v-model="formData.role"
                   required
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 >
                   <option value="teacher">Teacher</option>
                   <option value="finance">Finance Officer</option>
@@ -203,23 +208,23 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >Job Title</label
                 >
                 <input
                   v-model="formData.job_title"
                   type="text"
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
               <div>
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >Contract Type</label
                 >
                 <select
                   v-model="formData.contract_type"
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 >
                   <option value="Permanent">Permanent & Pensionable</option>
                   <option value="Contract">Contract</option>
@@ -228,25 +233,25 @@
               </div>
               <div>
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >Date of Hire</label
                 >
                 <input
                   v-model="formData.date_of_hire"
                   type="date"
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
               <div>
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >Leave Days</label
                 >
                 <input
                   v-model.number="formData.accrued_leave_days"
                   type="number"
                   min="0"
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
             </div>
@@ -260,35 +265,35 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >KRA PIN</label
                 >
                 <input
                   v-model="formData.kra_pin"
                   type="text"
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium uppercase"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium uppercase"
                 />
               </div>
               <div>
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >NSSF Number</label
                 >
                 <input
                   v-model="formData.nssf_number"
                   type="text"
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
               <div>
                 <label
-                  class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                   >NHIF Number</label
                 >
                 <input
                   v-model="formData.nhif_number"
                   type="text"
-                  class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
             </div>
@@ -298,13 +303,13 @@
             <button
               type="button"
               @click="closeModal"
-              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl font-bold transition-colors text-sm"
+              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-[12px] font-bold transition-colors text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              class="px-5 py-2.5 bg-school-navy text-white rounded-xl font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
+              class="px-5 py-2.5 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
             >
               {{ isEditing ? 'Save Changes' : 'Hire Staff' }}
             </button>

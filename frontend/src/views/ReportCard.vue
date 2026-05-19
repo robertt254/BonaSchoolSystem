@@ -1,7 +1,9 @@
 <template>
   <div class="p-8 bg-slate-50 min-h-screen print:p-0 print:bg-white">
-    <div class="mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200 print:hidden">
-      <h1 class="text-2xl font-bold text-slate-800 mb-4">Generate Official Report Card</h1>
+    <div class="mb-8 bg-white p-6 rounded-[12px] shadow-sm border border-[#E2E8F0] print:hidden">
+      <h1 class="font-heading text-[22px] font-bold text-[#0F172A] mb-4">
+        Generate Official Report Card
+      </h1>
 
       <div class="flex space-x-4 items-end">
         <div class="flex-1">
@@ -41,7 +43,7 @@
 
     <div
       v-if="reportData"
-      class="bg-white max-w-4xl mx-auto p-12 rounded-xl shadow-lg border border-gray-200 print:shadow-none print:border-none print:m-0 print:p-0"
+      class="bg-white max-w-4xl mx-auto p-12 rounded-[12px] shadow-lg border border-gray-200 print:shadow-none print:border-none print:m-0 print:p-0"
     >
       <div class="text-center border-b-4 border-school-navy pb-6 mb-8">
         <h1 class="text-4xl font-black text-gray-900 uppercase tracking-wider">The Bona School</h1>
