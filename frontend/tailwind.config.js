@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['DM Sans', 'sans-serif'],
+        heading: ['Outfit', 'sans-serif'],
       },
       colors: {
         school: {

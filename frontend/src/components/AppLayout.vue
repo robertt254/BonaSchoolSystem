@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen bg-school-grey font-sans overflow-hidden">
+  <div class="flex h-screen bg-school-grey font-sans relative overflow-hidden">
     <!-- Mobile Sidebar Overlay -->
     <div
       v-if="isSidebarOpen"
@@ -8,12 +8,18 @@
     ></div>
 
     <!-- SIDEBAR -->
+
     <aside
       :class="[
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        'fixed inset-y-0 left-0 z-30 w-72 bg-school-navy text-white transition-transform duration-300 ease-in-out transform md:relative md:translate-x-0 flex flex-col shadow-2xl border-r border-slate-800',
+        'fixed inset-y-0 left-0 z-30 w-72 bg-school-navy text-white transition-transform duration-300 ease-in-out transform md:relative md:translate-x-0 flex flex-col border-r border-slate-800 overflow-hidden',
       ]"
     >
+      <!-- Bottom right red/navy radial glow -->
+      <div
+        class="absolute bottom-0 right-0 w-96 h-96 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-school-red/20 via-school-navy to-transparent pointer-events-none blur-2xl"
+      ></div>
+
       <!-- Sidebar Header (Logo Area) -->
       <div class="flex items-center justify-center h-20 border-b border-slate-800 px-6">
         <div class="text-center">
@@ -27,7 +33,7 @@
         <router-link
           to="/"
           class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-          active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
+          active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
         >
           <span class="text-lg">🏠</span> Dashboard
         </router-link>
@@ -39,21 +45,21 @@
           <router-link
             to="/academics/attendance"
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
+            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
           >
             <span class="text-lg">📋</span> Roll Call
           </router-link>
           <router-link
             to="/academics"
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
+            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
           >
             <span class="text-lg">📝</span> Grading
           </router-link>
           <router-link
             to="/academics/report-card"
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
+            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
           >
             <span class="text-lg">🎓</span> Report Cards
           </router-link>
@@ -68,7 +74,7 @@
           <router-link
             to="/office"
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
+            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
           >
             <span class="text-lg">👨‍🎓</span> Office & Admissions
           </router-link>
@@ -81,14 +87,14 @@
           <router-link
             to="/finance"
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
+            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
           >
             <span class="text-lg">💰</span> Finance Dashboard
           </router-link>
           <router-link
             to="/finance/statements"
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
+            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
           >
             <span class="text-lg">📄</span> Statements
           </router-link>
@@ -102,14 +108,14 @@
             v-if="userRole === 'admin'"
             to="/admin"
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
+            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
           >
             <span class="text-lg">⚙️</span> Admin Console
           </router-link>
           <router-link
             to="/hr"
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
+            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
           >
             <span class="text-lg">🛡️</span> Staff & HR
           </router-link>
@@ -157,7 +163,7 @@
     <div class="flex-1 flex flex-col min-w-0 bg-school-grey overflow-hidden">
       <!-- TOP NAVIGATION BAR -->
       <header
-        class="bg-white border-b border-slate-200 h-20 flex items-center justify-between px-6 sm:px-8 z-10 shrink-0"
+        class="bg-white/80 backdrop-blur-md border-b border-slate-200 h-20 flex items-center justify-between px-6 sm:px-8 z-10 shrink-0 sticky top-0"
       >
         <!-- Mobile Menu Button -->
         <button
@@ -174,25 +180,55 @@
           </svg>
         </button>
 
-        <!-- Contextual Header Area -->
+        <!-- Contextual Header Area (Breadcrumbs) -->
         <div class="hidden md:flex flex-col">
-          <div class="flex items-center gap-2 text-sm font-medium mb-1">
-            <span class="text-slate-500">{{ routeName }}</span>
+          <div
+            class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1"
+          >
+            <span>{{ routeName }}</span>
+            <span class="text-slate-300">/</span>
+            <span class="text-school-red">{{ pageTitle }}</span>
           </div>
-          <h1 class="text-xl font-bold text-slate-900 tracking-tight leading-none">
+          <h1 class="text-2xl font-black font-heading text-slate-800 tracking-tight leading-none">
             {{ pageTitle }}
           </h1>
         </div>
-        <div class="md:hidden text-lg font-bold text-slate-800">Bona School</div>
+        <div class="md:hidden text-lg font-black font-heading text-slate-800 tracking-tight">
+          Bona School
+        </div>
 
-        <!-- Right Side: Term Selector, Notifications -->
-        <div class="flex items-center gap-4 sm:gap-6 ml-auto">
-          <!-- Global Term Selector -->
+        <!-- Right Side: Search, Term Selector, Notifications -->
+        <div class="flex items-center gap-3 sm:gap-5 ml-auto">
+          <!-- Search Bar -->
           <div
-            class="flex items-center bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 shadow-sm"
+            class="hidden lg:flex items-center bg-slate-50 border border-slate-200 rounded-full px-4 py-2 hover:bg-white hover:border-slate-300 transition-colors shadow-sm"
           >
             <svg
               class="w-4 h-4 text-slate-400 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search students, staff..."
+              class="bg-transparent border-none outline-none text-sm w-48 text-slate-600 placeholder-slate-400"
+            />
+          </div>
+
+          <!-- Global Term Selector -->
+          <div
+            class="flex items-center bg-white border border-slate-200 rounded-full px-4 py-2 shadow-sm hover:border-school-navy/20 transition-colors"
+          >
+            <svg
+              class="w-4 h-4 text-school-navy mr-2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -206,7 +242,7 @@
             </svg>
             <select
               v-model="appStore.currentTerm"
-              class="bg-transparent text-sm font-medium text-slate-700 outline-none cursor-pointer pr-2"
+              class="bg-transparent text-sm font-bold text-slate-700 outline-none cursor-pointer appearance-none pr-2"
             >
               <option v-for="term in appStore.terms" :key="term" :value="term">{{ term }}</option>
             </select>
@@ -214,7 +250,7 @@
 
           <!-- Notification Bell -->
           <button
-            class="relative p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors focus:outline-none"
+            class="relative p-2.5 text-slate-400 hover:text-school-navy hover:bg-slate-100 rounded-full transition-all duration-200 focus:outline-none border border-transparent hover:border-slate-200 bg-white shadow-sm"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -225,7 +261,7 @@
               ></path>
             </svg>
             <span
-              class="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-school-red ring-2 ring-white"
+              class="absolute top-2 right-2 block h-2.5 w-2.5 rounded-full bg-school-red ring-2 ring-white"
             ></span>
           </button>
         </div>

@@ -6,14 +6,17 @@
     >
       <!-- Decorative background element -->
       <div
-        class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-10 -mt-10"
+        class="absolute -top-32 -left-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-school-red/30 via-school-navy to-school-navy rounded-full blur-3xl"
+      ></div>
+      <div
+        class="absolute -bottom-32 -right-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/10 via-school-navy to-school-navy rounded-full blur-3xl"
       ></div>
 
       <div class="relative z-10">
-        <h1 class="text-3xl sm:text-4xl font-black tracking-tight mb-3">
+        <h1 class="text-3xl sm:text-4xl font-black font-heading tracking-tight mb-3">
           Welcome to The Bona School
         </h1>
-        <p class="text-slate-300 text-lg max-w-2xl">
+        <p class="text-slate-300 text-lg max-w-2xl font-sans">
           Competency-Based Curriculum (CBC) Management System
         </p>
       </div>
@@ -119,68 +122,142 @@
         </div>
       </div>
 
-      <!-- Quick Actions -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-lg font-black text-slate-800 tracking-tight">Quick Actions</h3>
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-widest"
-            >Common Tasks</span
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Column (Quick Actions) -->
+        <div class="lg:col-span-2 space-y-8">
+          <!-- Quick Actions -->
+          <div
+            class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 hover:shadow-md transition-shadow duration-300"
           >
+            <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+              <h3 class="text-lg font-black font-heading text-slate-800 tracking-tight">
+                Quick Actions
+              </h3>
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+                >Common Tasks</span
+              >
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <router-link
+                to="/academics/attendance"
+                class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-navy/20 transition-all duration-200 group text-center bg-white shadow-sm hover:-translate-y-1"
+              >
+                <div
+                  class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-navy/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100 shadow-inner text-2xl"
+                >
+                  📋
+                </div>
+                <p
+                  class="font-bold text-sm text-slate-700 group-hover:text-school-navy font-heading"
+                >
+                  Roll Call
+                </p>
+                <p class="text-[11px] text-slate-400 mt-1 uppercase tracking-wider font-bold">
+                  Mark attendance
+                </p>
+              </router-link>
+
+              <router-link
+                to="/finance"
+                class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-red/20 transition-all duration-200 group text-center bg-white shadow-sm hover:-translate-y-1"
+              >
+                <div
+                  class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-red/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100 shadow-inner text-2xl"
+                >
+                  💵
+                </div>
+                <p
+                  class="font-bold text-sm text-slate-700 group-hover:text-school-red font-heading"
+                >
+                  Log Payment
+                </p>
+                <p class="text-[11px] text-slate-400 mt-1 uppercase tracking-wider font-bold">
+                  Record fee
+                </p>
+              </router-link>
+
+              <router-link
+                to="/academics"
+                class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-navy/20 transition-all duration-200 group text-center bg-white shadow-sm hover:-translate-y-1"
+              >
+                <div
+                  class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-navy/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100 shadow-inner text-2xl"
+                >
+                  📝
+                </div>
+                <p
+                  class="font-bold text-sm text-slate-700 group-hover:text-school-navy font-heading"
+                >
+                  Enter Grades
+                </p>
+                <p class="text-[11px] text-slate-400 mt-1 uppercase tracking-wider font-bold">
+                  Update scores
+                </p>
+              </router-link>
+
+              <router-link
+                to="/office"
+                class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 group text-center bg-white shadow-sm hover:-translate-y-1"
+              >
+                <div
+                  class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-slate-200 group-hover:scale-110 transition-transform duration-300 border border-slate-100 shadow-inner text-2xl"
+                >
+                  ➕
+                </div>
+                <p class="font-bold text-sm text-slate-700 group-hover:text-slate-900 font-heading">
+                  Admit Student
+                </p>
+                <p class="text-[11px] text-slate-400 mt-1 uppercase tracking-wider font-bold">
+                  New enrollment
+                </p>
+              </router-link>
+            </div>
+          </div>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-          <router-link
-            to="/academics/attendance"
-            class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-navy/20 transition-all duration-200 group text-center bg-white shadow-sm hover:shadow"
-          >
-            <div
-              class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-navy/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100"
-            >
-              <span class="text-2xl">📋</span>
-            </div>
-            <p class="font-bold text-sm text-slate-700 group-hover:text-school-navy">Roll Call</p>
-            <p class="text-xs text-slate-400 mt-1">Mark daily attendance</p>
-          </router-link>
 
-          <router-link
-            to="/finance"
-            class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-red/20 transition-all duration-200 group text-center bg-white shadow-sm hover:shadow"
+        <!-- Sidebar Column (Activity Feed) -->
+        <div class="lg:col-span-1">
+          <div
+            class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 h-full hover:shadow-md transition-shadow duration-300"
           >
-            <div
-              class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-red/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100"
-            >
-              <span class="text-2xl">💵</span>
+            <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+              <h3 class="text-lg font-black font-heading text-slate-800 tracking-tight">
+                Recent Activity
+              </h3>
+              <button
+                class="text-xs font-bold text-school-navy hover:text-school-red uppercase tracking-widest transition-colors"
+              >
+                View All
+              </button>
             </div>
-            <p class="font-bold text-sm text-slate-700 group-hover:text-school-red">Log Payment</p>
-            <p class="text-xs text-slate-400 mt-1">Record fee collection</p>
-          </router-link>
 
-          <router-link
-            to="/academics"
-            class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-navy/20 transition-all duration-200 group text-center bg-white shadow-sm hover:shadow"
-          >
-            <div
-              class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-navy/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100"
-            >
-              <span class="text-2xl">📝</span>
+            <div class="space-y-6">
+              <div v-for="activity in recentActivity" :key="activity.id" class="flex gap-4 group">
+                <div class="flex-shrink-0">
+                  <div
+                    :class="[
+                      'w-10 h-10 rounded-full flex items-center justify-center text-lg',
+                      activity.bg,
+                    ]"
+                  >
+                    {{ activity.icon }}
+                  </div>
+                </div>
+                <div>
+                  <p
+                    class="text-sm font-medium text-slate-800 leading-snug group-hover:text-school-navy transition-colors"
+                  >
+                    {{ activity.action }}
+                  </p>
+                  <div class="flex items-center gap-2 mt-1.5 text-xs text-slate-500 font-medium">
+                    <span :class="activity.color">{{ activity.user }}</span>
+                    <span>•</span>
+                    <span>{{ activity.time }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p class="font-bold text-sm text-slate-700 group-hover:text-school-navy">
-              Enter Grades
-            </p>
-            <p class="text-xs text-slate-400 mt-1">Update CBC scores</p>
-          </router-link>
-
-          <router-link
-            to="/office"
-            class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 group text-center bg-white shadow-sm hover:shadow"
-          >
-            <div
-              class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-slate-200 group-hover:scale-110 transition-transform duration-300 border border-slate-100"
-            >
-              <span class="text-2xl">➕</span>
-            </div>
-            <p class="font-bold text-sm text-slate-700 group-hover:text-slate-900">Admit Student</p>
-            <p class="text-xs text-slate-400 mt-1">New enrollment</p>
-          </router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -197,6 +274,59 @@ const loading = ref(true)
 const totalStudents = ref(0)
 const totalRevenue = ref(0)
 const totalStaff = ref(0)
+
+const recentActivity = ref([
+  {
+    id: 1,
+    type: 'payment',
+    user: 'Finance Dept',
+    action: 'Recorded Term 1 fees for John Doe (Grade 3)',
+    time: '10 minutes ago',
+    icon: '💰',
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-50',
+  },
+  {
+    id: 2,
+    type: 'attendance',
+    user: 'Mr. Smith',
+    action: 'Marked Grade 4 attendance (100% present)',
+    time: '1 hour ago',
+    icon: '📋',
+    color: 'text-school-navy',
+    bg: 'bg-school-navy/10',
+  },
+  {
+    id: 3,
+    type: 'admission',
+    user: 'Office',
+    action: 'Admitted new student: Sarah Jenkins (Playgroup)',
+    time: '2 hours ago',
+    icon: '👨‍🎓',
+    color: 'text-purple-500',
+    bg: 'bg-purple-50',
+  },
+  {
+    id: 4,
+    type: 'grading',
+    user: 'Ms. Alice',
+    action: 'Submitted Math assessment scores for Grade 2',
+    time: '3 hours ago',
+    icon: '📝',
+    color: 'text-blue-500',
+    bg: 'bg-blue-50',
+  },
+  {
+    id: 5,
+    type: 'system',
+    user: 'System Admin',
+    action: 'Weekly database backup completed successfully',
+    time: '5 hours ago',
+    icon: '⚙️',
+    color: 'text-slate-500',
+    bg: 'bg-slate-100',
+  },
+])
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-KE', {
@@ -228,3 +358,20 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped>
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-count-up {
+  animation: countUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>
