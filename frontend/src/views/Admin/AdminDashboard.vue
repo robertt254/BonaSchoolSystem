@@ -20,7 +20,7 @@
             <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
               Total Students
             </div>
-            <div class="text-4xl font-extrabold text-slate-800">1,248</div>
+            <div class="text-4xl font-extrabold text-slate-800">{{ activeStudentsCount }}</div>
           </div>
           <div class="p-3 bg-blue-100/50 text-blue-600 rounded-xl">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,7 +61,7 @@
             <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
               Active Staff
             </div>
-            <div class="text-4xl font-extrabold text-slate-800">84</div>
+            <div class="text-4xl font-extrabold text-slate-800">{{ activeStaffCount }}</div>
           </div>
           <div class="p-3 bg-purple-100/50 text-purple-600 rounded-xl">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,3 +177,35 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import studentService from '@/services/studentService'
+import staffService from '@/services/staffService'
+
+const activeStudentsCount = ref(0)
+const activeStaffCount = ref(0)
+const loading = ref(true)
+
+const loadData = async () => {
+  loading.value = true
+  try {
+    const [students, staff] = await Promise.all([
+      studentService.getAllStudents(),
+      staffService.getAllStaff(),
+    ])
+
+    // Calculate active students
+    activeStudentsCount.value = students.filter((student) => student.status === 'Active').length
+
+    // Calculate active staff
+    activeStaffCount.value = staff.filter((s) => s.status === 'Active').length || staff.length
+  } catch (error) {
+    console.error('Failed to load dashboard metrics', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(loadData)
+</script>
