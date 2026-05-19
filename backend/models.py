@@ -35,6 +35,17 @@ class Payroll(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class Expense(Base):
+    __tablename__ = "expenses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    amount = Column(Float)
+    justification = Column(String)
+    category = Column(String, nullable=True)
+    expense_date = Column(DateTime(timezone=True), server_default=func.now())
+    recorded_by = Column(String)
+
+
 class Student(Base):
     __tablename__ = "students"
 

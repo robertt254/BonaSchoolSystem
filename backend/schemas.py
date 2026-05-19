@@ -100,6 +100,26 @@ class UserResponse(UserBase):
         from_attributes = True
 
 
+# --- EXPENSE SCHEMAS ---
+class ExpenseBase(BaseModel):
+    amount: float
+    justification: str
+    category: Optional[str] = None
+
+
+class ExpenseCreate(ExpenseBase):
+    pass
+
+
+class ExpenseResponse(ExpenseBase):
+    id: int
+    expense_date: datetime
+    recorded_by: str
+
+    class Config:
+        from_attributes = True
+
+
 # --- PAYROLL SCHEMAS ---
 class PayrollBase(BaseModel):
     staff_id: int

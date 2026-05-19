@@ -36,3 +36,32 @@ def get_payroll_ledger(
     finance_officer: models.User = Depends(verify_finance_access)
 ):
     return db.query(models.Payroll).offset(skip).limit(limit).all()
+
+@router.post("/expenses", response_model=schemas.ExpenseResponse)
+def create_expense(
+    expense: schemas.ExpenseCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    if current_user.role != "principal":
+        raise HTTPException(status_code=403, detail="Only the principal can create expenses")
+
+    new_expense = models.Expense(
+        **expense.model_dump(),
+        recorded_by=current_user.name
+    )
+    db.add(new_expense)
+    db.commit()
+    db.refresh(new_expense)
+    return new_expense
+
+@router.get("/expenses", response_model=list[schemas.ExpenseResponse])
+def get_expenses(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    if current_user.role not in ["finance", "admin", "principal", "secretary"]:
+        raise HTTPException(status_code=403, detail="Not authorized to view financials")
+    return db.query(models.Expense).offset(skip).limit(limit).all()
