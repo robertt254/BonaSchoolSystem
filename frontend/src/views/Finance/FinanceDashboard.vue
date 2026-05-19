@@ -24,6 +24,20 @@
     </div>
 
     <div v-else class="space-y-8">
+      <!-- Actions Section -->
+      <div class="flex items-center gap-4">
+        <button
+          v-if="['finance', 'admin', 'principal', 'secretary'].includes(authStore.user?.role)"
+          @click="openFeeModal"
+          class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-[12px] font-bold transition-all shadow-sm text-sm flex items-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Record Fee Payment
+        </button>
+      </div>
+
       <!-- High-Level Metrics -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <!-- Goal Progress -->
@@ -145,6 +159,63 @@
               <tr v-if="payrollLedger.length === 0">
                 <td colspan="6" class="p-8 text-center text-slate-400 text-sm font-medium">
                   No payroll records found.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Expenses Module -->
+      <div
+        class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
+      >
+        <div
+          class="border-b border-slate-100 px-6 py-5 flex items-center justify-between bg-slate-50"
+        >
+          <div>
+            <h3 class="text-lg font-bold text-slate-800 tracking-tight">Expenses Ledger</h3>
+            <p class="text-xs text-slate-500 mt-0.5">School operational expenses.</p>
+          </div>
+          <button
+            v-if="authStore.user?.role === 'principal'"
+            @click="openExpenseModal"
+            class="bg-school-navy hover:bg-school-navy/90 text-white px-4 py-2 rounded-[12px] font-bold transition-all shadow-sm text-sm flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Add Expense
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-white text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-100">
+                <th class="p-4 pl-6 font-bold">Date</th>
+                <th class="p-4 font-bold">Category</th>
+                <th class="p-4 font-bold">Justification</th>
+                <th class="p-4 font-bold">Recorded By</th>
+                <th class="p-4 pr-6 font-bold text-right text-school-red">Amount</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm">
+              <tr
+                v-for="expense in expenses"
+                :key="expense.id"
+                class="border-b border-slate-50 hover:bg-slate-50/50 transition duration-150"
+              >
+                <td class="p-4 pl-6 font-medium text-slate-500">{{ new Date(expense.expense_date).toLocaleDateString() }}</td>
+                <td class="p-4 font-bold text-slate-800">{{ expense.category || 'N/A' }}</td>
+                <td class="p-4 text-slate-600">{{ expense.justification }}</td>
+                <td class="p-4 font-medium text-slate-500">{{ expense.recorded_by }}</td>
+                <td class="p-4 pr-6 text-right font-bold text-school-red">
+                  {{ formatCurrency(expense.amount) }}
+                </td>
+              </tr>
+              <tr v-if="expenses.length === 0">
+                <td colspan="5" class="p-8 text-center text-slate-400 text-sm font-medium">
+                  No expenses recorded.
                 </td>
               </tr>
             </tbody>
@@ -280,6 +351,184 @@
         </form>
       </div>
     </div>
+
+    <!-- Fee Payment Modal -->
+    <div
+      v-if="showFeeModal"
+      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in"
+    >
+      <div
+        class="bg-white rounded-[12px] shadow-2xl w-full max-w-md overflow-hidden border border-[#E2E8F0]"
+      >
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <h2 class="text-xl font-black text-slate-800 tracking-tight">Record Fee Payment</h2>
+          <button
+            @click="closeFeeModal"
+            class="text-slate-400 hover:text-school-red hover:bg-school-red/10 h-8 w-8 rounded-full flex items-center justify-center transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <form @submit.prevent="submitFee" class="p-6 space-y-5">
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">
+              Select Student
+            </label>
+            <select
+              v-model="feeForm.student_id"
+              required
+              class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+            >
+              <option disabled value="">-- Choose a student --</option>
+              <option v-for="student in students" :key="student.id" :value="student.id">
+                {{ student.first_name }} {{ student.last_name }} ({{ student.admission_number }})
+              </option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">
+                Term
+              </label>
+              <select
+                v-model="feeForm.term"
+                class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+              >
+                <option value="Term 1">Term 1</option>
+                <option value="Term 2">Term 2</option>
+                <option value="Term 3">Term 3</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">
+                Payment Type
+              </label>
+              <select
+                v-model="feeForm.payment_type"
+                class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+              >
+                <option value="Tuition">Tuition</option>
+                <option value="Transport">Transport</option>
+                <option value="Uniform">Uniform</option>
+                <option value="Meals">Meals</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-school-red uppercase tracking-widest mb-1.5">
+              Amount (Ksh)
+            </label>
+            <input
+              v-model.number="feeForm.amount"
+              type="number"
+              min="1"
+              required
+              class="w-full border border-red-200 rounded-[12px] p-3 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
+            />
+          </div>
+
+          <div class="flex justify-end space-x-3 pt-4 mt-2">
+            <button
+              type="button"
+              @click="closeFeeModal"
+              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-[12px] font-bold transition-colors text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-5 py-2.5 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
+            >
+              Record Payment
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Expense Modal -->
+    <div
+      v-if="showExpenseModal"
+      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in"
+    >
+      <div
+        class="bg-white rounded-[12px] shadow-2xl w-full max-w-md overflow-hidden border border-[#E2E8F0]"
+      >
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <h2 class="text-xl font-black text-slate-800 tracking-tight">Record Expense</h2>
+          <button
+            @click="closeExpenseModal"
+            class="text-slate-400 hover:text-school-red hover:bg-school-red/10 h-8 w-8 rounded-full flex items-center justify-center transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <form @submit.prevent="submitExpense" class="p-6 space-y-5">
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">
+              Category
+            </label>
+            <input
+              v-model="expenseForm.category"
+              type="text"
+              placeholder="e.g. Maintenance, Utilities, Supplies"
+              class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all"
+            />
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">
+              Justification (Required)
+            </label>
+            <textarea
+              v-model="expenseForm.justification"
+              required
+              rows="3"
+              placeholder="Explain why this expense is necessary..."
+              class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all resize-none"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-school-red uppercase tracking-widest mb-1.5">
+              Amount (Ksh)
+            </label>
+            <input
+              v-model.number="expenseForm.amount"
+              type="number"
+              min="1"
+              required
+              class="w-full border border-red-200 rounded-[12px] p-3 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
+            />
+          </div>
+
+          <div class="flex justify-end space-x-3 pt-4 mt-2">
+            <button
+              type="button"
+              @click="closeExpenseModal"
+              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-[12px] font-bold transition-colors text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-5 py-2.5 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
+            >
+              Save Expense
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -290,16 +539,28 @@ import studentService from '@/services/studentService'
 import staffService from '@/services/staffService'
 import financeService from '@/services/financeService'
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 
 const appStore = useAppStore()
+const authStore = useAuthStore()
 
 const fees = ref([])
 const students = ref([])
 const activeStaff = ref([])
 const payrollLedger = ref([])
+const expenses = ref([])
 const loading = ref(true)
 
 const showPayrollModal = ref(false)
+const showExpenseModal = ref(false)
+const showFeeModal = ref(false)
+
+const feeForm = reactive({
+  student_id: '',
+  amount: 0,
+  payment_type: 'Tuition',
+  term: appStore.currentTerm,
+})
 
 const payrollForm = reactive({
   staff_id: '',
@@ -309,19 +570,27 @@ const payrollForm = reactive({
   deductions: 0,
 })
 
+const expenseForm = reactive({
+  amount: 0,
+  justification: '',
+  category: '',
+})
+
 const loadData = async () => {
   loading.value = true
   try {
-    const [fetchedFees, fetchedStudents, fetchedStaff, fetchedPayroll] = await Promise.all([
+    const [fetchedFees, fetchedStudents, fetchedStaff, fetchedPayroll, fetchedExpenses] = await Promise.all([
       feeService.getAllFees().catch(() => []),
       studentService.getAllStudents().catch(() => []),
       staffService.getAllStaff().catch(() => []),
       financeService.getPayrollLedger().catch(() => []),
+      financeService.getExpenses().catch(() => []),
     ])
     fees.value = fetchedFees
     students.value = fetchedStudents
     activeStaff.value = fetchedStaff // you could filter by active if staff had a status
     payrollLedger.value = fetchedPayroll.sort((a, b) => b.id - a.id) // simplistic sort latest first
+    expenses.value = fetchedExpenses.sort((a, b) => b.id - a.id)
   } catch (error) {
     console.error('Error loading finance data:', error)
   } finally {
@@ -372,6 +641,30 @@ const collectionPercentage = computed(() => {
   return Math.min(Math.round(pct), 100)
 })
 
+// --- FEE MODAL ---
+const openFeeModal = () => {
+  feeForm.student_id = ''
+  feeForm.amount = 0
+  feeForm.payment_type = 'Tuition'
+  feeForm.term = appStore.currentTerm
+  showFeeModal.value = true
+}
+
+const closeFeeModal = () => {
+  showFeeModal.value = false
+}
+
+const submitFee = async () => {
+  try {
+    await feeService.recordFee(feeForm)
+    closeFeeModal()
+    await loadData()
+  } catch (error) {
+    alert(error.message || 'Failed to record fee.')
+    console.error(error)
+  }
+}
+
 // --- PAYROLL MODAL ---
 const calculatedNetPay = computed(() => {
   return payrollForm.basic_salary + payrollForm.allowances - payrollForm.deductions
@@ -405,6 +698,29 @@ const submitPayroll = async () => {
     await loadData()
   } catch (error) {
     alert(error.message || 'Failed to execute payroll.')
+    console.error(error)
+  }
+}
+
+// --- EXPENSE MODAL ---
+const openExpenseModal = () => {
+  expenseForm.amount = 0
+  expenseForm.justification = ''
+  expenseForm.category = ''
+  showExpenseModal.value = true
+}
+
+const closeExpenseModal = () => {
+  showExpenseModal.value = false
+}
+
+const submitExpense = async () => {
+  try {
+    await financeService.recordExpense(expenseForm)
+    closeExpenseModal()
+    await loadData()
+  } catch (error) {
+    alert(error.message || 'Failed to record expense.')
     console.error(error)
   }
 }
