@@ -6,7 +6,7 @@
     </div>
 
     <div
-      class="flex space-x-4 mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100 items-end"
+      class="flex space-x-4 mb-8 bg-white p-6 rounded-[12px] shadow-sm border border-gray-100 items-end"
     >
       <div class="flex-1 max-w-sm">
         <label class="block text-sm font-medium text-gray-700 mb-1">Select CBC Grade</label>
@@ -28,7 +28,7 @@
 
     <div
       v-if="classList.length > 0"
-      class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+      class="bg-white rounded-[12px] shadow-sm border border-gray-100 overflow-hidden"
     >
       <div
         class="bg-school-grey/50 p-4 border-b border-school-grey/80 flex justify-between items-center"
@@ -92,7 +92,7 @@
 
     <div
       v-else-if="hasSearched"
-      class="text-center py-12 text-gray-500 bg-white rounded-xl border border-gray-200 mt-8"
+      class="text-center py-12 text-gray-500 bg-white rounded-[12px] border border-gray-200 mt-8"
     >
       <p class="text-lg">No students found in {{ selectedGrade }}.</p>
     </div>
@@ -144,7 +144,7 @@ const saveAttendance = async () => {
       body: JSON.stringify(classList.value),
     })
     if (!response.ok) throw new Error('Failed to save attendance')
-    alert('✅ Roll Call submitted successfully for today!')
+    alert(' Roll Call submitted successfully for today!')
   } catch (error) {
     alert('Error saving attendance')
     console.error(error)

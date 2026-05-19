@@ -12,14 +12,14 @@
 
     <!-- Flat Class Navigation Tabs -->
     <div
-      class="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 overflow-x-auto flex gap-2"
+      class="bg-white p-2 rounded-[12px] shadow-sm border border-[#E2E8F0] overflow-x-auto flex gap-2"
     >
       <button
         v-for="grade in cbcGrades"
         :key="grade"
         @click="selectedGrade = grade"
         :class="[
-          'px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all',
+          'px-5 py-2.5 rounded-[12px] text-sm font-bold whitespace-nowrap transition-all',
           selectedGrade === grade
             ? 'bg-school-navy text-white shadow-md'
             : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
@@ -30,7 +30,7 @@
     </div>
 
     <!-- Grade Content Area -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mt-6">
+    <div class="bg-white rounded-[12px] shadow-sm border border-[#E2E8F0] overflow-hidden mt-6">
       <!-- Content Header -->
       <div
         class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50"
@@ -61,7 +61,7 @@
               v-model="searchQuery"
               type="text"
               placeholder="Search student name..."
-              class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy bg-white transition-all"
+              class="w-full pl-9 pr-4 py-2 text-sm border border-[#E2E8F0] rounded-[12px] focus:outline-none focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy bg-white transition-all"
             />
           </div>
         </div>
@@ -73,7 +73,7 @@
         class="flex flex-col justify-center items-center py-20 text-slate-400 space-y-4"
       >
         <div
-          class="w-8 h-8 border-4 border-slate-200 border-t-school-navy rounded-full animate-spin"
+          class="w-8 h-8 border-4 border-[#E2E8F0] border-t-school-navy rounded-full animate-spin mx-auto"
         ></div>
         <span class="text-xs font-bold tracking-widest uppercase">Loading students...</span>
       </div>
@@ -83,7 +83,7 @@
         <table class="w-full text-left border-collapse">
           <thead>
             <tr
-              class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-100"
+              class="bg-school-grey border-b border-[#E2E8F0] text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
             >
               <th class="p-4 pl-6 font-bold w-12">#</th>
               <th class="p-4 font-bold">Student Name</th>
@@ -103,7 +103,7 @@
               <td class="p-4 font-bold text-slate-800">
                 <div class="flex items-center gap-3">
                   <div
-                    class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs border border-slate-200"
+                    class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs border border-[#E2E8F0]"
                   >
                     {{ student.first_name.charAt(0) }}
                   </div>
@@ -126,7 +126,7 @@
               <td class="p-4 pr-6 text-right flex gap-2 justify-end">
                 <router-link
                   :to="`/students/${student.id}/profile`"
-                  class="text-xs font-bold text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 px-3 py-1.5 rounded-lg transition-colors border border-slate-200"
+                  class="text-xs font-bold text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 px-3 py-1.5 rounded-lg transition-colors border border-[#E2E8F0]"
                 >
                   Profile
                 </router-link>
@@ -142,7 +142,7 @@
             <tr v-if="filteredStudents.length === 0">
               <td colspan="5" class="p-12 text-center">
                 <div class="flex flex-col items-center justify-center text-slate-400">
-                  <span class="text-4xl mb-3">👨‍🎓</span>
+                  <span class="text-4xl mb-3"></span>
                   <p class="font-medium text-sm">No students found in {{ selectedGrade }}.</p>
                 </div>
               </td>
@@ -155,14 +155,16 @@
     <!-- Quick Entry Grade Form (Mockup for now) -->
     <div
       v-if="showGradeModal"
-      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in"
+      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in"
     >
       <div
-        class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100"
+        class="bg-white rounded-[12px] shadow-2xl w-full max-w-lg overflow-hidden border border-[#E2E8F0]"
       >
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <div>
-            <h2 class="text-lg font-black text-slate-800 tracking-tight">Record Assessments</h2>
+            <h2 class="font-heading text-[22px] font-bold text-[#0F172A] tracking-tight">
+              Record Assessments
+            </h2>
             <p class="text-xs text-slate-500 mt-0.5">
               {{ selectedStudent?.first_name }} {{ selectedStudent?.last_name }} -
               {{ appStore.currentTerm }}
@@ -186,13 +188,14 @@
         <form @submit.prevent="submitScore" class="p-6 space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+              <label
+                class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                 >Learning Area</label
               >
               <select
                 v-model="gradeForm.learning_area"
                 required
-                class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
               >
                 <option disabled value="">Select Area</option>
                 <option>Mathematics Activities</option>
@@ -201,13 +204,14 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+              <label
+                class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                 >Score (CBC)</label
               >
               <select
                 v-model="gradeForm.score"
                 required
-                class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-bold text-school-navy"
+                class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-bold text-school-navy"
               >
                 <option disabled value="">Select Score</option>
                 <option value="EE">Exceeding (EE)</option>
@@ -219,13 +223,14 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+            <label
+              class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
               >Teacher's Remarks</label
             >
             <textarea
               v-model="gradeForm.remarks"
               rows="2"
-              class="w-full border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm"
+              class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm"
               placeholder="Enter optional comments..."
             ></textarea>
           </div>
@@ -233,7 +238,7 @@
           <div class="flex justify-end pt-4">
             <button
               type="submit"
-              class="px-5 py-2.5 bg-school-navy text-white rounded-xl font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm w-full"
+              class="px-5 py-2.5 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm w-full"
             >
               Submit Score
             </button>

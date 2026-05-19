@@ -3,8 +3,12 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Finance Dashboard</h1>
-        <p class="text-slate-500 mt-2 text-lg">Manage school collections, ledgers, and payroll.</p>
+        <h1 class="font-heading text-[22px] font-bold text-[#0F172A] tracking-tight">
+          Finance Dashboard
+        </h1>
+        <p class="text-[13px] text-[#94A3B8] mt-1">
+          Manage school collections, ledgers, and payroll.
+        </p>
       </div>
     </div>
 
@@ -14,7 +18,7 @@
       class="flex flex-col justify-center items-center py-20 text-slate-400 space-y-4"
     >
       <div
-        class="w-8 h-8 border-4 border-slate-200 border-t-school-navy rounded-full animate-spin"
+        class="w-8 h-8 border-4 border-[#E2E8F0] border-t-school-navy rounded-full animate-spin mx-auto"
       ></div>
       <span class="text-xs font-bold tracking-widest uppercase">Loading Finance Data...</span>
     </div>
@@ -24,7 +28,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <!-- Goal Progress -->
         <div
-          class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 col-span-1 sm:col-span-2 relative overflow-hidden group"
+          class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] col-span-1 sm:col-span-2 relative overflow-hidden group"
         >
           <div
             class="absolute right-0 top-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"
@@ -32,7 +36,7 @@
           <div class="relative z-10">
             <div class="flex justify-between items-end mb-4">
               <div>
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+                <div class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1">
                   {{ appStore.currentTerm }} Collection
                 </div>
                 <div class="text-4xl font-extrabold text-slate-800">
@@ -58,14 +62,14 @@
 
         <!-- Total Revenue -->
         <div
-          class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 relative overflow-hidden group"
+          class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
         >
           <div
             class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
           ></div>
           <div class="relative z-10 flex flex-col justify-between h-full">
             <div>
-              <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+              <div class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1">
                 Total Revenue
               </div>
               <div class="text-3xl font-extrabold text-emerald-600">
@@ -80,7 +84,9 @@
       </div>
 
       <!-- Payroll Module -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
+      <div
+        class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
+      >
         <div
           class="border-b border-slate-100 px-6 py-5 flex items-center justify-between bg-slate-50"
         >
@@ -90,7 +96,7 @@
           </div>
           <button
             @click="openPayrollModal"
-            class="bg-school-navy hover:bg-school-navy/90 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-sm text-sm flex items-center gap-2"
+            class="bg-school-navy hover:bg-school-navy/90 text-white px-4 py-2 rounded-[12px] font-bold transition-all shadow-sm text-sm flex items-center gap-2"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -150,10 +156,10 @@
     <!-- Payroll Modal -->
     <div
       v-if="showPayrollModal"
-      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in"
+      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in"
     >
       <div
-        class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100"
+        class="bg-white rounded-[12px] shadow-2xl w-full max-w-md overflow-hidden border border-[#E2E8F0]"
       >
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <h2 class="text-xl font-black text-slate-800 tracking-tight">Run Payroll</h2>
@@ -174,13 +180,14 @@
 
         <form @submit.prevent="submitPayroll" class="p-6 space-y-5">
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+            <label
+              class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
               >Select Staff</label
             >
             <select
               v-model="payrollForm.staff_id"
               required
-              class="w-full border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+              class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
             >
               <option disabled value="">-- Choose a staff member --</option>
               <option v-for="staff in activeStaff" :key="staff.id" :value="staff.id">
@@ -191,18 +198,20 @@
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+              <label
+                class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                 >Payment Month</label
               >
               <input
                 v-model="payrollForm.payment_month"
                 required
                 type="month"
-                class="w-full border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+                class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
               />
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
+              <label
+                class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
                 >Basic Salary (Ksh)</label
               >
               <input
@@ -210,7 +219,7 @@
                 type="number"
                 min="0"
                 required
-                class="w-full border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-bold text-slate-800 transition-all"
+                class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-bold text-slate-800 transition-all"
               />
             </div>
             <div>
@@ -223,7 +232,7 @@
                 type="number"
                 min="0"
                 required
-                class="w-full border border-emerald-200 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none bg-emerald-50/50 font-bold text-emerald-700 transition-all"
+                class="w-full border border-emerald-200 rounded-[12px] p-3 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none bg-emerald-50/50 font-bold text-emerald-700 transition-all"
               />
             </div>
             <div>
@@ -236,14 +245,14 @@
                 type="number"
                 min="0"
                 required
-                class="w-full border border-red-200 rounded-xl p-3 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
+                class="w-full border border-red-200 rounded-[12px] p-3 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
               />
             </div>
           </div>
 
           <!-- Net Pay Calculation -->
           <div
-            class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center mt-2"
+            class="p-4 bg-slate-50 rounded-[12px] border border-[#E2E8F0] flex justify-between items-center mt-2"
           >
             <span class="text-sm font-bold text-slate-500 uppercase tracking-widest"
               >Net Payable</span
@@ -257,13 +266,13 @@
             <button
               type="button"
               @click="closePayrollModal"
-              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl font-bold transition-colors text-sm"
+              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-[12px] font-bold transition-colors text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              class="px-5 py-2.5 bg-school-navy text-white rounded-xl font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
+              class="px-5 py-2.5 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
             >
               Disburse Funds
             </button>

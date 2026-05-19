@@ -4,214 +4,285 @@
     <div
       v-if="isSidebarOpen"
       @click="isSidebarOpen = false"
-      class="fixed inset-0 bg-school-navy/50 z-20 md:hidden transition-opacity"
+      class="fixed inset-0 bg-school-navy/50 z-[90] md:hidden transition-opacity"
     ></div>
 
     <!-- SIDEBAR -->
     <aside
       :class="[
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        'fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-br from-school-navy via-[#1A2A42] to-school-navy text-white transition-all duration-500 ease-out transform md:relative md:translate-x-0 flex flex-col border-r border-white/10 overflow-hidden shadow-[10px_0_30px_rgba(0,0,0,0.5)]',
+        'fixed inset-y-0 left-0 z-[100] w-[264px] bg-school-navy text-white transition-all duration-300 ease-out transform md:relative md:translate-x-0 flex flex-col overflow-hidden',
       ]"
     >
-      <!-- Extravagant glowing orbs -->
+      <!-- Decorative Gradient -->
+      <div
+        class="absolute bottom-[-120px] right-[-80px] w-[260px] h-[260px] rounded-full bg-[radial-gradient(circle,rgba(211,47,47,0.14)_0%,transparent_70%)] pointer-events-none"
+      ></div>
 
       <!-- Sidebar Header (Logo Area) -->
       <div
-        class="flex items-center justify-center h-20 border-b border-white/10 px-6 bg-school-navy"
+        class="flex flex-row items-center gap-[12px] p-[22px_18px_18px] border-b border-white/[0.06] bg-school-navy relative z-10"
       >
-        <div class="text-center">
-          <h2 class="text-xl font-medium font-heading text-white tracking-widest uppercase">
-            Bona School
+        <div
+          class="w-[42px] h-[42px] rounded-[11px] bg-gradient-to-br from-school-red to-red-400 flex items-center justify-center font-heading font-extrabold text-[17px] text-white shadow-[0_6px_16px_rgba(211,47,47,0.35)] shrink-0"
+        >
+          BS
+        </div>
+        <div class="flex flex-col">
+          <h2 class="font-heading font-bold text-[13.5px] text-white leading-tight">
+            The Bona School
           </h2>
-          <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest">CBC Management</p>
+          <p class="text-[9.5px] font-semibold uppercase tracking-[0.1em] text-white/30 mt-0.5">
+            CBC Management
+          </p>
         </div>
       </div>
 
       <!-- Navigation Links -->
-      <nav class="relative flex-1 px-4 py-8 space-y-2 overflow-y-auto z-10">
+      <nav
+        class="flex-1 overflow-y-auto py-[18px] px-[10px] space-y-0 hide-scrollbar relative z-10"
+      >
         <router-link
           to="/"
-          class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-200 group"
-          active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+          class="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[9px] text-[13.5px] font-medium text-white/50 transition-all duration-150 cursor-pointer mb-[1px] hover:bg-white/[0.07] hover:text-white/85 relative group"
+          active-class="bg-[rgba(211,47,47,0.12)] text-red-300 active-nav-item hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
         >
-          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-            />
+          <div
+            class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-school-red rounded-[0_3px_3px_0] hidden"
+          ></div>
+          <svg
+            class="w-[17px] h-[17px] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            viewBox="0 0 24 24"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
           </svg>
           Dashboard
         </router-link>
 
         <template v-if="['senior_teacher', 'principal', 'admin'].includes(userRole)">
-          <div class="pt-6 pb-2">
-            <p class="px-4 text-[10px] font-medium text-slate-400 uppercase tracking-widest">
+          <div class="pt-[16px] pb-[5px]">
+            <span
+              class="text-[9.5px] font-bold uppercase tracking-[0.1em] text-white/20 px-[10px] block"
+            >
               Academics
-            </p>
+            </span>
           </div>
           <router-link
             to="/academics/attendance"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-200 group"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[9px] text-[13.5px] font-medium text-white/50 transition-all duration-150 cursor-pointer mb-[1px] hover:bg-white/[0.07] hover:text-white/85 relative group"
+            active-class="bg-[rgba(211,47,47,0.12)] text-red-300 active-nav-item hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
           >
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-              />
+            <div
+              class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-school-red rounded-[0_3px_3px_0] hidden"
+            ></div>
+            <svg
+              class="w-[17px] h-[17px] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity nav-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M9 11l3 3L22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
             </svg>
             Roll Call
           </router-link>
           <router-link
             to="/academics"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-200 group"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[9px] text-[13.5px] font-medium text-white/50 transition-all duration-150 cursor-pointer mb-[1px] hover:bg-white/[0.07] hover:text-white/85 relative group"
+            active-class="bg-[rgba(211,47,47,0.12)] text-red-300 active-nav-item hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
           >
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            <div
+              class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-school-red rounded-[0_3px_3px_0] hidden"
+            ></div>
+            <svg
+              class="w-[17px] h-[17px] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity nav-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
               />
             </svg>
             Grading
           </router-link>
           <router-link
             to="/academics/report-card"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-200 group"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[9px] text-[13.5px] font-medium text-white/50 transition-all duration-150 cursor-pointer mb-[1px] hover:bg-white/[0.07] hover:text-white/85 relative group"
+            active-class="bg-[rgba(211,47,47,0.12)] text-red-300 active-nav-item hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
           >
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 14l9-5-9-5-9 5 9 5z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
-              />
+            <div
+              class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-school-red rounded-[0_3px_3px_0] hidden"
+            ></div>
+            <svg
+              class="w-[17px] h-[17px] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity nav-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
             </svg>
             Report Cards
           </router-link>
         </template>
 
         <template v-if="['secretary', 'principal', 'admin'].includes(userRole)">
-          <div class="pt-6 pb-2">
-            <p class="px-4 text-[10px] font-medium text-slate-400 uppercase tracking-widest">
+          <div class="pt-[16px] pb-[5px]">
+            <span
+              class="text-[9.5px] font-bold uppercase tracking-[0.1em] text-white/20 px-[10px] block"
+            >
               Administration
-            </p>
+            </span>
           </div>
           <router-link
             to="/office"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-200 group"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[9px] text-[13.5px] font-medium text-white/50 transition-all duration-150 cursor-pointer mb-[1px] hover:bg-white/[0.07] hover:text-white/85 relative group"
+            active-class="bg-[rgba(211,47,47,0.12)] text-red-300 active-nav-item hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
           >
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-              />
+            <div
+              class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-school-red rounded-[0_3px_3px_0] hidden"
+            ></div>
+            <svg
+              class="w-[17px] h-[17px] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity nav-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <rect x="9" y="14" width="6" height="7" />
             </svg>
             Office
           </router-link>
         </template>
 
         <template v-if="['finance', 'principal', 'admin'].includes(userRole)">
-          <div class="pt-6 pb-2">
-            <p class="px-4 text-[10px] font-medium text-slate-400 uppercase tracking-widest">
+          <div class="pt-[16px] pb-[5px]">
+            <span
+              class="text-[9.5px] font-bold uppercase tracking-[0.1em] text-white/20 px-[10px] block"
+            >
               Finance
-            </p>
+            </span>
           </div>
           <router-link
             to="/finance"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-200 group"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[9px] text-[13.5px] font-medium text-white/50 transition-all duration-150 cursor-pointer mb-[1px] hover:bg-white/[0.07] hover:text-white/85 relative group"
+            active-class="bg-[rgba(211,47,47,0.12)] text-red-300 active-nav-item hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
           >
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
+            <div
+              class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-school-red rounded-[0_3px_3px_0] hidden"
+            ></div>
+            <svg
+              class="w-[17px] h-[17px] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity nav-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <rect x="2" y="5" width="20" height="14" rx="2" />
+              <line x1="2" y1="10" x2="22" y2="10" />
             </svg>
             Dashboard
           </router-link>
           <router-link
             to="/finance/statements"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-200 group"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[9px] text-[13.5px] font-medium text-white/50 transition-all duration-150 cursor-pointer mb-[1px] hover:bg-white/[0.07] hover:text-white/85 relative group"
+            active-class="bg-[rgba(211,47,47,0.12)] text-red-300 active-nav-item hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
           >
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
+            <div
+              class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-school-red rounded-[0_3px_3px_0] hidden"
+            ></div>
+            <svg
+              class="w-[17px] h-[17px] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity nav-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
             </svg>
             Statements
           </router-link>
         </template>
 
         <template v-if="['admin', 'principal'].includes(userRole)">
-          <div class="pt-6 pb-2">
-            <p class="px-4 text-[10px] font-medium text-slate-400 uppercase tracking-widest">
+          <div class="pt-[16px] pb-[5px]">
+            <span
+              class="text-[9.5px] font-bold uppercase tracking-[0.1em] text-white/20 px-[10px] block"
+            >
               System
-            </p>
+            </span>
           </div>
           <router-link
             v-if="userRole === 'admin'"
             to="/admin"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-200 group"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[9px] text-[13.5px] font-medium text-white/50 transition-all duration-150 cursor-pointer mb-[1px] hover:bg-white/[0.07] hover:text-white/85 relative group"
+            active-class="bg-[rgba(211,47,47,0.12)] text-red-300 active-nav-item hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
           >
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
+            <div
+              class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-school-red rounded-[0_3px_3px_0] hidden"
+            ></div>
+            <svg
+              class="w-[17px] h-[17px] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity nav-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
             </svg>
             Console
           </router-link>
           <router-link
             to="/hr"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-200 group"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[9px] text-[13.5px] font-medium text-white/50 transition-all duration-150 cursor-pointer mb-[1px] hover:bg-white/[0.07] hover:text-white/85 relative group"
+            active-class="bg-[rgba(211,47,47,0.12)] text-red-300 active-nav-item hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
           >
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              />
+            <div
+              class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-school-red rounded-[0_3px_3px_0] hidden"
+            ></div>
+            <svg
+              class="w-[17px] h-[17px] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity nav-icon"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
             HR
           </router-link>
@@ -219,42 +290,51 @@
       </nav>
 
       <!-- Sidebar Footer (Logout) -->
-      <div class="relative p-4 border-t border-white/10 bg-black/20 backdrop-blur-md">
+      <div class="border-t border-white/[0.06] p-[14px_10px] relative z-10 bg-school-navy">
         <div
-          class="flex items-center mb-4 px-2 hover:translate-x-2 transition-transform duration-300"
+          class="flex items-center gap-[10px] p-[9px_10px] rounded-[9px] bg-white/[0.05] cursor-pointer hover:bg-white/[0.08] transition-all"
         >
           <div
-            class="h-10 w-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-white font-semibold uppercase mr-3"
+            class="w-[32px] h-[32px] rounded-full bg-gradient-to-br from-school-red to-red-400 font-heading font-bold text-[12px] text-white flex items-center justify-center flex-shrink-0"
           >
             {{ userNameInitial }}
           </div>
           <div class="overflow-hidden">
-            <p class="text-base font-medium font-heading text-white truncate drop-shadow-md">
-              {{ userName }}
-            </p>
-            <p class="text-[10px] text-red-200 uppercase tracking-widest truncate font-medium">
-              {{ userRole }}
-            </p>
+            <p class="text-[13px] font-semibold text-white truncate">{{ userName }}</p>
+            <p class="text-[10.5px] text-white/30 mt-[1px] truncate">{{ userRole }}</p>
           </div>
+          <svg
+            class="ml-auto opacity-30 flex-shrink-0 w-[14px] h-[14px]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="12" cy="5" r="1" />
+            <circle cx="12" cy="12" r="1" />
+            <circle cx="12" cy="19" r="1" />
+          </svg>
         </div>
         <button
           @click="logout"
-          class="w-full flex items-center justify-center gap-2 bg-slate-800/50 hover:bg-school-red text-white py-3 rounded-xl transition-all duration-500 text-sm font-medium border border-white/10 hover:border-transparent hover: group"
+          class="w-full flex items-center justify-center gap-2 p-[7px_10px] rounded-[8px] cursor-pointer mt-[4px] text-white/30 text-[12.5px] font-medium transition-all hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
         >
           <svg
-            class="w-5 h-5 text-red-300 group-hover:text-white transition-colors"
+            class="w-[14px] h-[14px]"
             fill="none"
             stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
             viewBox="0 0 24 24"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            ></path>
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
           </svg>
-          SIGN OUT
+          Sign Out
         </button>
       </div>
     </aside>
@@ -263,128 +343,115 @@
     <div class="flex-1 flex flex-col min-w-0 bg-school-grey overflow-hidden relative">
       <!-- TOP NAVIGATION BAR -->
       <header
-        class="bg-white border-b border-slate-200 h-20 flex items-center justify-between px-8 z-30 shrink-0 sticky top-0"
+        class="bg-white h-[62px] px-[30px] flex items-center justify-between border-b border-[#E2E8F0] sticky top-0 z-50 shrink-0"
       >
         <!-- Mobile Menu Button -->
         <button
           @click="isSidebarOpen = true"
-          class="md:hidden p-3 -ml-2 text-school-navy bg-white shadow-md hover:shadow-lg rounded-xl focus:outline-none transition-all"
+          class="md:hidden p-2 -ml-4 text-school-navy bg-white hover:bg-slate-50 rounded-lg focus:outline-none transition-all"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            ></path>
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            viewBox="0 0 24 24"
+          >
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
 
         <!-- Contextual Header Area (Breadcrumbs) -->
-        <div class="hidden md:flex flex-col animate-slide-up">
-          <div
-            class="flex items-center gap-2 text-[10px] font-medium text-slate-400 uppercase tracking-[0.2em] mb-1.5"
-          >
-            <span class="hover:text-school-navy transition-colors cursor-pointer">{{
-              routeName
-            }}</span>
-            <span class="text-slate-300">/</span>
-            <span class="text-school-red">{{ pageTitle }}</span>
+        <div class="hidden md:flex flex-col">
+          <div class="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#94A3B8]">
+            {{ routeName }}
           </div>
-          <h1
-            class="text-3xl font-medium font-heading text-transparent bg-clip-text bg-gradient-to-r from-school-navy to-blue-600 tracking-tight leading-none drop-shadow-sm hover:scale-105 origin-left transition-transform duration-300"
-          >
+          <h1 class="font-heading text-[17px] font-bold text-[#0F172A] leading-tight">
             {{ pageTitle }}
           </h1>
         </div>
-        <div
-          class="md:hidden text-xl font-medium font-heading text-school-navy tracking-tight drop-shadow-sm"
-        >
+        <div class="md:hidden font-heading text-[17px] font-bold text-[#0F172A] leading-tight">
           Bona School
         </div>
 
         <!-- Right Side: Search, Term Selector, Notifications -->
-        <div class="flex items-center gap-6 ml-auto">
+        <div class="flex items-center gap-[10px] ml-auto">
           <!-- Search Bar -->
           <div
-            class="hidden lg:flex items-center bg-white border border-slate-100 rounded-2xl px-5 py-3 hover:border-blue-300 transition-all shadow-[0_5px_15px_rgba(0,0,0,0.05)] w-64 focus-within:ring-2 focus-within:border-school-navy focus-within:ring-4 ring-school-navy/10"
+            class="hidden lg:flex items-center gap-2 bg-school-grey border border-[#E2E8F0] rounded-[9px] px-[14px] py-[7px] cursor-text hover:border-[#CBD5E1] transition-all"
           >
             <svg
-              class="w-5 h-5 text-slate-300 group-hover:text-school-navy transition-colors mr-3"
+              class="w-[14px] h-[14px] text-[#94A3B8]"
               fill="none"
               stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
               viewBox="0 0 24 24"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              ></path>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
               type="text"
-              placeholder="Search students, staff..."
-              class="bg-transparent border-none outline-none text-sm w-full text-slate-700 placeholder-slate-300 font-medium"
+              placeholder="Search..."
+              class="bg-transparent border-none outline-none text-[13px] w-48 text-[#94A3B8] placeholder-[#94A3B8]"
             />
           </div>
 
           <!-- Global Term Selector -->
           <div class="relative group">
             <div
-              class="absolute -inset-1 bg-gradient-to-r from-school-red to-orange-400 rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-500 group-hover:duration-200"
-            ></div>
-            <div
-              class="relative flex items-center bg-white border border-slate-100 rounded-2xl px-5 py-3 shadow-sm hover:shadow-md transition-all"
+              class="flex items-center gap-[7px] px-[14px] py-[7px] bg-school-grey border border-[#E2E8F0] rounded-[9px] cursor-pointer hover:border-school-red hover:text-school-red transition-all relative text-[#0F172A]"
             >
-              <svg
-                class="w-5 h-5 text-school-red mr-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                ></path>
-              </svg>
+              <span class="w-[7px] h-[7px] rounded-full bg-emerald-500 shrink-0"></span>
               <select
                 v-model="appStore.currentTerm"
-                class="bg-transparent text-sm font-medium text-school-navy outline-none cursor-pointer appearance-none pr-4 uppercase tracking-wider"
+                class="bg-transparent text-[13px] font-semibold outline-none cursor-pointer appearance-none pr-5 z-10 relative"
               >
                 <option v-for="term in appStore.terms" :key="term" :value="term">{{ term }}</option>
               </select>
+              <svg
+                class="w-[14px] h-[14px] absolute right-3 pointer-events-none"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
             </div>
           </div>
 
           <!-- Notification Bell -->
-          <div class="relative group">
-            <div
-              class="absolute -inset-1 bg-gradient-to-r from-blue-400 to-school-navy rounded-full blur opacity-0 group-hover:opacity-40 transition duration-500"
-            ></div>
-            <button
-              class="relative p-3.5 text-slate-400 hover:text-white hover:bg-school-navy rounded-full transition-all duration-300 focus:outline-none bg-white shadow-[0_5px_15px_rgba(0,0,0,0.05)] hover:shadow-lg border border-slate-100 group-hover:border-transparent"
+          <button
+            class="w-[38px] h-[38px] rounded-[9px] bg-school-grey border border-[#E2E8F0] flex items-center justify-center cursor-pointer hover:bg-white hover:border-[#CBD5E1] text-[#475569] relative transition-all"
+          >
+            <svg
+              class="w-[17px] h-[17px]"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
             >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                ></path>
-              </svg>
-              <span
-                class="absolute top-2.5 right-2.5 block h-3 w-3 rounded-full bg-gradient-to-r from-school-red to-orange-500 ring-4 ring-white"
-              ></span>
-            </button>
-          </div>
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            <span
+              class="absolute top-[7px] right-[7px] w-[7px] h-[7px] rounded-full bg-school-red border-[1.5px] border-white"
+            ></span>
+          </button>
         </div>
       </header>
 
       <!-- DYNAMIC PAGE CONTENT WITH TRANSITIONS -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-10 relative z-10">
+      <main class="flex-1 overflow-y-auto p-4 sm:p-8 relative z-10">
         <router-view v-slot="{ Component }">
           <transition name="fade-scale" mode="out-in">
             <component :is="Component" />
@@ -471,29 +538,29 @@ const logout = () => {
 /* Extravagant Router Transitions */
 .fade-scale-enter-active,
 .fade-scale-leave-active {
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
 }
 .fade-scale-enter-from {
   opacity: 0;
-  transform: scale(0.95) translateY(20px) rotateX(-10deg);
 }
 .fade-scale-leave-to {
   opacity: 0;
-  transform: scale(1.05) translateY(-20px) rotateX(10deg);
 }
 
-/* Custom scrollbar for sidebar */
-aside nav::-webkit-scrollbar {
-  width: 4px;
+/* Hide scrollbar for sidebar nav */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-aside nav::-webkit-scrollbar-track {
-  background: transparent;
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
-aside nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+
+/* Nav item active accent */
+.active-nav-item div {
+  display: block;
 }
-aside nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+.active-nav-item .nav-icon {
+  opacity: 1;
 }
 </style>

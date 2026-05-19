@@ -2,27 +2,29 @@
   <div class="max-w-7xl mx-auto">
     <!-- Page Header -->
     <div class="mb-10">
-      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Administrator Dashboard</h1>
-      <p class="text-slate-500 mt-2 text-lg">System overview and quick metrics.</p>
+      <h1 class="font-heading text-[22px] font-bold text-[#0F172A] tracking-tight">
+        Administrator Dashboard
+      </h1>
+      <p class="text-[13px] text-[#94A3B8] mt-1">System overview and quick metrics.</p>
     </div>
 
     <!-- Quick Stat Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
       <!-- Card 1 -->
       <div
-        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 hover:shadow-md transition-shadow relative overflow-hidden group"
+        class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow relative overflow-hidden group"
       >
         <div
           class="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
         ></div>
         <div class="flex justify-between items-start relative z-10">
           <div>
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <div class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1">
               Total Students
             </div>
             <div class="text-4xl font-extrabold text-slate-800">{{ activeStudentsCount }}</div>
           </div>
-          <div class="p-3 bg-blue-100/50 text-blue-600 rounded-xl">
+          <div class="p-3 bg-blue-100/50 text-blue-600 rounded-[12px]">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
@@ -51,19 +53,19 @@
 
       <!-- Card 2 -->
       <div
-        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 hover:shadow-md transition-shadow relative overflow-hidden group"
+        class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow relative overflow-hidden group"
       >
         <div
           class="absolute right-0 top-0 w-24 h-24 bg-purple-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
         ></div>
         <div class="flex justify-between items-start relative z-10">
           <div>
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <div class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1">
               Active Staff
             </div>
             <div class="text-4xl font-extrabold text-slate-800">{{ activeStaffCount }}</div>
           </div>
-          <div class="p-3 bg-purple-100/50 text-purple-600 rounded-xl">
+          <div class="p-3 bg-purple-100/50 text-purple-600 rounded-[12px]">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
@@ -92,14 +94,14 @@
 
       <!-- Card 3 -->
       <div
-        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60 hover:shadow-md transition-shadow relative overflow-hidden group"
+        class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow relative overflow-hidden group"
       >
         <div
           class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
         ></div>
         <div class="flex justify-between items-start relative z-10">
           <div>
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <div class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1">
               System Status
             </div>
             <div class="text-2xl font-bold text-emerald-600 flex items-center gap-3 mt-3">
@@ -112,7 +114,7 @@
               All Systems Operational
             </div>
           </div>
-          <div class="p-3 bg-emerald-100/50 text-emerald-600 rounded-xl">
+          <div class="p-3 bg-emerald-100/50 text-emerald-600 rounded-[12px]">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
@@ -128,7 +130,9 @@
     </div>
 
     <!-- Main Data Area Placeholder (Skeleton Design) -->
-    <div class="relative bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
+    <div
+      class="relative bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
+    >
       <!-- Table Header Skeleton -->
       <div class="border-b border-slate-100 px-6 py-5 flex items-center justify-between">
         <h3 class="text-lg font-bold text-slate-800">Recent Activity</h3>
@@ -156,7 +160,7 @@
 
       <!-- Overlay Empty State -->
       <div
-        class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/80 backdrop-blur-[1px]"
+        class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white backdrop-blur-[1px]"
       >
         <div class="p-4 bg-slate-50 rounded-full mb-4">
           <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

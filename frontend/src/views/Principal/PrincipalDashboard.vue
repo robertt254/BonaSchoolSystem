@@ -14,7 +14,7 @@
       <span class="animate-pulse text-lg">Fetching student records...</span>
     </div>
 
-    <div v-else class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div v-else class="bg-white rounded-[12px] shadow-sm border border-gray-100 overflow-hidden">
       <table class="w-full text-left border-collapse">
         <thead>
           <tr
@@ -77,7 +77,7 @@
       v-if="showModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
     >
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+      <div class="bg-white rounded-[12px] shadow-xl w-full max-w-md overflow-hidden">
         <div class="p-6 border-b border-gray-100 flex justify-between items-center">
           <h2 class="text-xl font-bold text-gray-800">
             {{ isEditing ? 'Edit Student' : 'Enroll New Student' }}
