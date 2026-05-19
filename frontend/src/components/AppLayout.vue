@@ -8,141 +8,169 @@
     ></div>
 
     <!-- SIDEBAR -->
-
     <aside
       :class="[
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        'fixed inset-y-0 left-0 z-30 w-72 bg-school-navy text-white transition-transform duration-300 ease-in-out transform md:relative md:translate-x-0 flex flex-col border-r border-slate-800 overflow-hidden',
+        'fixed inset-y-0 left-0 z-40 w-72 bg-gradient-to-br from-school-navy via-[#1A2A42] to-school-navy text-white transition-all duration-500 ease-out transform md:relative md:translate-x-0 flex flex-col border-r border-white/10 overflow-hidden shadow-[10px_0_30px_rgba(0,0,0,0.5)]',
       ]"
     >
-      <!-- Bottom right red/navy radial glow -->
+      <!-- Extravagant glowing orbs -->
       <div
-        class="absolute bottom-0 right-0 w-96 h-96 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-school-red/20 via-school-navy to-transparent pointer-events-none blur-2xl"
+        class="absolute -top-32 -left-32 w-64 h-64 bg-school-red/40 rounded-full blur-[80px] animate-pulse-glow"
+      ></div>
+      <div
+        class="absolute bottom-0 right-0 w-80 h-80 bg-blue-500/20 rounded-full blur-[100px] animate-float"
       ></div>
 
       <!-- Sidebar Header (Logo Area) -->
-      <div class="flex items-center justify-center h-20 border-b border-slate-800 px-6">
-        <div class="text-center">
-          <h2 class="text-xl font-black text-white tracking-widest uppercase">The Bona School</h2>
-          <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest">CBC Management</p>
+      <div
+        class="relative flex items-center justify-center h-24 border-b border-white/10 px-6 bg-white/5 backdrop-blur-md"
+      >
+        <div class="text-center transform hover:scale-110 transition-transform duration-300">
+          <h2
+            class="text-2xl font-black font-heading text-transparent bg-clip-text bg-gradient-to-r from-white via-red-200 to-white animate-gradient-xy tracking-widest uppercase filter drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+          >
+            Bona School
+          </h2>
+          <p class="text-[10px] text-red-200 mt-1 uppercase tracking-widest animate-pulse">
+            CBC Management
+          </p>
         </div>
       </div>
 
       <!-- Navigation Links -->
-      <nav class="flex-1 px-4 py-8 space-y-1 overflow-y-auto">
+      <nav class="relative flex-1 px-4 py-8 space-y-2 overflow-y-auto z-10">
         <router-link
           to="/"
-          class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-          active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+          class="flex items-center gap-4 px-4 py-3.5 text-sm font-bold rounded-xl text-slate-300 hover:bg-white/10 hover:text-white hover:scale-105 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all duration-300 group"
+          active-class="bg-gradient-to-r from-school-red/80 to-school-red/20 text-white shadow-[0_0_20px_rgba(211,47,47,0.6)] border-l-4 border-white scale-105"
         >
-          <span class="text-lg">🏠</span> Dashboard
+          <span class="text-xl group-hover:animate-bounce">🏠</span> Dashboard
         </router-link>
 
         <template v-if="['senior_teacher', 'principal', 'admin'].includes(userRole)">
           <div class="pt-6 pb-2">
-            <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Academics</p>
+            <p
+              class="px-4 text-[10px] font-black text-red-300/80 uppercase tracking-[0.2em] animate-pulse"
+            >
+              Academics
+            </p>
           </div>
           <router-link
             to="/academics/attendance"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-4 px-4 py-3.5 text-sm font-bold rounded-xl text-slate-300 hover:bg-white/10 hover:text-white hover:scale-105 transition-all duration-300 group"
+            active-class="bg-gradient-to-r from-school-red/80 to-school-red/20 text-white shadow-[0_0_20px_rgba(211,47,47,0.6)] border-l-4 border-white scale-105"
           >
-            <span class="text-lg">📋</span> Roll Call
+            <span class="text-xl group-hover:animate-spin-slow">📋</span> Roll Call
           </router-link>
           <router-link
             to="/academics"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-4 px-4 py-3.5 text-sm font-bold rounded-xl text-slate-300 hover:bg-white/10 hover:text-white hover:scale-105 transition-all duration-300 group"
+            active-class="bg-gradient-to-r from-school-red/80 to-school-red/20 text-white shadow-[0_0_20px_rgba(211,47,47,0.6)] border-l-4 border-white scale-105"
           >
-            <span class="text-lg">📝</span> Grading
+            <span class="text-xl group-hover:animate-float">📝</span> Grading
           </router-link>
           <router-link
             to="/academics/report-card"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-4 px-4 py-3.5 text-sm font-bold rounded-xl text-slate-300 hover:bg-white/10 hover:text-white hover:scale-105 transition-all duration-300 group"
+            active-class="bg-gradient-to-r from-school-red/80 to-school-red/20 text-white shadow-[0_0_20px_rgba(211,47,47,0.6)] border-l-4 border-white scale-105"
           >
-            <span class="text-lg">🎓</span> Report Cards
+            <span class="text-xl group-hover:animate-pulse">🎓</span> Report Cards
           </router-link>
         </template>
 
-        <template v-if="['principal', 'secretary', 'admin'].includes(userRole)">
+        <template v-if="['secretary', 'principal', 'admin'].includes(userRole)">
           <div class="pt-6 pb-2">
-            <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">
+            <p
+              class="px-4 text-[10px] font-black text-red-300/80 uppercase tracking-[0.2em] animate-pulse"
+            >
               Administration
             </p>
           </div>
           <router-link
             to="/office"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-4 px-4 py-3.5 text-sm font-bold rounded-xl text-slate-300 hover:bg-white/10 hover:text-white hover:scale-105 transition-all duration-300 group"
+            active-class="bg-gradient-to-r from-school-red/80 to-school-red/20 text-white shadow-[0_0_20px_rgba(211,47,47,0.6)] border-l-4 border-white scale-105"
           >
-            <span class="text-lg">👨‍🎓</span> Office & Admissions
+            <span class="text-xl group-hover:animate-bounce">👨‍🎓</span> Office
           </router-link>
         </template>
 
         <template v-if="['finance', 'principal', 'admin'].includes(userRole)">
           <div class="pt-6 pb-2">
-            <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Finance</p>
+            <p
+              class="px-4 text-[10px] font-black text-red-300/80 uppercase tracking-[0.2em] animate-pulse"
+            >
+              Finance
+            </p>
           </div>
           <router-link
             to="/finance"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-4 px-4 py-3.5 text-sm font-bold rounded-xl text-slate-300 hover:bg-white/10 hover:text-white hover:scale-105 transition-all duration-300 group"
+            active-class="bg-gradient-to-r from-school-red/80 to-school-red/20 text-white shadow-[0_0_20px_rgba(211,47,47,0.6)] border-l-4 border-white scale-105"
           >
-            <span class="text-lg">💰</span> Finance Dashboard
+            <span class="text-xl group-hover:animate-spin-slow">💰</span> Dashboard
           </router-link>
           <router-link
             to="/finance/statements"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-4 px-4 py-3.5 text-sm font-bold rounded-xl text-slate-300 hover:bg-white/10 hover:text-white hover:scale-105 transition-all duration-300 group"
+            active-class="bg-gradient-to-r from-school-red/80 to-school-red/20 text-white shadow-[0_0_20px_rgba(211,47,47,0.6)] border-l-4 border-white scale-105"
           >
-            <span class="text-lg">📄</span> Statements
+            <span class="text-xl group-hover:animate-float">📄</span> Statements
           </router-link>
         </template>
 
         <template v-if="['admin', 'principal'].includes(userRole)">
           <div class="pt-6 pb-2">
-            <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">System</p>
+            <p
+              class="px-4 text-[10px] font-black text-red-300/80 uppercase tracking-[0.2em] animate-pulse"
+            >
+              System
+            </p>
           </div>
           <router-link
             v-if="userRole === 'admin'"
             to="/admin"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-4 px-4 py-3.5 text-sm font-bold rounded-xl text-slate-300 hover:bg-white/10 hover:text-white hover:scale-105 transition-all duration-300 group"
+            active-class="bg-gradient-to-r from-school-red/80 to-school-red/20 text-white shadow-[0_0_20px_rgba(211,47,47,0.6)] border-l-4 border-white scale-105"
           >
-            <span class="text-lg">⚙️</span> Admin Console
+            <span class="text-xl group-hover:animate-spin-slow">⚙️</span> Console
           </router-link>
           <router-link
             to="/hr"
-            class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
-            active-class="bg-white/10 text-white border-l-4 border-school-red rounded-l-none"
+            class="flex items-center gap-4 px-4 py-3.5 text-sm font-bold rounded-xl text-slate-300 hover:bg-white/10 hover:text-white hover:scale-105 transition-all duration-300 group"
+            active-class="bg-gradient-to-r from-school-red/80 to-school-red/20 text-white shadow-[0_0_20px_rgba(211,47,47,0.6)] border-l-4 border-white scale-105"
           >
-            <span class="text-lg">🛡️</span> Staff & HR
+            <span class="text-xl group-hover:animate-pulse">🛡️</span> HR
           </router-link>
         </template>
       </nav>
 
       <!-- Sidebar Footer (Logout) -->
-      <div class="p-4 border-t border-slate-800 bg-school-navy">
-        <div class="flex items-center mb-4 px-2">
+      <div class="relative p-4 border-t border-white/10 bg-black/20 backdrop-blur-md">
+        <div
+          class="flex items-center mb-4 px-2 hover:translate-x-2 transition-transform duration-300"
+        >
           <div
-            class="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-white font-bold uppercase mr-3 border border-slate-700 shadow-sm"
+            class="h-12 w-12 rounded-full bg-gradient-to-tr from-school-red to-orange-500 flex items-center justify-center text-white font-black uppercase mr-3 shadow-[0_0_15px_rgba(211,47,47,0.8)] border-2 border-white animate-pulse-glow"
           >
             {{ userNameInitial }}
           </div>
           <div class="overflow-hidden">
-            <p class="text-sm font-bold text-white truncate">{{ userName }}</p>
-            <p class="text-[11px] text-slate-400 uppercase tracking-wider truncate">
+            <p class="text-base font-black font-heading text-white truncate drop-shadow-md">
+              {{ userName }}
+            </p>
+            <p class="text-[10px] text-red-200 uppercase tracking-widest truncate font-bold">
               {{ userRole }}
             </p>
           </div>
         </div>
         <button
           @click="logout"
-          class="w-full flex items-center justify-center gap-2 bg-slate-800/50 hover:bg-school-red/90 text-white py-2.5 rounded-lg transition-all duration-200 text-sm font-medium border border-slate-700 hover:border-school-red group"
+          class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-white/5 to-white/10 hover:from-school-red hover:to-red-600 text-white py-3 rounded-xl transition-all duration-500 text-sm font-bold border border-white/10 hover:border-transparent hover:shadow-[0_0_20px_rgba(211,47,47,0.8)] group hover:-translate-y-1"
         >
           <svg
-            class="w-4 h-4 text-slate-400 group-hover:text-white transition-colors"
+            class="w-5 h-5 text-red-300 group-hover:text-white transition-colors group-hover:animate-bounce"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -150,25 +178,30 @@
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              stroke-width="2"
+              stroke-width="2.5"
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
             ></path>
           </svg>
-          Sign Out
+          SIGN OUT
         </button>
       </div>
     </aside>
 
     <!-- MAIN CONTENT WRAPPER -->
-    <div class="flex-1 flex flex-col min-w-0 bg-school-grey overflow-hidden">
+    <div class="flex-1 flex flex-col min-w-0 bg-[#f8f9fc] overflow-hidden relative">
+      <!-- Animated Background elements for main content -->
+      <div
+        class="absolute top-0 right-0 w-full h-[500px] bg-gradient-to-b from-school-navy/5 to-transparent pointer-events-none"
+      ></div>
+
       <!-- TOP NAVIGATION BAR -->
       <header
-        class="bg-white/80 backdrop-blur-md border-b border-slate-200 h-20 flex items-center justify-between px-6 sm:px-8 z-10 shrink-0 sticky top-0"
+        class="bg-white/60 backdrop-blur-xl border-b border-white shadow-[0_4px_30px_rgba(0,0,0,0.05)] h-24 flex items-center justify-between px-8 z-30 shrink-0 sticky top-0"
       >
         <!-- Mobile Menu Button -->
         <button
           @click="isSidebarOpen = true"
-          class="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg focus:outline-none transition-colors"
+          class="md:hidden p-3 -ml-2 text-school-navy bg-white shadow-md hover:shadow-lg rounded-xl focus:outline-none transition-all hover:scale-110 active:scale-95"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -181,30 +214,36 @@
         </button>
 
         <!-- Contextual Header Area (Breadcrumbs) -->
-        <div class="hidden md:flex flex-col">
+        <div class="hidden md:flex flex-col animate-slide-up">
           <div
-            class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1"
+            class="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5"
           >
-            <span>{{ routeName }}</span>
+            <span class="hover:text-school-navy transition-colors cursor-pointer">{{
+              routeName
+            }}</span>
             <span class="text-slate-300">/</span>
-            <span class="text-school-red">{{ pageTitle }}</span>
+            <span class="text-school-red animate-pulse">{{ pageTitle }}</span>
           </div>
-          <h1 class="text-2xl font-black font-heading text-slate-800 tracking-tight leading-none">
+          <h1
+            class="text-3xl font-black font-heading text-transparent bg-clip-text bg-gradient-to-r from-school-navy to-blue-600 tracking-tight leading-none drop-shadow-sm hover:scale-105 origin-left transition-transform duration-300"
+          >
             {{ pageTitle }}
           </h1>
         </div>
-        <div class="md:hidden text-lg font-black font-heading text-slate-800 tracking-tight">
+        <div
+          class="md:hidden text-xl font-black font-heading text-school-navy tracking-tight drop-shadow-sm"
+        >
           Bona School
         </div>
 
         <!-- Right Side: Search, Term Selector, Notifications -->
-        <div class="flex items-center gap-3 sm:gap-5 ml-auto">
+        <div class="flex items-center gap-6 ml-auto">
           <!-- Search Bar -->
           <div
-            class="hidden lg:flex items-center bg-slate-50 border border-slate-200 rounded-full px-4 py-2 hover:bg-white hover:border-slate-300 transition-colors shadow-sm"
+            class="hidden lg:flex items-center bg-white border border-slate-100 rounded-2xl px-5 py-3 hover:border-blue-300 transition-all shadow-[0_5px_15px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_25px_rgba(10,25,47,0.1)] group w-72 hover:w-80 duration-500 ease-out focus-within:w-80 focus-within:border-school-navy focus-within:ring-4 ring-school-navy/10"
           >
             <svg
-              class="w-4 h-4 text-slate-400 mr-2"
+              class="w-5 h-5 text-slate-300 group-hover:text-school-navy transition-colors mr-3 group-hover:animate-spin-slow"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -212,64 +251,83 @@
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                stroke-width="2"
+                stroke-width="2.5"
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               ></path>
             </svg>
             <input
               type="text"
-              placeholder="Search students, staff..."
-              class="bg-transparent border-none outline-none text-sm w-48 text-slate-600 placeholder-slate-400"
+              placeholder="Search the extravagant..."
+              class="bg-transparent border-none outline-none text-sm w-full text-slate-700 placeholder-slate-300 font-bold"
             />
           </div>
 
           <!-- Global Term Selector -->
-          <div
-            class="flex items-center bg-white border border-slate-200 rounded-full px-4 py-2 shadow-sm hover:border-school-navy/20 transition-colors"
-          >
-            <svg
-              class="w-4 h-4 text-school-navy mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div class="relative group">
+            <div
+              class="absolute -inset-1 bg-gradient-to-r from-school-red to-orange-400 rounded-2xl blur opacity-20 group-hover:opacity-60 transition duration-500 group-hover:duration-200"
+            ></div>
+            <div
+              class="relative flex items-center bg-white border border-slate-100 rounded-2xl px-5 py-3 shadow-sm hover:shadow-md transition-all"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              ></path>
-            </svg>
-            <select
-              v-model="appStore.currentTerm"
-              class="bg-transparent text-sm font-bold text-slate-700 outline-none cursor-pointer appearance-none pr-2"
-            >
-              <option v-for="term in appStore.terms" :key="term" :value="term">{{ term }}</option>
-            </select>
+              <svg
+                class="w-5 h-5 text-school-red mr-3 animate-pulse"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                ></path>
+              </svg>
+              <select
+                v-model="appStore.currentTerm"
+                class="bg-transparent text-sm font-black text-school-navy outline-none cursor-pointer appearance-none pr-4 uppercase tracking-wider"
+              >
+                <option v-for="term in appStore.terms" :key="term" :value="term">{{ term }}</option>
+              </select>
+            </div>
           </div>
 
           <!-- Notification Bell -->
-          <button
-            class="relative p-2.5 text-slate-400 hover:text-school-navy hover:bg-slate-100 rounded-full transition-all duration-200 focus:outline-none border border-transparent hover:border-slate-200 bg-white shadow-sm"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              ></path>
-            </svg>
-            <span
-              class="absolute top-2 right-2 block h-2.5 w-2.5 rounded-full bg-school-red ring-2 ring-white"
-            ></span>
-          </button>
+          <div class="relative group">
+            <div
+              class="absolute -inset-1 bg-gradient-to-r from-blue-400 to-school-navy rounded-full blur opacity-0 group-hover:opacity-40 transition duration-500"
+            ></div>
+            <button
+              class="relative p-3.5 text-slate-400 hover:text-white hover:bg-school-navy rounded-full transition-all duration-300 focus:outline-none bg-white shadow-[0_5px_15px_rgba(0,0,0,0.05)] hover:shadow-lg hover:scale-110 active:scale-95 border border-slate-100 group-hover:border-transparent"
+            >
+              <svg
+                class="w-6 h-6 group-hover:animate-bounce-slow"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                ></path>
+              </svg>
+              <span
+                class="absolute top-2.5 right-2.5 block h-3 w-3 rounded-full bg-gradient-to-r from-school-red to-orange-500 ring-4 ring-white animate-pulse"
+              ></span>
+            </button>
+          </div>
         </div>
       </header>
 
-      <!-- DYNAMIC PAGE CONTENT -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-8 bg-school-grey">
-        <router-view />
+      <!-- DYNAMIC PAGE CONTENT WITH TRANSITIONS -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-10 relative z-10">
+        <router-view v-slot="{ Component }">
+          <transition name="fade-scale" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </main>
     </div>
   </div>
@@ -348,7 +406,21 @@ const logout = () => {
 </script>
 
 <style scoped>
-/* Optional: Custom scrollbar for sidebar */
+/* Extravagant Router Transitions */
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fade-scale-enter-from {
+  opacity: 0;
+  transform: scale(0.95) translateY(20px) rotateX(-10deg);
+}
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(1.05) translateY(-20px) rotateX(10deg);
+}
+
+/* Custom scrollbar for sidebar */
 aside nav::-webkit-scrollbar {
   width: 4px;
 }
@@ -360,6 +432,6 @@ aside nav::-webkit-scrollbar-thumb {
   border-radius: 4px;
 }
 aside nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.3);
 }
 </style>
