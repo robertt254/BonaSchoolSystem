@@ -65,7 +65,14 @@ class Token(BaseModel):
 class UserBase(BaseModel):
     username: str
     name: str
-    role: str  # admin, principal, accountant, teacher
+    role: str  # admin, principal, finance, teacher
+    kra_pin: Optional[str] = None
+    nssf_number: Optional[str] = None
+    nhif_number: Optional[str] = None
+    job_title: Optional[str] = None
+    date_of_hire: Optional[date] = None
+    contract_type: Optional[str] = None
+    accrued_leave_days: int = 0
 
 
 class UserCreate(UserBase):
@@ -77,10 +84,39 @@ class UserUpdate(BaseModel):
     name: Optional[str] = None
     role: Optional[str] = None
     password: Optional[str] = None  # Optional when editing
+    kra_pin: Optional[str] = None
+    nssf_number: Optional[str] = None
+    nhif_number: Optional[str] = None
+    job_title: Optional[str] = None
+    date_of_hire: Optional[date] = None
+    contract_type: Optional[str] = None
+    accrued_leave_days: Optional[int] = None
 
 
 class UserResponse(UserBase):
     id: int
+
+    class Config:
+        from_attributes = True
+
+
+# --- PAYROLL SCHEMAS ---
+class PayrollBase(BaseModel):
+    staff_id: int
+    basic_salary: float
+    allowances: float
+    deductions: float
+    net_pay: float
+    payment_month: str
+
+
+class PayrollCreate(PayrollBase):
+    pass
+
+
+class PayrollResponse(PayrollBase):
+    id: int
+    created_at: datetime
 
     class Config:
         from_attributes = True
@@ -119,3 +155,9 @@ class AttendanceResponse(AttendanceCreate):
 
     class Config:
         from_attributes = True
+
+class StudentProfile(BaseModel):
+    student: StudentResponse
+    attendance_percentage: float
+    assessments: list[AssessmentResponse]
+    fee_balance: float

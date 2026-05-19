@@ -44,4 +44,13 @@ export default {
     if (!response.ok) throw new Error('Failed to delete student')
     return await response.json()
   },
+
+  async getStudentProfile(studentId) {
+    const response = await fetch(`${API_URL}/${studentId}/profile`, {
+      method: 'GET',
+      headers: getHeaders(),
+    })
+    if (!response.ok) throw new Error('Failed to fetch student profile')
+    return await response.json()
+  },
 }

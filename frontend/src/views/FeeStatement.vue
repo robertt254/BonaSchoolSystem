@@ -102,7 +102,7 @@
 
       <div class="mt-16 pt-8 flex justify-between">
         <div class="w-64 border-t border-gray-400 text-center pt-2">
-          <p class="text-sm text-gray-600">Accountant Signature</p>
+          <p class="text-sm text-gray-600">Finance Officer Signature</p>
         </div>
         <div class="w-64 border-t border-gray-400 text-center pt-2">
           <p class="text-sm text-gray-600">Parent/Guardian Signature</p>

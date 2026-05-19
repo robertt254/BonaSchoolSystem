@@ -5,10 +5,10 @@ import models, schemas, auth
 
 router = APIRouter(prefix="/api/staff", tags=["Staff Management"])
 
-# Helper function to ensure only admins get in
-def verify_admin(current_user: models.User = Depends(auth.get_current_user)):
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Only System Administrators can manage staff")
+# Helper function to ensure only admins or principal get in
+def verify_admin_or_principal(current_user: models.User = Depends(auth.get_current_user)):
+    if current_user.role not in ["admin", "principal"]:
+        raise HTTPException(status_code=403, detail="Only System Administrators or Principals can manage staff")
     return current_user
 
 @router.get("/", response_model=list[schemas.UserResponse])
@@ -16,7 +16,7 @@ def get_all_staff(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    admin: models.User = Depends(verify_admin)
+    user: models.User = Depends(verify_admin_or_principal)
 ):
     return db.query(models.User).offset(skip).limit(limit).all()
 
@@ -24,7 +24,7 @@ def get_all_staff(
 def create_staff(
     user: schemas.UserCreate, 
     db: Session = Depends(get_db), 
-    admin: models.User = Depends(verify_admin)
+    admin: models.User = Depends(verify_admin_or_principal)
 ):
     # Check if username is already taken
     existing_user = db.query(models.User).filter(models.User.username == user.username).first()
@@ -34,11 +34,19 @@ def create_staff(
     # Hash the password before saving!
     hashed_pw = auth.pwd_context.hash(user.password)
     
+    # Pass all fields securely
     new_user = models.User(
         username=user.username,
         name=user.name,
         role=user.role,
-        hashed_password=hashed_pw
+        hashed_password=hashed_pw,
+        kra_pin=user.kra_pin,
+        nssf_number=user.nssf_number,
+        nhif_number=user.nhif_number,
+        job_title=user.job_title,
+        date_of_hire=user.date_of_hire,
+        contract_type=user.contract_type,
+        accrued_leave_days=user.accrued_leave_days
     )
     db.add(new_user)
     db.commit()
@@ -50,7 +58,7 @@ def update_staff(
     user_id: int, 
     user_update: schemas.UserUpdate, 
     db: Session = Depends(get_db), 
-    admin: models.User = Depends(verify_admin)
+    admin: models.User = Depends(verify_admin_or_principal)
 ):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if not db_user:
@@ -72,7 +80,7 @@ def update_staff(
 def terminate_staff(
     user_id: int, 
     db: Session = Depends(get_db), 
-    admin: models.User = Depends(verify_admin)
+    admin: models.User = Depends(verify_admin_or_principal)
 ):
     # The Ultimate Safety Check
     if admin.id == user_id:

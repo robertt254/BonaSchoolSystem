@@ -54,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
   const determineRoleFromUsername = (uname) => {
     if (uname.includes('admin')) return 'admin'
     if (uname.includes('principal')) return 'principal'
-    if (uname.includes('finance') || uname.includes('account')) return 'accountant'
+    if (uname.includes('finance')) return 'finance'
     if (uname.includes('secretary')) return 'secretary'
     return 'senior_teacher'
   }
