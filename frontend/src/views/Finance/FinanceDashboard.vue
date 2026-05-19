@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
@@ -25,10 +25,10 @@
 
     <div v-else class="space-y-8">
       <!-- High-Level Metrics -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
         <!-- Goal Progress -->
         <div
-          class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] col-span-1 sm:col-span-2 relative overflow-hidden group"
+          class="bg-white p-8 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] col-span-1 sm:col-span-2 relative overflow-hidden group"
         >
           <div
             class="absolute right-0 top-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"
@@ -62,7 +62,7 @@
 
         <!-- Total Revenue -->
         <div
-          class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
+          class="bg-white p-8 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
         >
           <div
             class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
@@ -88,7 +88,7 @@
         class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
       >
         <div
-          class="border-b border-slate-100 px-6 py-5 flex items-center justify-between bg-slate-50"
+          class="border-b border-slate-100 px-8 py-6 flex items-center justify-between bg-slate-50"
         >
           <div>
             <h3 class="text-lg font-bold text-slate-800 tracking-tight">Payroll Ledger</h3>
@@ -115,12 +115,12 @@
               <tr
                 class="bg-white text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-100"
               >
-                <th class="p-4 pl-6 font-bold">Month</th>
-                <th class="p-4 font-bold">Staff Member</th>
-                <th class="p-4 font-bold text-right">Basic</th>
-                <th class="p-4 font-bold text-right text-emerald-600">Allowances</th>
-                <th class="p-4 font-bold text-right text-school-red">Deductions</th>
-                <th class="p-4 pr-6 font-bold text-right text-slate-800">Net Pay</th>
+                <th class="py-5 px-8 font-bold">Month</th>
+                <th class="py-5 px-8 font-bold">Staff Member</th>
+                <th class="py-5 px-8 font-bold text-right">Basic</th>
+                <th class="py-5 px-8 font-bold text-right text-emerald-600">Allowances</th>
+                <th class="py-5 px-8 font-bold text-right text-school-red">Deductions</th>
+                <th class="py-5 px-8 pr-6 font-bold text-right text-slate-800">Net Pay</th>
               </tr>
             </thead>
             <tbody class="text-sm">
@@ -129,21 +129,21 @@
                 :key="pay.id"
                 class="border-b border-slate-50 hover:bg-slate-50/50 transition duration-150"
               >
-                <td class="p-4 pl-6 font-medium text-slate-500">{{ pay.payment_month }}</td>
-                <td class="p-4 font-bold text-slate-800">{{ getStaffName(pay.staff_id) }}</td>
-                <td class="p-4 text-right text-slate-600">
+                <td class="py-5 px-8 font-medium text-slate-500">{{ pay.payment_month }}</td>
+                <td class="py-5 px-8 font-bold text-slate-800">{{ getStaffName(pay.staff_id) }}</td>
+                <td class="py-5 px-8 text-right text-slate-600">
                   {{ formatCurrency(pay.basic_salary) }}
                 </td>
-                <td class="p-4 text-right text-emerald-600">
+                <td class="py-5 px-8 text-right text-emerald-600">
                   {{ formatCurrency(pay.allowances) }}
                 </td>
-                <td class="p-4 text-right text-school-red">{{ formatCurrency(pay.deductions) }}</td>
-                <td class="p-4 pr-6 text-right font-bold text-slate-800">
+                <td class="py-5 px-8 text-right text-school-red">{{ formatCurrency(pay.deductions) }}</td>
+                <td class="py-5 px-8 pr-6 text-right font-bold text-slate-800">
                   {{ formatCurrency(pay.net_pay) }}
                 </td>
               </tr>
               <tr v-if="payrollLedger.length === 0">
-                <td colspan="6" class="p-8 text-center text-slate-400 text-sm font-medium">
+                <td colspan="6" class="py-6 px-8 text-center text-slate-400 text-sm font-medium">
                   No payroll records found.
                 </td>
               </tr>
@@ -156,12 +156,12 @@
     <!-- Payroll Modal -->
     <div
       v-if="showPayrollModal"
-      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in"
+      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center py-5 px-8 z-50 animate-fade-in"
     >
       <div
         class="bg-white rounded-[12px] shadow-2xl w-full max-w-md overflow-hidden border border-[#E2E8F0]"
       >
-        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <h2 class="text-xl font-black text-slate-800 tracking-tight">Run Payroll</h2>
           <button
             @click="closePayrollModal"
@@ -178,7 +178,7 @@
           </button>
         </div>
 
-        <form @submit.prevent="submitPayroll" class="p-6 space-y-5">
+        <form @submit.prevent="submitPayroll" class="p-8 space-y-6">
           <div>
             <label
               class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
@@ -187,7 +187,7 @@
             <select
               v-model="payrollForm.staff_id"
               required
-              class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+              class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
             >
               <option disabled value="">-- Choose a staff member --</option>
               <option v-for="staff in activeStaff" :key="staff.id" :value="staff.id">
@@ -196,7 +196,7 @@
             </select>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-8">
             <div>
               <label
                 class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
@@ -206,7 +206,7 @@
                 v-model="payrollForm.payment_month"
                 required
                 type="month"
-                class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+                class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
               />
             </div>
             <div>
@@ -219,7 +219,7 @@
                 type="number"
                 min="0"
                 required
-                class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-bold text-slate-800 transition-all"
+                class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-bold text-slate-800 transition-all"
               />
             </div>
             <div>
@@ -232,7 +232,7 @@
                 type="number"
                 min="0"
                 required
-                class="w-full border border-emerald-200 rounded-[12px] p-3 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none bg-emerald-50/50 font-bold text-emerald-700 transition-all"
+                class="w-full border border-emerald-200 rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none bg-emerald-50/50 font-bold text-emerald-700 transition-all"
               />
             </div>
             <div>
@@ -245,14 +245,14 @@
                 type="number"
                 min="0"
                 required
-                class="w-full border border-red-200 rounded-[12px] p-3 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
+                class="w-full border border-red-200 rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
               />
             </div>
           </div>
 
           <!-- Net Pay Calculation -->
           <div
-            class="p-4 bg-slate-50 rounded-[12px] border border-[#E2E8F0] flex justify-between items-center mt-2"
+            class="py-5 px-8 bg-slate-50 rounded-[12px] border border-[#E2E8F0] flex justify-between items-center mt-2"
           >
             <span class="text-sm font-bold text-slate-500 uppercase tracking-widest"
               >Net Payable</span
@@ -262,17 +262,17 @@
             }}</span>
           </div>
 
-          <div class="flex justify-end space-x-3 pt-4 mt-2">
+          <div class="flex justify-end gap-6 pt-4 mt-2">
             <button
               type="button"
               @click="closePayrollModal"
-              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-[12px] font-bold transition-colors text-sm"
+              class="px-8 py-4 text-slate-600 hover:bg-slate-100 rounded-[12px] font-bold transition-colors text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              class="px-5 py-2.5 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
+              class="px-8 py-4 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
             >
               Disburse Funds
             </button>

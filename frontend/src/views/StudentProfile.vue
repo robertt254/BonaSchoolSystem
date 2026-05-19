@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto space-y-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
@@ -10,7 +10,7 @@
       </div>
       <button
         @click="$router.back()"
-        class="text-sm font-bold text-school-navy bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg transition-colors"
+        class="text-sm font-bold text-school-navy bg-slate-100 hover:bg-slate-200 px-6 py-3.5 rounded-lg transition-colors"
       >
         &larr; Back
       </button>
@@ -28,10 +28,10 @@
     </div>
 
     <!-- Content -->
-    <div v-else-if="profile" class="space-y-6">
+    <div v-else-if="profile" class="space-y-8">
       <!-- Profile Card -->
       <div
-        class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] p-6 flex flex-col sm:flex-row sm:items-center gap-6 relative overflow-hidden group"
+        class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] p-8 flex flex-col sm:flex-row sm:items-center gap-8 relative overflow-hidden group"
       >
         <div
           class="absolute right-0 top-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"
@@ -74,10 +74,10 @@
       </div>
 
       <!-- Quick Metrics Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
         <!-- Attendance -->
         <div
-          class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
+          class="bg-white p-8 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
         >
           <div
             class="absolute right-0 top-0 w-24 h-24 bg-purple-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
@@ -100,7 +100,7 @@
 
         <!-- Finance -->
         <div
-          class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
+          class="bg-white p-8 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
         >
           <div
             class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
@@ -133,7 +133,7 @@
       <div
         class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
       >
-        <div class="border-b border-slate-100 px-6 py-5">
+        <div class="border-b border-slate-100 px-8 py-6">
           <h3 class="text-lg font-bold text-slate-800 tracking-tight">CBC Assessments</h3>
           <p class="text-xs text-slate-500 mt-0.5">Academic progress and scores.</p>
         </div>
@@ -143,10 +143,10 @@
               <tr
                 class="bg-school-grey border-b border-[#E2E8F0] text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
               >
-                <th class="p-4 pl-6 font-bold">Term</th>
-                <th class="p-4 font-bold">Learning Area</th>
-                <th class="p-4 font-bold">Score</th>
-                <th class="p-4 pr-6 font-bold">Remarks</th>
+                <th class="py-5 px-8 font-bold">Term</th>
+                <th class="py-5 px-8 font-bold">Learning Area</th>
+                <th class="py-5 px-8 font-bold">Score</th>
+                <th class="py-5 px-8 font-bold">Remarks</th>
               </tr>
             </thead>
             <tbody class="text-sm">
@@ -155,13 +155,13 @@
                 :key="assessment.id"
                 class="border-b border-slate-50 hover:bg-slate-50/50 transition duration-150"
               >
-                <td class="p-4 pl-6 font-medium text-slate-500">{{ assessment.term }}</td>
-                <td class="p-4 font-bold text-slate-800">{{ assessment.learning_area }}</td>
-                <td class="p-4 font-bold text-school-navy">{{ assessment.score }}</td>
-                <td class="p-4 pr-6 text-slate-500 text-xs">{{ assessment.remarks || '-' }}</td>
+                <td class="py-5 px-8 font-medium text-slate-500">{{ assessment.term }}</td>
+                <td class="py-5 px-8 font-bold text-slate-800">{{ assessment.learning_area }}</td>
+                <td class="py-5 px-8 font-bold text-school-navy">{{ assessment.score }}</td>
+                <td class="py-5 px-8 text-slate-500 text-xs">{{ assessment.remarks || '-' }}</td>
               </tr>
               <tr v-if="profile.assessments.length === 0">
-                <td colspan="4" class="p-8 text-center text-slate-400 text-sm font-medium">
+                <td colspan="4" class="py-6 px-8 text-center text-slate-400 text-sm font-medium">
                   No assessments recorded yet.
                 </td>
               </tr>

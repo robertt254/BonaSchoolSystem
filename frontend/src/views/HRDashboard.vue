@@ -1,6 +1,6 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-8">
       <div>
         <h1 class="font-heading text-[22px] font-bold text-[#0F172A] tracking-tight">
           HR & Staff Management
@@ -11,7 +11,7 @@
       </div>
       <button
         @click="openModal()"
-        class="bg-school-navy hover:bg-school-navy/90 text-white px-5 py-2.5 rounded-[12px] font-bold transition-all shadow-sm hover:shadow flex items-center gap-2 text-sm"
+        class="bg-school-navy hover:bg-school-navy/90 text-white px-8 py-4 rounded-[12px] font-bold transition-all shadow-sm hover:shadow flex items-center gap-6 text-sm"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -47,12 +47,12 @@
             <tr
               class="bg-school-grey border-b border-[#E2E8F0] text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
             >
-              <th class="p-4 pl-6 font-bold">Staff Member</th>
-              <th class="p-4 font-bold">Role & Title</th>
-              <th class="p-4 font-bold">Contract</th>
-              <th class="p-4 font-bold">Compliance (KRA/NSSF/NHIF)</th>
-              <th class="p-4 font-bold">Leave Days</th>
-              <th class="p-4 pr-6 font-bold text-right">Actions</th>
+              <th class="py-5 px-8 font-bold">Staff Member</th>
+              <th class="py-5 px-8 font-bold">Role & Title</th>
+              <th class="py-5 px-8 font-bold">Contract</th>
+              <th class="py-5 px-8 font-bold">Compliance (KRA/NSSF/NHIF)</th>
+              <th class="py-5 px-8 font-bold">Leave Days</th>
+              <th class="py-5 px-8 pr-6 font-bold text-right">Actions</th>
             </tr>
           </thead>
           <tbody class="text-sm">
@@ -61,19 +61,19 @@
               :key="staff.id"
               class="border-b border-slate-50 hover:bg-slate-50/50 transition duration-150"
             >
-              <td class="p-4 pl-6">
+              <td class="py-5 px-8">
                 <div class="font-bold text-slate-800">{{ staff.name }}</div>
                 <div class="text-xs text-slate-500 font-medium">Username: {{ staff.username }}</div>
               </td>
-              <td class="p-4">
+              <td class="py-5 px-8">
                 <div class="font-bold text-school-navy capitalize">{{ staff.role }}</div>
                 <div class="text-xs text-slate-500">{{ staff.job_title || 'N/A' }}</div>
               </td>
-              <td class="p-4 text-slate-600 font-medium text-xs">
+              <td class="py-5 px-8 text-slate-600 font-medium text-xs">
                 <div>{{ staff.contract_type || 'N/A' }}</div>
                 <div class="text-slate-400 mt-0.5">Hired: {{ staff.date_of_hire || 'N/A' }}</div>
               </td>
-              <td class="p-4 text-[10px] text-slate-500 font-mono space-y-1">
+              <td class="py-5 px-8 text-[10px] text-slate-500 font-mono space-y-1">
                 <div>
                   KRA:
                   <span class="font-bold text-slate-700">{{ staff.kra_pin || 'Pending' }}</span>
@@ -87,8 +87,8 @@
                   <span class="font-bold text-slate-700">{{ staff.nhif_number || 'Pending' }}</span>
                 </div>
               </td>
-              <td class="p-4 font-bold text-slate-700">{{ staff.accrued_leave_days }}</td>
-              <td class="p-4 pr-6 text-right">
+              <td class="py-5 px-8 font-bold text-slate-700">{{ staff.accrued_leave_days }}</td>
+              <td class="py-5 px-8 pr-6 text-right">
                 <button
                   @click="openModal(staff)"
                   class="text-xs font-bold text-slate-500 hover:text-school-navy mr-3 transition-colors"
@@ -112,11 +112,11 @@
     <!-- Hire / Edit Modal -->
     <div
       v-if="showModal"
-      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in overflow-y-auto"
+      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center py-5 px-8 z-50 animate-fade-in overflow-y-auto"
     >
       <div class="bg-white rounded-[12px] shadow-2xl w-full max-w-2xl overflow-hidden my-8">
         <div
-          class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 sticky top-0 z-10"
+          class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50 sticky top-0 z-10"
         >
           <h2 class="text-xl font-black text-slate-800 tracking-tight">
             {{ isEditing ? 'Edit Staff Profile' : 'Hire New Staff' }}
@@ -136,13 +136,13 @@
           </button>
         </div>
 
-        <form @submit.prevent="saveStaff" class="p-6 space-y-6">
+        <form @submit.prevent="saveStaff" class="p-8 space-y-6">
           <!-- Basic Info -->
           <div class="space-y-4">
             <h3 class="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2">
               Basic Information
             </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div>
                 <label
                   class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
@@ -152,7 +152,7 @@
                   v-model="formData.name"
                   required
                   type="text"
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
               <div>
@@ -165,7 +165,7 @@
                   required
                   type="text"
                   :disabled="isEditing"
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium disabled:opacity-50"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium disabled:opacity-50"
                 />
               </div>
               <div v-if="!isEditing">
@@ -177,7 +177,7 @@
                   v-model="formData.password"
                   required
                   type="password"
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
               <div>
@@ -188,7 +188,7 @@
                 <select
                   v-model="formData.role"
                   required
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 >
                   <option value="teacher">Teacher</option>
                   <option value="finance">Finance Officer</option>
@@ -205,7 +205,7 @@
             <h3 class="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2">
               Employment Details
             </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div>
                 <label
                   class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
@@ -214,7 +214,7 @@
                 <input
                   v-model="formData.job_title"
                   type="text"
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
               <div>
@@ -224,7 +224,7 @@
                 >
                 <select
                   v-model="formData.contract_type"
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 >
                   <option value="Permanent">Permanent & Pensionable</option>
                   <option value="Contract">Contract</option>
@@ -239,7 +239,7 @@
                 <input
                   v-model="formData.date_of_hire"
                   type="date"
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
               <div>
@@ -251,7 +251,7 @@
                   v-model.number="formData.accrued_leave_days"
                   type="number"
                   min="0"
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
             </div>
@@ -262,7 +262,7 @@
             <h3 class="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2">
               Compliance (Kenyan Law)
             </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div>
                 <label
                   class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
@@ -271,7 +271,7 @@
                 <input
                   v-model="formData.kra_pin"
                   type="text"
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium uppercase"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium uppercase"
                 />
               </div>
               <div>
@@ -282,7 +282,7 @@
                 <input
                   v-model="formData.nssf_number"
                   type="text"
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
               <div>
@@ -293,7 +293,7 @@
                 <input
                   v-model="formData.nhif_number"
                   type="text"
-                  class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
             </div>
@@ -303,13 +303,13 @@
             <button
               type="button"
               @click="closeModal"
-              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-[12px] font-bold transition-colors text-sm"
+              class="px-8 py-4 text-slate-600 hover:bg-slate-100 rounded-[12px] font-bold transition-colors text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              class="px-5 py-2.5 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
+              class="px-8 py-4 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
             >
               {{ isEditing ? 'Save Changes' : 'Hire Staff' }}
             </button>

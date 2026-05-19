@@ -1,16 +1,16 @@
 <template>
-  <div class="p-8 bg-slate-50 min-h-screen print:p-0 print:bg-white">
-    <div class="mb-8 bg-white p-6 rounded-[12px] shadow-sm border border-[#E2E8F0] print:hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-slate-50 min-h-screen print:p-0 print:bg-white">
+    <div class="mb-8 bg-white p-8 rounded-[12px] shadow-sm border border-[#E2E8F0] print:hidden">
       <h1 class="font-heading text-[22px] font-bold text-[#0F172A] mb-4">
         Generate Official Report Card
       </h1>
 
-      <div class="flex space-x-4 items-end">
+      <div class="flex gap-8 items-end">
         <div class="flex-1">
           <label class="block text-sm font-medium text-slate-700 mb-1">Select Student</label>
           <select
             v-model="selectedStudent"
-            class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
+            class="w-full border px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
           >
             <option disabled value="">-- Choose a student --</option>
             <option v-for="student in students" :key="student.id" :value="student.id">
@@ -23,7 +23,7 @@
           <label class="block text-sm font-medium text-slate-700 mb-1">Academic Term</label>
           <select
             v-model="selectedTerm"
-            class="w-full border p-2 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
+            class="w-full border px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
           >
             <option value="Term 1">Term 1</option>
             <option value="Term 2">Term 2</option>
@@ -34,7 +34,7 @@
         <button
           @click="loadReport"
           :disabled="!selectedStudent"
-          class="bg-school-navy text-white px-6 py-2 rounded-lg font-medium hover:bg-school-navy/90 transition disabled:bg-gray-300"
+          class="bg-school-navy text-white px-6 py-3.5 rounded-lg font-medium hover:bg-school-navy/90 transition disabled:bg-gray-300"
         >
           Generate Report
         </button>
@@ -53,7 +53,7 @@
       </div>
 
       <div
-        class="flex justify-between items-center bg-school-grey/50 p-6 rounded-lg mb-8 border border-school-grey/80"
+        class="flex justify-between items-center bg-school-grey/50 p-8 rounded-lg mb-8 border border-school-grey/80"
       >
         <div>
           <p class="text-sm text-school-navy/90 font-bold uppercase tracking-wider">Student Name</p>
@@ -72,17 +72,17 @@
         <thead>
           <tr class="bg-gray-100">
             <th
-              class="border border-gray-300 p-3 text-left font-bold text-gray-800 uppercase text-sm w-1/3"
+              class="py-5 px-8 text-left font-bold text-gray-800 uppercase text-sm w-1/3"
             >
               Learning Area
             </th>
             <th
-              class="border border-gray-300 p-3 text-center font-bold text-gray-800 uppercase text-sm w-1/6"
+              class="py-5 px-8 text-center font-bold text-gray-800 uppercase text-sm w-1/6"
             >
               Score
             </th>
             <th
-              class="border border-gray-300 p-3 text-left font-bold text-gray-800 uppercase text-sm"
+              class="py-5 px-8 text-left font-bold text-gray-800 uppercase text-sm"
             >
               Teacher's Remarks
             </th>
@@ -90,11 +90,11 @@
         </thead>
         <tbody>
           <tr v-for="result in reportData.results" :key="result.learning_area">
-            <td class="border border-gray-300 p-3 font-medium text-gray-900">
+            <td class="py-5 px-8 font-medium text-gray-900">
               {{ result.learning_area }}
             </td>
             <td
-              class="border border-gray-300 p-3 text-center font-black text-lg"
+              class="py-5 px-8 text-center font-black text-lg"
               :class="{
                 'text-green-600': result.score === 'EE',
                 'text-school-navy/70': result.score === 'ME',
@@ -104,19 +104,19 @@
             >
               {{ result.score }}
             </td>
-            <td class="border border-gray-300 p-3 text-gray-700 italic">
+            <td class="py-5 px-8 text-gray-700 italic">
               {{ result.remarks || '---' }}
             </td>
           </tr>
           <tr v-if="reportData.results.length === 0">
-            <td colspan="3" class="p-8 text-center text-gray-500 font-medium">
+            <td colspan="3" class="py-6 px-8 text-center text-gray-500 font-medium">
               No assessments recorded for this term yet.
             </td>
           </tr>
         </tbody>
       </table>
 
-      <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-12">
+      <div class="bg-gray-50 border border-gray-200 p-8 rounded-lg mb-12">
         <h4 class="font-bold text-gray-800 uppercase text-sm mb-4 border-b pb-2">
           CBC Grading Key
         </h4>
@@ -140,7 +140,7 @@
       <div class="mt-16 text-center print:hidden">
         <button
           @click="printDoc"
-          class="bg-gray-900 text-white px-8 py-3 rounded-lg shadow-lg hover:bg-black font-bold"
+          class="bg-gray-900 text-white px-8 py-4 rounded-lg shadow-lg hover:bg-black font-bold"
         >
           🖨️ Print Report Card
         </button>

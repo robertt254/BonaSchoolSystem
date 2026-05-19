@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     <!-- Page Header -->
     <div class="mb-10">
       <h1 class="font-heading text-[22px] font-bold text-[#0F172A] tracking-tight">
@@ -9,10 +9,10 @@
     </div>
 
     <!-- Quick Stat Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
       <!-- Card 1 -->
       <div
-        class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow relative overflow-hidden group"
+        class="bg-white p-8 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow relative overflow-hidden group"
       >
         <div
           class="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
@@ -53,7 +53,7 @@
 
       <!-- Card 2 -->
       <div
-        class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow relative overflow-hidden group"
+        class="bg-white p-8 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow relative overflow-hidden group"
       >
         <div
           class="absolute right-0 top-0 w-24 h-24 bg-purple-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
@@ -94,7 +94,7 @@
 
       <!-- Card 3 -->
       <div
-        class="bg-white p-6 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow relative overflow-hidden group"
+        class="bg-white p-8 rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] hover:shadow-md transition-shadow relative overflow-hidden group"
       >
         <div
           class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
@@ -134,12 +134,12 @@
       class="relative bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
     >
       <!-- Table Header Skeleton -->
-      <div class="border-b border-slate-100 px-6 py-5 flex items-center justify-between">
+      <div class="border-b border-slate-100 px-8 py-6 flex items-center justify-between">
         <h3 class="text-lg font-bold text-slate-800">Recent Activity</h3>
         <div class="h-8 w-24 bg-slate-100 rounded animate-pulse"></div>
       </div>
       <!-- Table Body Skeleton -->
-      <div class="p-6">
+      <div class="p-8">
         <div class="space-y-4">
           <div
             v-for="i in 4"

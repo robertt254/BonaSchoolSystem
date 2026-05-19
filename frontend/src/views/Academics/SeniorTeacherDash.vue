@@ -1,7 +1,7 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-6 animate-fade-in pb-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in pb-12">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8 mb-2">
       <div>
         <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
           Academics & Grading
@@ -12,14 +12,14 @@
 
     <!-- Flat Class Navigation Tabs -->
     <div
-      class="bg-white p-2 rounded-[12px] shadow-sm border border-[#E2E8F0] overflow-x-auto flex gap-2"
+      class="bg-white p-8 rounded-[12px] shadow-sm border border-[#E2E8F0] overflow-x-auto flex gap-2"
     >
       <button
         v-for="grade in cbcGrades"
         :key="grade"
         @click="selectedGrade = grade"
         :class="[
-          'px-5 py-2.5 rounded-[12px] text-sm font-bold whitespace-nowrap transition-all',
+          'px-6 py-3.5 rounded-[12px] text-sm font-bold whitespace-nowrap transition-all',
           selectedGrade === grade
             ? 'bg-school-navy text-white shadow-md'
             : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
@@ -33,7 +33,7 @@
     <div class="bg-white rounded-[12px] shadow-sm border border-[#E2E8F0] overflow-hidden mt-6">
       <!-- Content Header -->
       <div
-        class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50"
+        class="p-8 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50"
       >
         <div>
           <h3 class="text-lg font-bold text-slate-800 tracking-tight">
@@ -85,11 +85,11 @@
             <tr
               class="bg-school-grey border-b border-[#E2E8F0] text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
             >
-              <th class="p-4 pl-6 font-bold w-12">#</th>
-              <th class="p-4 font-bold">Student Name</th>
-              <th class="p-4 font-bold">Admission No.</th>
-              <th class="p-4 font-bold">Status</th>
-              <th class="p-4 pr-6 font-bold text-right">Actions</th>
+              <th class="py-5 px-8 font-bold w-12">#</th>
+              <th class="py-5 px-8 font-bold">Student Name</th>
+              <th class="py-5 px-8 font-bold">Admission No.</th>
+              <th class="py-5 px-8 font-bold">Status</th>
+              <th class="py-5 px-8 font-bold text-right">Actions</th>
             </tr>
           </thead>
 
@@ -99,8 +99,8 @@
               :key="student.id"
               class="border-b border-slate-50 hover:bg-slate-50/80 transition-colors group"
             >
-              <td class="p-4 pl-6 text-slate-400 font-medium">{{ index + 1 }}</td>
-              <td class="p-4 font-bold text-slate-800">
+              <td class="py-5 px-8 text-slate-400 font-medium">{{ index + 1 }}</td>
+              <td class="py-5 px-8 font-bold text-slate-800">
                 <div class="flex items-center gap-3">
                   <div
                     class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs border border-[#E2E8F0]"
@@ -110,8 +110,8 @@
                   {{ student.first_name }} {{ student.last_name }}
                 </div>
               </td>
-              <td class="p-4 text-slate-500 font-medium">{{ student.admission_number }}</td>
-              <td class="p-4">
+              <td class="py-5 px-8 text-slate-500 font-medium">{{ student.admission_number }}</td>
+              <td class="py-5 px-8">
                 <span
                   class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border"
                   :class="
@@ -123,16 +123,16 @@
                   {{ student.status }}
                 </span>
               </td>
-              <td class="p-4 pr-6 text-right flex gap-2 justify-end">
+              <td class="py-5 px-8 text-right flex gap-2 justify-end">
                 <router-link
                   :to="`/students/${student.id}/profile`"
-                  class="text-xs font-bold text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 px-3 py-1.5 rounded-lg transition-colors border border-[#E2E8F0]"
+                  class="text-xs font-bold text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 px-6 py-3.5 rounded-lg transition-colors border border-[#E2E8F0]"
                 >
                   Profile
                 </router-link>
                 <button
                   @click="openGradingModal(student)"
-                  class="text-xs font-bold text-school-navy bg-school-navy/5 hover:bg-school-navy hover:text-white px-3 py-1.5 rounded-lg transition-colors border border-school-navy/10 hover:border-school-navy"
+                  class="text-xs font-bold text-school-navy bg-school-navy/5 hover:bg-school-navy hover:text-white px-6 py-3.5 rounded-lg transition-colors border border-school-navy/10 hover:border-school-navy"
                 >
                   Enter Grades
                 </button>
@@ -140,7 +140,7 @@
             </tr>
 
             <tr v-if="filteredStudents.length === 0">
-              <td colspan="5" class="p-12 text-center">
+              <td colspan="5" class="py-12 px-8 text-center">
                 <div class="flex flex-col items-center justify-center text-slate-400">
                   <span class="text-4xl mb-3"></span>
                   <p class="font-medium text-sm">No students found in {{ selectedGrade }}.</p>
@@ -160,7 +160,7 @@
       <div
         class="bg-white rounded-[12px] shadow-2xl w-full max-w-lg overflow-hidden border border-[#E2E8F0]"
       >
-        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <div>
             <h2 class="font-heading text-[22px] font-bold text-[#0F172A] tracking-tight">
               Record Assessments
@@ -185,7 +185,7 @@
           </button>
         </div>
 
-        <form @submit.prevent="submitScore" class="p-6 space-y-4">
+        <form @submit.prevent="submitScore" class="p-8 space-y-6">
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label
@@ -230,7 +230,7 @@
             <textarea
               v-model="gradeForm.remarks"
               rows="2"
-              class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm"
+              class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm"
               placeholder="Enter optional comments..."
             ></textarea>
           </div>
@@ -238,7 +238,7 @@
           <div class="flex justify-end pt-4">
             <button
               type="submit"
-              class="px-5 py-2.5 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm w-full"
+              class="px-8 py-4 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm w-full"
             >
               Submit Score
             </button>

@@ -1,8 +1,8 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-[22px] pb-20 relative">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative">
     <!-- Welcome Banner -->
     <div
-      class="relative rounded-[18px] p-[28px_32px] overflow-hidden flex flex-col sm:flex-row items-center justify-between shadow-sm animate-slide-in"
+      class="relative rounded-[18px] p-8 overflow-hidden flex flex-col sm:flex-row items-center justify-between shadow-sm animate-slide-in"
       style="background: linear-gradient(130deg, #0a192f 0%, #1a0f40 50%, #0f172a 100%)"
     >
       <!-- Decorative Layers -->
@@ -29,7 +29,7 @@
           active.
         </p>
         <button
-          class="mt-[16px] inline-flex items-center gap-[6px] bg-white/10 border border-white/[0.12] text-white/75 text-[12.5px] font-semibold px-[16px] py-[7px] rounded-[8px] cursor-pointer hover:bg-white/15 hover:text-white transition-all"
+          class="mt-[16px] inline-flex items-center gap-[6px] bg-white/10 border border-white/[0.12] text-white/75 text-[12.5px] font-semibold px-6 py-3.5 rounded-[8px] cursor-pointer hover:bg-white/15 hover:text-white transition-all"
         >
           <svg
             class="w-[16px] h-[16px]"
@@ -89,7 +89,7 @@
     <div v-else class="space-y-[18px] relative z-10">
       <!-- Stats Grid -->
       <div
-        class="grid grid-cols-1 md:grid-cols-3 gap-[16px]"
+        class="grid grid-cols-1 md:grid-cols-3 gap-8"
         style="animation: slideIn 0.4s 0.08s ease both"
       >
         <!-- Total Enrolled -->
@@ -228,12 +228,12 @@
 
       <!-- Two-Column Section -->
       <div
-        class="grid grid-cols-1 lg:grid-cols-2 gap-[18px]"
+        class="grid grid-cols-1 lg:grid-cols-2 gap-8"
         style="animation: slideIn 0.4s 0.18s ease both"
       >
         <!-- Quick Actions Panel -->
         <div class="bg-white border border-[#E2E8F0] rounded-[12px] overflow-hidden">
-          <div class="flex items-center justify-between p-[16px_20px] border-b border-[#E2E8F0]">
+          <div class="flex items-center justify-between p-8 border-b border-[#E2E8F0]">
             <div>
               <h3 class="font-heading text-[14.5px] font-bold text-[#0F172A]">Quick Actions</h3>
               <p class="text-[11.5px] text-[#94A3B8] mt-[1px]">Common tasks and shortcuts</p>
@@ -243,10 +243,10 @@
               >View All</span
             >
           </div>
-          <div class="grid grid-cols-2 gap-[10px] p-[14px]">
+          <div class="grid grid-cols-2 gap-[10px] p-8">
             <router-link
               to="/academics/attendance"
-              class="flex items-center gap-[12px] p-[14px] rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(211,47,47,0.12)] text-school-red"
@@ -272,7 +272,7 @@
 
             <router-link
               to="/finance"
-              class="flex items-center gap-[12px] p-[14px] rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(5,150,105,0.1)] text-[#059669]"
@@ -298,7 +298,7 @@
 
             <router-link
               to="/academics"
-              class="flex items-center gap-[12px] p-[14px] rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(37,99,235,0.1)] text-[#2563EB]"
@@ -325,7 +325,7 @@
 
             <router-link
               to="/office"
-              class="flex items-center gap-[12px] p-[14px] rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(217,119,6,0.1)] text-[#D97706]"
@@ -352,7 +352,7 @@
 
             <router-link
               to="/academics/report-card"
-              class="flex items-center gap-[12px] p-[14px] rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(211,47,47,0.12)] text-school-red"
@@ -380,7 +380,7 @@
 
             <router-link
               to="/finance/statements"
-              class="flex items-center gap-[12px] p-[14px] rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(37,99,235,0.1)] text-[#2563EB]"
@@ -409,7 +409,7 @@
 
         <!-- Activity Feed Panel -->
         <div class="bg-white border border-[#E2E8F0] rounded-[12px] overflow-hidden">
-          <div class="flex items-center justify-between p-[16px_20px] border-b border-[#E2E8F0]">
+          <div class="flex items-center justify-between p-8 border-b border-[#E2E8F0]">
             <div>
               <h3 class="font-heading text-[14.5px] font-bold text-[#0F172A]">Activity Feed</h3>
               <p class="text-[11.5px] text-[#94A3B8] mt-[1px]">Latest system events</p>
@@ -424,7 +424,7 @@
             <div
               v-for="activity in recentActivity"
               :key="activity.id"
-              class="flex items-start gap-[12px] p-[12px_20px] border-b border-[#E2E8F0] last:border-b-0 cursor-pointer transition-colors hover:bg-[#F8FAFC]"
+              class="flex items-start gap-6 p-8 border-b border-[#E2E8F0] last:border-b-0 cursor-pointer transition-colors hover:bg-[#F8FAFC]"
             >
               <div
                 class="w-[34px] h-[34px] rounded-full flex items-center justify-center font-heading font-bold text-[13px] flex-shrink-0 mt-[1px]"

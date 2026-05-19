@@ -1,18 +1,18 @@
 <template>
-  <div class="p-8 bg-gray-50 min-h-screen">
-    <div class="mb-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-gray-50 min-h-screen">
+    <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-800">Daily Roll Call</h1>
       <p class="text-gray-600 mt-1">Record attendance for the current school day.</p>
     </div>
 
     <div
-      class="flex space-x-4 mb-8 bg-white p-6 rounded-[12px] shadow-sm border border-gray-100 items-end"
+      class="flex gap-8 mb-8 bg-white p-8 rounded-[12px] shadow-sm border border-gray-100 items-end"
     >
       <div class="flex-1 max-w-sm">
         <label class="block text-sm font-medium text-gray-700 mb-1">Select CBC Grade</label>
         <select
           v-model="selectedGrade"
-          class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
+          class="w-full border border-gray-300 px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
         >
           <option v-for="g in grades" :key="g" :value="g">{{ g }}</option>
         </select>
@@ -20,7 +20,7 @@
 
       <button
         @click="loadClassList"
-        class="bg-school-navy text-white px-6 py-2 rounded-lg font-medium hover:bg-school-navy/90 transition shadow"
+        class="bg-school-navy text-white px-6 py-3.5 rounded-lg font-medium hover:bg-school-navy/90 transition shadow"
       >
         Load Students
       </button>
@@ -31,7 +31,7 @@
       class="bg-white rounded-[12px] shadow-sm border border-gray-100 overflow-hidden"
     >
       <div
-        class="bg-school-grey/50 p-4 border-b border-school-grey/80 flex justify-between items-center"
+        class="bg-school-grey/50 p-8 border-b border-school-grey/80 flex justify-between items-center"
       >
         <h2 class="font-bold text-school-navy">{{ selectedGrade }} Roster</h2>
         <span class="text-sm font-medium text-blue-700 bg-school-grey px-3 py-1 rounded-full"
@@ -42,9 +42,9 @@
       <table class="w-full text-left">
         <thead class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider">
           <tr>
-            <th class="p-4 font-semibold w-1/3">Student Name</th>
-            <th class="p-4 font-semibold w-1/4">Status</th>
-            <th class="p-4 font-semibold">Remarks (Optional)</th>
+            <th class="py-5 px-8 font-semibold w-1/3">Student Name</th>
+            <th class="py-5 px-8 font-semibold w-1/4">Status</th>
+            <th class="py-5 px-8 font-semibold">Remarks (Optional)</th>
           </tr>
         </thead>
         <tbody>
@@ -53,8 +53,8 @@
             :key="s.student_id"
             class="border-b border-gray-50 hover:bg-gray-50 transition"
           >
-            <td class="p-4 font-medium text-gray-800">{{ s.name }}</td>
-            <td class="p-4">
+            <td class="py-5 px-8 font-medium text-gray-800">{{ s.name }}</td>
+            <td class="py-5 px-8">
               <label class="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -69,21 +69,21 @@
                 </span>
               </label>
             </td>
-            <td class="p-4">
+            <td class="py-5 px-8">
               <input
                 v-model="s.remarks"
                 placeholder="E.g., Sick, Sent home for fees..."
-                class="border border-gray-300 p-2 rounded-lg w-full text-sm focus:ring-2 focus:ring-school-navy outline-none"
+                class="border border-gray-300 px-4 py-3.5 rounded-lg w-full text-sm focus:ring-2 focus:ring-school-navy outline-none"
               />
             </td>
           </tr>
         </tbody>
       </table>
 
-      <div class="p-6 bg-gray-50 text-right border-t border-gray-100">
+      <div class="p-8 bg-gray-50 text-right border-t border-gray-100">
         <button
           @click="saveAttendance"
-          class="bg-green-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-green-600 transition flex items-center justify-center ml-auto"
+          class="bg-green-700 text-white px-8 py-4 rounded-lg font-bold shadow-lg hover:bg-green-600 transition flex items-center justify-center ml-auto"
         >
           Submit Roll Call
         </button>
