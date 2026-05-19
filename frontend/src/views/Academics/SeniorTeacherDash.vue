@@ -177,25 +177,18 @@
           </button>
         </div>
 
-        <div class="p-6 space-y-4">
-          <div
-            class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm flex gap-3"
-          >
-            <span>⚠️</span>
-            <p>
-              Grading submission module is under construction. Values entered here will not be
-              permanently saved yet.
-            </p>
-          </div>
-
+        <form @submit.prevent="submitScore" class="p-6 space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5"
                 >Learning Area</label
               >
               <select
+                v-model="gradeForm.learning_area"
+                required
                 class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
               >
+                <option disabled value="">Select Area</option>
                 <option>Mathematics Activities</option>
                 <option>Language Activities</option>
                 <option>Environmental Activities</option>
@@ -206,8 +199,11 @@
                 >Score (CBC)</label
               >
               <select
+                v-model="gradeForm.score"
+                required
                 class="w-full border border-slate-200 rounded-xl p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-bold text-school-navy"
               >
+                <option disabled value="">Select Score</option>
                 <option value="EE">Exceeding (EE)</option>
                 <option value="ME">Meeting (ME)</option>
                 <option value="AE">Approaching (AE)</option>
@@ -221,6 +217,7 @@
               >Teacher's Remarks</label
             >
             <textarea
+              v-model="gradeForm.remarks"
               rows="2"
               class="w-full border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm"
               placeholder="Enter optional comments..."
@@ -229,22 +226,23 @@
 
           <div class="flex justify-end pt-4">
             <button
-              @click="showGradeModal = false"
+              type="submit"
               class="px-5 py-2.5 bg-school-navy text-white rounded-xl font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm w-full"
             >
               Submit Score
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useAppStore } from '@/stores/app'
 import studentService from '@/services/studentService'
+import academicService from '@/services/academicService'
 
 const appStore = useAppStore()
 
@@ -269,6 +267,12 @@ const students = ref([])
 // Modal state
 const showGradeModal = ref(false)
 const selectedStudent = ref(null)
+
+const gradeForm = reactive({
+  learning_area: '',
+  score: '',
+  remarks: '',
+})
 
 const loadStudents = async () => {
   loading.value = true
@@ -301,6 +305,35 @@ const filteredStudents = computed(() => {
 
 const openGradingModal = (student) => {
   selectedStudent.value = student
+  gradeForm.learning_area = ''
+  gradeForm.score = ''
+  gradeForm.remarks = ''
   showGradeModal.value = true
+}
+
+const submitScore = async () => {
+  if (!selectedStudent.value) return
+
+  const payload = [
+    {
+      student_id: selectedStudent.value.id,
+      term: appStore.currentTerm,
+      learning_area: gradeForm.learning_area,
+      score: gradeForm.score,
+      remarks: gradeForm.remarks,
+    },
+  ]
+
+  try {
+    await academicService.saveScores(payload)
+    showGradeModal.value = false
+    gradeForm.learning_area = ''
+    gradeForm.score = ''
+    gradeForm.remarks = ''
+    alert('Scores saved successfully!')
+  } catch (error) {
+    alert('Failed to save scores.')
+    console.error(error)
+  }
 }
 </script>

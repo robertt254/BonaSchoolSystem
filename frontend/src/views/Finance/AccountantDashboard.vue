@@ -317,10 +317,25 @@ const termCollected = computed(() => {
   return filteredFees.value.reduce((sum, fee) => sum + (fee.amount || 0), 0)
 })
 
-// Simplified goal logic: Assuming an average term fee of 15000 per active student
+const feeStructure = {
+  'Play Group': 12000,
+  PP1: 15000,
+  PP2: 15000,
+  'Grade 1': 18000,
+  'Grade 2': 18000,
+  'Grade 3': 18000,
+  'Grade 4': 20000,
+  'Grade 5': 20000,
+  'Grade 6': 20000,
+}
+
+// Calculate exact term goal based on fee structure per active student
 const termGoal = computed(() => {
-  const activeStudents = students.value.filter((s) => s.status === 'Active').length
-  return activeStudents * 15000
+  const activeStudents = students.value.filter((s) => s.status === 'Active')
+  return activeStudents.reduce((total, student) => {
+    const fee = feeStructure[student.grade_level] || 0
+    return total + fee
+  }, 0)
 })
 
 const collectionPercentage = computed(() => {
