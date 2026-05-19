@@ -123,7 +123,13 @@
                   {{ student.status }}
                 </span>
               </td>
-              <td class="p-4 pr-6 text-right">
+              <td class="p-4 pr-6 text-right flex gap-2 justify-end">
+                <router-link
+                  :to="`/students/${student.id}/profile`"
+                  class="text-xs font-bold text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 px-3 py-1.5 rounded-lg transition-colors border border-slate-200"
+                >
+                  Profile
+                </router-link>
                 <button
                   @click="openGradingModal(student)"
                   class="text-xs font-bold text-school-navy bg-school-navy/5 hover:bg-school-navy hover:text-white px-3 py-1.5 rounded-lg transition-colors border border-school-navy/10 hover:border-school-navy"
@@ -314,18 +320,16 @@ const openGradingModal = (student) => {
 const submitScore = async () => {
   if (!selectedStudent.value) return
 
-  const payload = [
-    {
-      student_id: selectedStudent.value.id,
-      term: appStore.currentTerm,
-      learning_area: gradeForm.learning_area,
-      score: gradeForm.score,
-      remarks: gradeForm.remarks,
-    },
-  ]
+  const payload = {
+    student_id: selectedStudent.value.id,
+    term: appStore.currentTerm,
+    learning_area: gradeForm.learning_area,
+    score: gradeForm.score,
+    remarks: gradeForm.remarks,
+  }
 
   try {
-    await academicService.saveScores(payload)
+    await academicService.saveScores([payload])
     showGradeModal.value = false
     gradeForm.learning_area = ''
     gradeForm.score = ''

@@ -23,11 +23,6 @@ const router = createRouter({
           component: () => import('../views/Admin/AdminDashboard.vue'),
         },
         {
-          path: 'admin/staff',
-          name: 'staff-directory',
-          component: () => import('../views/StaffDirectory.vue'),
-        },
-        {
           path: 'principal',
           name: 'principal-dash',
           component: () => import('../views/Principal/PrincipalDashboard.vue'),
@@ -39,13 +34,23 @@ const router = createRouter({
         },
         {
           path: 'finance',
-          name: 'accountant-dash',
-          component: () => import('../views/Finance/AccountantDashboard.vue'),
+          name: 'finance-dash',
+          component: () => import('../views/Finance/FinanceDashboard.vue'),
         },
         {
           path: 'finance/statements',
           name: 'fee-statement',
           component: () => import('../views/FeeStatement.vue'),
+        },
+        {
+          path: 'students/:id/profile',
+          name: 'student-profile',
+          component: () => import('../views/StudentProfile.vue'),
+        },
+        {
+          path: 'hr',
+          name: 'hr-dash',
+          component: () => import('../views/HRDashboard.vue'),
         },
         {
           path: 'academics',

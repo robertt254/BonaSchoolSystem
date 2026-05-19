@@ -10,6 +10,7 @@ import fees
 import staff
 import academics
 import attendance
+import finance
 from database import engine
 
 # Tell SQLAlchemy to build all our tables in the database
@@ -25,7 +26,7 @@ def seed_users():
             {"username": "admin", "password": "password", "name": "System Admin", "role": "admin"},
             {"username": "principal", "password": "password", "name": "School Principal", "role": "principal"},
             {"username": "teacher", "password": "password", "name": "Class Teacher", "role": "senior_teacher"},
-            {"username": "accountant", "password": "password", "name": "Finance Officer", "role": "accountant"},
+            {"username": "finance", "password": "password", "name": "Finance Officer", "role": "finance"},
             {"username": "secretary", "password": "password", "name": "School Secretary", "role": "secretary"},
         ]
 
@@ -65,6 +66,7 @@ app.include_router(fees.router)
 app.include_router(staff.router)
 app.include_router(academics.router)
 app.include_router(attendance.router)
+app.include_router(finance.router)
 
 # Serve static files from the built Vue app
 frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")

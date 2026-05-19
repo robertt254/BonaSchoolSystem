@@ -74,7 +74,7 @@
           </router-link>
         </template>
 
-        <template v-if="['accountant', 'principal', 'admin'].includes(userRole)">
+        <template v-if="['finance', 'principal', 'admin'].includes(userRole)">
           <div class="pt-6 pb-2">
             <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Finance</p>
           </div>
@@ -83,7 +83,7 @@
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
             active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
           >
-            <span class="text-lg">💰</span> Fee Ledger
+            <span class="text-lg">💰</span> Finance Dashboard
           </router-link>
           <router-link
             to="/finance/statements"
@@ -94,11 +94,12 @@
           </router-link>
         </template>
 
-        <template v-if="['admin'].includes(userRole)">
+        <template v-if="['admin', 'principal'].includes(userRole)">
           <div class="pt-6 pb-2">
             <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">System</p>
           </div>
           <router-link
+            v-if="userRole === 'admin'"
             to="/admin"
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
             active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
@@ -106,7 +107,7 @@
             <span class="text-lg">⚙️</span> Admin Console
           </router-link>
           <router-link
-            to="/admin/staff"
+            to="/hr"
             class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:bg-white/5 hover:text-white transition-all duration-200"
             active-class="bg-school-navy shadow-inner text-white border-l-4 border-school-red rounded-l-none"
           >
@@ -274,7 +275,7 @@ const pageTitle = computed(() => {
   if (name === 'admin-dash') return 'Admin Console'
   if (name === 'staff-directory') return 'Staff Directory'
   if (name === 'secretary-dash') return 'Office & Admissions'
-  if (name === 'accountant-dash') return 'Fee Ledger'
+  if (name === 'finance-dash') return 'Finance Dashboard'
   if (name === 'fee-statement') return 'Statements'
   if (name === 'teacher-dash') return 'Grading'
   if (name === 'report-card') return 'Report Cards'

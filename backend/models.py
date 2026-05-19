@@ -12,6 +12,28 @@ class User(Base):
     name = Column(String)
     role = Column(String)
 
+    # HR & Compliance fields (Kenyan Employment Law)
+    kra_pin = Column(String, nullable=True)
+    nssf_number = Column(String, nullable=True)
+    nhif_number = Column(String, nullable=True)
+    job_title = Column(String, nullable=True)
+    date_of_hire = Column(Date, nullable=True)
+    contract_type = Column(String, nullable=True)
+    accrued_leave_days = Column(Integer, default=0)
+
+
+class Payroll(Base):
+    __tablename__ = "payroll"
+
+    id = Column(Integer, primary_key=True, index=True)
+    staff_id = Column(Integer, ForeignKey("users.id"))
+    basic_salary = Column(Float, default=0.0)
+    allowances = Column(Float, default=0.0)
+    deductions = Column(Float, default=0.0)
+    net_pay = Column(Float, default=0.0)
+    payment_month = Column(String)  # e.g., "October 2023"
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
 
 class Student(Base):
     __tablename__ = "students"
@@ -35,7 +57,7 @@ class FeePayment(Base):
     payment_type = Column(String)  # e.g., Tuition, Uniforms, Transport
     term = Column(String)  # e.g., "Term 1", "Term 2", "Term 3"
     payment_date = Column(DateTime(timezone=True), server_default=func.now())
-    recorded_by = Column(String)  # To track which accountant logged it
+    recorded_by = Column(String)  # To track which finance officer logged it
 
 
 class Assessment(Base):
