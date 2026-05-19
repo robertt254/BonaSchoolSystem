@@ -16,6 +16,47 @@ from database import engine
 # Tell SQLAlchemy to build all our tables in the database
 models.Base.metadata.create_all(bind=engine)
 
+# Automatic schema migrations for existing SQLite/PostgreSQL databases
+def apply_migrations():
+    from sqlalchemy import text
+    try:
+        with engine.connect() as conn:
+            # Check if using SQLite (which doesn't support ADD COLUMN IF NOT EXISTS easily)
+            # or PostgreSQL. The error usually comes from PostgreSQL on Render.
+            if engine.url.drivername.startswith("postgresql"):
+                conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS kra_pin VARCHAR;'))
+                conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS nssf_number VARCHAR;'))
+                conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS nhif_number VARCHAR;'))
+                conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS job_title VARCHAR;'))
+                conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS date_of_hire DATE;'))
+                conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS contract_type VARCHAR;'))
+                conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS accrued_leave_days INTEGER DEFAULT 0;'))
+            elif engine.url.drivername.startswith("sqlite"):
+                # SQLite workaround: check columns first
+                cursor = conn.execute(text("PRAGMA table_info(users)"))
+                columns = [row[1] for row in cursor.fetchall()]
+
+                if "kra_pin" not in columns:
+                    conn.execute(text('ALTER TABLE users ADD COLUMN kra_pin VARCHAR;'))
+                if "nssf_number" not in columns:
+                    conn.execute(text('ALTER TABLE users ADD COLUMN nssf_number VARCHAR;'))
+                if "nhif_number" not in columns:
+                    conn.execute(text('ALTER TABLE users ADD COLUMN nhif_number VARCHAR;'))
+                if "job_title" not in columns:
+                    conn.execute(text('ALTER TABLE users ADD COLUMN job_title VARCHAR;'))
+                if "date_of_hire" not in columns:
+                    conn.execute(text('ALTER TABLE users ADD COLUMN date_of_hire DATE;'))
+                if "contract_type" not in columns:
+                    conn.execute(text('ALTER TABLE users ADD COLUMN contract_type VARCHAR;'))
+                if "accrued_leave_days" not in columns:
+                    conn.execute(text('ALTER TABLE users ADD COLUMN accrued_leave_days INTEGER DEFAULT 0;'))
+            conn.commit()
+    except Exception as e:
+        print("Migration warning:", e)
+
+# Run migrations before seeding
+apply_migrations()
+
 # Function to seed initial users into the database
 def seed_users():
     from database import SessionLocal
