@@ -1,19 +1,8 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-12 animate-slide-up pb-20 relative">
-    <!-- Background Extravaganza -->
-    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      <div
-        class="absolute top-[10%] right-[10%] w-[500px] h-[500px] bg-gradient-to-br from-school-red/10 to-transparent rounded-full blur-[120px] animate-pulse-glow"
-      ></div>
-      <div
-        class="absolute bottom-[20%] left-[5%] w-[600px] h-[600px] bg-gradient-to-tr from-blue-400/10 to-transparent rounded-full blur-[150px] animate-float"
-        style="animation-delay: 2s"
-      ></div>
-    </div>
-
+  <div class="max-w-7xl mx-auto space-y-12 pb-20 relative">
     <!-- Welcome Banner -->
     <div
-      class="relative bg-school-navy rounded-[2.5rem] p-10 sm:p-14 text-white shadow-[0_30px_60px_-15px_rgba(10,25,47,0.5)] flex justify-between items-center overflow-hidden group hover:scale-[1.02] transition-transform duration-700 ease-out z-10 border border-white/10"
+      class="relative bg-school-navy rounded-2xl p-10 sm:p-14 text-white shadow-xl flex justify-between items-center overflow-hidden border border-slate-800"
     >
       <!-- Moving Gradient Background -->
       <div
@@ -23,37 +12,23 @@
         class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] z-0"
       ></div>
 
-      <!-- Glowing Orbs inside Banner -->
-      <div
-        class="absolute -top-40 -left-40 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-school-red/40 via-school-red/5 to-transparent rounded-full blur-3xl group-hover:scale-150 transition-transform duration-[2s] z-0"
-      ></div>
-      <div
-        class="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-500/30 via-school-navy to-transparent rounded-full blur-3xl animate-pulse-glow z-0"
-      ></div>
-
       <div class="relative z-10 max-w-3xl">
         <div
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 animate-slide-up"
-          style="animation-delay: 100ms"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6"
         >
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
           <span class="text-xs font-bold uppercase tracking-widest text-emerald-100"
             >System Online & Active</span
           >
         </div>
-        <h1
-          class="text-4xl sm:text-6xl font-black font-heading tracking-tight mb-4 leading-tight drop-shadow-[0_0_30px_rgba(255,255,255,0.3)] animate-slide-up"
-          style="animation-delay: 200ms"
-        >
+        <h1 class="text-3xl sm:text-4xl font-bold font-heading tracking-tight mb-3">
           Welcome to
-          <span
-            class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-white animate-gradient-xy"
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-white"
             >The Bona School</span
           >
         </h1>
         <p
-          class="text-slate-300/80 text-xl font-bold max-w-2xl font-sans tracking-wide leading-relaxed animate-slide-up"
-          style="animation-delay: 300ms"
+          class="text-slate-300/80 text-xl font-bold max-w-2xl font-sans tracking-wide leading-relaxed"
         >
           Experience the pinnacle of Competency-Based Curriculum management.
         </p>
@@ -63,12 +38,9 @@
         class="hidden lg:flex relative z-10 group-hover:rotate-12 group-hover:scale-125 transition-all duration-700"
       >
         <div
-          class="absolute inset-0 bg-school-red/20 blur-2xl rounded-full animate-pulse-glow"
-        ></div>
-        <div
           class="w-32 h-32 bg-gradient-to-br from-white/20 to-white/5 rounded-3xl backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-[0_0_40px_rgba(255,255,255,0.1)] transform -rotate-6"
         >
-          <span class="text-6xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] animate-float">🎓</span>
+          <span class="text-6xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">🎓</span>
         </div>
       </div>
     </div>
@@ -80,11 +52,10 @@
         <div
           class="absolute inset-0 border-8 border-school-red border-t-transparent rounded-full animate-spin"
         ></div>
-        <div class="absolute inset-4 bg-school-navy rounded-full animate-pulse-glow"></div>
+        <div class="absolute inset-4 bg-school-navy rounded-full"></div>
       </div>
-      <span
-        class="mt-8 font-black font-heading text-xl tracking-[0.2em] text-school-navy uppercase animate-pulse"
-        >Compiling Extravagance...</span
+      <span class="mt-8 font-bold font-heading text-xl tracking-[0.2em] text-school-navy uppercase"
+        >Loading dashboard...</span
       >
     </div>
 
@@ -94,26 +65,26 @@
         <!-- Students Card -->
         <div class="relative group">
           <div
-            class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-school-navy rounded-[2rem] blur opacity-20 group-hover:opacity-100 transition duration-500 group-hover:duration-200"
+            class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-school-navy rounded-2xl blur opacity-20 group-hover:opacity-100 transition duration-500 group-hover:duration-200"
           ></div>
           <div
-            class="relative bg-white/80 backdrop-blur-xl rounded-[2rem] p-8 shadow-xl border border-white hover:-translate-y-2 transition-all duration-300 h-full"
+            class="relative bg-white/80 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white hover:-translate-y-1 transition-all duration-300 h-full"
           >
             <div class="flex justify-between items-start">
               <div>
                 <p
-                  class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2 font-heading"
+                  class="text-xs font-medium text-slate-500 uppercase tracking-[0.3em] mb-2 font-heading"
                 >
                   Total Enrolled
                 </p>
                 <h2
-                  class="text-6xl font-black font-heading text-school-navy tracking-tighter drop-shadow-sm animate-count-up"
+                  class="text-4xl font-bold font-heading text-school-navy tracking-tighter drop-shadow-sm animate-count-up"
                 >
                   {{ totalStudents }}
                 </h2>
               </div>
               <div
-                class="p-5 bg-gradient-to-br from-blue-50 to-white rounded-2xl text-4xl shadow-inner border border-blue-100 group-hover:rotate-[20deg] group-hover:scale-125 transition-all duration-500"
+                class="p-5 bg-gradient-to-br from-blue-50 to-white rounded-2xl text-4xl shadow-inner border border-blue-100 transition-transform duration-300 group-hover:scale-110"
               >
                 👨‍🎓
               </div>
@@ -123,7 +94,7 @@
                 class="text-sm text-slate-500 font-bold uppercase tracking-wider flex items-center gap-3"
               >
                 <span
-                  class="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)] animate-pulse"
+                  class="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]"
                 ></span>
                 Across all grades
               </p>
@@ -134,29 +105,41 @@
         <!-- Revenue Card -->
         <div class="relative group">
           <div
-            class="absolute -inset-0.5 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-[2rem] blur opacity-20 group-hover:opacity-100 transition duration-500 group-hover:duration-200"
+            class="absolute -inset-0.5 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl blur opacity-20 group-hover:opacity-100 transition duration-500 group-hover:duration-200"
           ></div>
           <div
-            class="relative bg-white/80 backdrop-blur-xl rounded-[2rem] p-8 shadow-xl border border-white hover:-translate-y-2 transition-all duration-300 h-full"
+            class="relative bg-white/80 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white hover:-translate-y-1 transition-all duration-300 h-full"
           >
             <div class="flex justify-between items-start">
               <div>
                 <p
-                  class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] mb-2 font-heading"
+                  class="text-xs font-medium text-slate-500 uppercase tracking-[0.3em] mb-2 font-heading"
                 >
                   Total Revenue
                 </p>
                 <h2
-                  class="text-5xl font-black font-heading text-slate-800 tracking-tighter drop-shadow-sm animate-count-up"
-                  style="animation-delay: 100ms"
+                  class="text-4xl font-bold font-heading text-slate-800 tracking-tighter drop-shadow-sm animate-count-up"
                 >
                   {{ formatCurrency(totalRevenue) }}
                 </h2>
               </div>
               <div
-                class="p-5 bg-gradient-to-br from-emerald-50 to-white rounded-2xl text-4xl shadow-inner border border-emerald-100 group-hover:-rotate-[20deg] group-hover:scale-125 transition-all duration-500"
+                class="p-5 bg-gradient-to-br from-emerald-50 to-white rounded-2xl text-emerald-600 shadow-inner border border-emerald-100 transition-transform duration-300 group-hover:scale-110"
               >
-                💰
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-8 h-8"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
               </div>
             </div>
             <div class="mt-8 pt-6 border-t border-slate-100/50">
@@ -164,7 +147,7 @@
                 class="text-sm text-slate-500 font-bold uppercase tracking-wider flex items-center gap-3"
               >
                 <span
-                  class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)] animate-pulse"
+                  class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)]"
                 ></span>
                 Historical Payments
               </p>
@@ -175,29 +158,41 @@
         <!-- Staff Card -->
         <div class="relative group">
           <div
-            class="absolute -inset-0.5 bg-gradient-to-r from-school-red to-orange-500 rounded-[2rem] blur opacity-20 group-hover:opacity-100 transition duration-500 group-hover:duration-200"
+            class="absolute -inset-0.5 bg-gradient-to-r from-school-red to-orange-500 rounded-2xl blur opacity-20 group-hover:opacity-100 transition duration-500 group-hover:duration-200"
           ></div>
           <div
-            class="relative bg-white/80 backdrop-blur-xl rounded-[2rem] p-8 shadow-xl border border-white hover:-translate-y-2 transition-all duration-300 h-full"
+            class="relative bg-white/80 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white hover:-translate-y-1 transition-all duration-300 h-full"
           >
             <div class="flex justify-between items-start">
               <div>
                 <p
-                  class="text-[10px] font-black text-school-red uppercase tracking-[0.3em] mb-2 font-heading"
+                  class="text-xs font-medium text-slate-500 uppercase tracking-[0.3em] mb-2 font-heading"
                 >
                   Active Staff
                 </p>
                 <h2
-                  class="text-6xl font-black font-heading text-slate-800 tracking-tighter drop-shadow-sm animate-count-up"
-                  style="animation-delay: 200ms"
+                  class="text-4xl font-bold font-heading text-slate-800 tracking-tighter drop-shadow-sm animate-count-up"
                 >
                   {{ totalStaff }}
                 </h2>
               </div>
               <div
-                class="p-5 bg-gradient-to-br from-red-50 to-white rounded-2xl text-4xl shadow-inner border border-red-100 group-hover:rotate-[20deg] group-hover:scale-125 transition-all duration-500"
+                class="p-5 bg-gradient-to-br from-red-50 to-white rounded-2xl text-school-red shadow-inner border border-red-100 transition-transform duration-300 group-hover:scale-110"
               >
-                🧑‍🏫
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-8 h-8"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+                  />
+                </svg>
               </div>
             </div>
             <div class="mt-8 pt-6 border-t border-slate-100/50">
@@ -205,7 +200,7 @@
                 class="text-sm text-slate-500 font-bold uppercase tracking-wider flex items-center gap-3"
               >
                 <span
-                  class="w-3 h-3 rounded-full bg-school-red shadow-[0_0_10px_rgba(211,47,47,0.6)] animate-pulse"
+                  class="w-3 h-3 rounded-full bg-school-red shadow-[0_0_10px_rgba(211,47,47,0.6)]"
                 ></span>
                 Teachers & Admin
               </p>
@@ -218,17 +213,32 @@
         <!-- Main Column (Quick Actions) -->
         <div class="lg:col-span-2">
           <div
-            class="bg-white/70 backdrop-blur-2xl rounded-[2rem] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.05)] border border-white p-10 hover:shadow-2xl transition-shadow duration-500 h-full"
+            class="bg-white/70 backdrop-blur-2xl rounded-2xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.05)] border border-white p-10 hover:shadow-2xl transition-shadow duration-500 h-full"
           >
             <div class="flex items-center justify-between mb-10 pb-6 border-b border-slate-200/50">
               <h3
-                class="text-2xl font-black font-heading text-school-navy tracking-tight flex items-center gap-4"
+                class="text-xl font-bold font-heading text-school-navy tracking-tight flex items-center gap-4"
               >
-                <span class="p-2.5 bg-blue-50 text-blue-600 rounded-xl animate-float">⚡</span>
+                <span class="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-5 h-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
+                    />
+                  </svg>
+                </span>
                 Quick Actions
               </h3>
               <span
-                class="px-4 py-2 bg-slate-100 rounded-full text-xs font-black text-slate-400 uppercase tracking-widest shadow-inner"
+                class="px-4 py-2 bg-slate-100 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest shadow-inner"
                 >Command Center</span
               >
             </div>
@@ -239,75 +249,123 @@
                   class="absolute inset-0 bg-school-navy rounded-2xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"
                 ></div>
                 <div
-                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-school-navy transition-all duration-300 transform group-hover:-translate-y-2 shadow-sm group-hover:shadow-xl"
+                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-school-navy transition-all duration-300 transform group-hover:-translate-y-1 shadow-sm group-hover:shadow-xl"
                 >
                   <div
                     class="w-16 h-16 flex items-center justify-center bg-slate-50 rounded-2xl mb-6 group-hover:bg-school-navy group-hover:text-white transition-all duration-500 shadow-inner group-hover:shadow-[0_10px_20px_rgba(10,25,47,0.3)] group-hover:rotate-12"
                   >
-                    <span class="text-3xl">📋</span>
+                    <svg
+                      class="w-6 h-6 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                      />
+                    </svg>
                   </div>
                   <p
-                    class="font-black text-base text-slate-700 group-hover:text-school-navy font-heading"
+                    class="font-bold text-base text-slate-700 group-hover:text-school-navy font-heading"
                   >
                     Roll Call
                   </p>
                 </div>
               </router-link>
 
-              <router-link to="/finance" class="relative group" style="animation-delay: 100ms">
+              <router-link to="/finance" class="relative group">
                 <div
                   class="absolute inset-0 bg-emerald-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"
                 ></div>
                 <div
-                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-emerald-500 transition-all duration-300 transform group-hover:-translate-y-2 shadow-sm group-hover:shadow-xl"
+                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-emerald-500 transition-all duration-300 transform group-hover:-translate-y-1 shadow-sm group-hover:shadow-xl"
                 >
                   <div
                     class="w-16 h-16 flex items-center justify-center bg-slate-50 rounded-2xl mb-6 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-500 shadow-inner group-hover:shadow-[0_10px_20px_rgba(16,185,129,0.3)] group-hover:-rotate-12"
                   >
-                    <span class="text-3xl">💵</span>
+                    <svg
+                      class="w-6 h-6 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
                   </div>
                   <p
-                    class="font-black text-base text-slate-700 group-hover:text-emerald-600 font-heading"
+                    class="font-bold text-base text-slate-700 group-hover:text-emerald-600 font-heading"
                   >
                     Log Payment
                   </p>
                 </div>
               </router-link>
 
-              <router-link to="/academics" class="relative group" style="animation-delay: 200ms">
+              <router-link to="/academics" class="relative group">
                 <div
                   class="absolute inset-0 bg-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"
                 ></div>
                 <div
-                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-purple-500 transition-all duration-300 transform group-hover:-translate-y-2 shadow-sm group-hover:shadow-xl"
+                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-purple-500 transition-all duration-300 transform group-hover:-translate-y-1 shadow-sm group-hover:shadow-xl"
                 >
                   <div
                     class="w-16 h-16 flex items-center justify-center bg-slate-50 rounded-2xl mb-6 group-hover:bg-purple-500 group-hover:text-white transition-all duration-500 shadow-inner group-hover:shadow-[0_10px_20px_rgba(168,85,247,0.3)] group-hover:rotate-12"
                   >
-                    <span class="text-3xl">📝</span>
+                    <svg
+                      class="w-6 h-6 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
                   </div>
                   <p
-                    class="font-black text-base text-slate-700 group-hover:text-purple-600 font-heading"
+                    class="font-bold text-base text-slate-700 group-hover:text-purple-600 font-heading"
                   >
                     Enter Grades
                   </p>
                 </div>
               </router-link>
 
-              <router-link to="/office" class="relative group" style="animation-delay: 300ms">
+              <router-link to="/office" class="relative group">
                 <div
                   class="absolute inset-0 bg-school-red rounded-2xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"
                 ></div>
                 <div
-                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-school-red transition-all duration-300 transform group-hover:-translate-y-2 shadow-sm group-hover:shadow-xl"
+                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-school-red transition-all duration-300 transform group-hover:-translate-y-1 shadow-sm group-hover:shadow-xl"
                 >
                   <div
                     class="w-16 h-16 flex items-center justify-center bg-slate-50 rounded-2xl mb-6 group-hover:bg-school-red group-hover:text-white transition-all duration-500 shadow-inner group-hover:shadow-[0_10px_20px_rgba(211,47,47,0.3)] group-hover:-rotate-12"
                   >
-                    <span class="text-3xl">➕</span>
+                    <svg
+                      class="w-6 h-6 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                      />
+                    </svg>
                   </div>
                   <p
-                    class="font-black text-base text-slate-700 group-hover:text-school-red font-heading"
+                    class="font-bold text-base text-slate-700 group-hover:text-school-red font-heading"
                   >
                     Admit
                   </p>
@@ -320,7 +378,7 @@
         <!-- Sidebar Column (Activity Feed) -->
         <div class="lg:col-span-1">
           <div
-            class="bg-white/70 backdrop-blur-2xl rounded-[2rem] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.05)] border border-white p-8 h-full hover:shadow-2xl transition-shadow duration-500 relative overflow-hidden"
+            class="bg-white/70 backdrop-blur-2xl rounded-2xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.05)] border border-white p-8 h-full hover:shadow-2xl transition-shadow duration-500 relative overflow-hidden"
           >
             <!-- Decorative background element -->
             <div
@@ -329,12 +387,28 @@
 
             <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-200/50">
               <h3
-                class="text-xl font-black font-heading text-slate-800 tracking-tight flex items-center gap-3"
+                class="text-xl font-bold font-heading text-slate-800 tracking-tight flex items-center gap-3"
               >
-                <span class="animate-pulse-glow text-2xl">📡</span> Live Feed
+                <span class="text-blue-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75"
+                    />
+                  </svg>
+                </span>
+                Sample Activity
               </h3>
               <button
-                class="text-[10px] font-black text-school-red bg-red-50 px-3 py-1.5 rounded-full hover:bg-school-red hover:text-white uppercase tracking-[0.2em] transition-all hover:shadow-[0_0_15px_rgba(211,47,47,0.4)]"
+                class="text-xs font-medium text-slate-500 bg-red-50 px-3 py-1.5 rounded-full hover:bg-school-red hover:text-white uppercase tracking-[0.2em] transition-all hover:shadow-[0_0_15px_rgba(211,47,47,0.4)]"
               >
                 All Logs
               </button>
@@ -346,7 +420,7 @@
                 :key="activity.id"
                 class="flex gap-5 group p-3 rounded-2xl hover:bg-white hover:shadow-[0_10px_20px_rgba(0,0,0,0.03)] transition-all duration-300 border border-transparent hover:border-slate-100"
                 :style="`animation-delay: ${index * 100}ms`"
-                :class="'animate-slide-up'"
+                :class="''"
               >
                 <div class="flex-shrink-0">
                   <div
@@ -355,12 +429,12 @@
                       activity.bg,
                     ]"
                   >
-                    <span class="group-hover:animate-bounce-slow">{{ activity.icon }}</span>
+                    <span v-html="activity.icon"></span>
                   </div>
                 </div>
                 <div class="flex flex-col justify-center">
                   <p
-                    class="text-sm font-black text-slate-800 leading-snug group-hover:text-school-navy transition-colors font-heading"
+                    class="text-sm font-bold text-slate-800 leading-snug group-hover:text-school-navy transition-colors font-heading"
                   >
                     {{ activity.action }}
                   </p>
@@ -415,7 +489,7 @@ const recentActivity = ref([
     user: 'Finance',
     action: 'Recorded Term 1 fees for John Doe',
     time: '10m ago',
-    icon: '💰',
+    icon: '<svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
     color: 'text-emerald-600',
     bg: 'bg-emerald-50',
   },
@@ -425,7 +499,7 @@ const recentActivity = ref([
     user: 'Mr. Smith',
     action: 'Marked Grade 4 attendance (100%)',
     time: '1h ago',
-    icon: '📋',
+    icon: '<svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>',
     color: 'text-school-navy',
     bg: 'bg-blue-50',
   },
@@ -435,7 +509,7 @@ const recentActivity = ref([
     user: 'Office',
     action: 'Admitted Sarah Jenkins (Playgroup)',
     time: '2h ago',
-    icon: '👨‍🎓',
+    icon: '<svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>',
     color: 'text-purple-600',
     bg: 'bg-purple-50',
   },
@@ -445,7 +519,7 @@ const recentActivity = ref([
     user: 'Ms. Alice',
     action: 'Submitted Math scores for Grade 2',
     time: '3h ago',
-    icon: '📝',
+    icon: '<svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
     color: 'text-orange-600',
     bg: 'bg-orange-50',
   },
@@ -455,7 +529,7 @@ const recentActivity = ref([
     user: 'System',
     action: 'Weekly automated backup completed',
     time: '5h ago',
-    icon: '⚙️',
+    icon: '<svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
     color: 'text-slate-600',
     bg: 'bg-slate-100',
   },
