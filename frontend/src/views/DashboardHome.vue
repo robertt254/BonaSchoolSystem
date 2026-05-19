@@ -1,215 +1,317 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-8 animate-fade-in pb-12">
+  <div class="max-w-7xl mx-auto space-y-12 animate-slide-up pb-20 relative">
+    <!-- Background Extravaganza -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <div
+        class="absolute top-[10%] right-[10%] w-[500px] h-[500px] bg-gradient-to-br from-school-red/10 to-transparent rounded-full blur-[120px] animate-pulse-glow"
+      ></div>
+      <div
+        class="absolute bottom-[20%] left-[5%] w-[600px] h-[600px] bg-gradient-to-tr from-blue-400/10 to-transparent rounded-full blur-[150px] animate-float"
+        style="animation-delay: 2s"
+      ></div>
+    </div>
+
     <!-- Welcome Banner -->
     <div
-      class="bg-school-navy rounded-2xl p-8 sm:p-10 text-white shadow-xl flex justify-between items-center relative overflow-hidden"
+      class="relative bg-school-navy rounded-[2.5rem] p-10 sm:p-14 text-white shadow-[0_30px_60px_-15px_rgba(10,25,47,0.5)] flex justify-between items-center overflow-hidden group hover:scale-[1.02] transition-transform duration-700 ease-out z-10 border border-white/10"
     >
-      <!-- Decorative background element -->
+      <!-- Moving Gradient Background -->
       <div
-        class="absolute -top-32 -left-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-school-red/30 via-school-navy to-school-navy rounded-full blur-3xl"
+        class="absolute inset-0 bg-gradient-to-br from-school-navy via-[#1A2A42] to-school-navy opacity-90 z-0"
       ></div>
       <div
-        class="absolute -bottom-32 -right-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/10 via-school-navy to-school-navy rounded-full blur-3xl"
+        class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] z-0"
       ></div>
 
-      <div class="relative z-10">
-        <h1 class="text-3xl sm:text-4xl font-black font-heading tracking-tight mb-3">
-          Welcome to The Bona School
+      <!-- Glowing Orbs inside Banner -->
+      <div
+        class="absolute -top-40 -left-40 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-school-red/40 via-school-red/5 to-transparent rounded-full blur-3xl group-hover:scale-150 transition-transform duration-[2s] z-0"
+      ></div>
+      <div
+        class="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-500/30 via-school-navy to-transparent rounded-full blur-3xl animate-pulse-glow z-0"
+      ></div>
+
+      <div class="relative z-10 max-w-3xl">
+        <div
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 animate-slide-up"
+          style="animation-delay: 100ms"
+        >
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-xs font-bold uppercase tracking-widest text-emerald-100"
+            >System Online & Active</span
+          >
+        </div>
+        <h1
+          class="text-4xl sm:text-6xl font-black font-heading tracking-tight mb-4 leading-tight drop-shadow-[0_0_30px_rgba(255,255,255,0.3)] animate-slide-up"
+          style="animation-delay: 200ms"
+        >
+          Welcome to
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-white animate-gradient-xy"
+            >The Bona School</span
+          >
         </h1>
-        <p class="text-slate-300 text-lg max-w-2xl font-sans">
-          Competency-Based Curriculum (CBC) Management System
+        <p
+          class="text-slate-300/80 text-xl font-bold max-w-2xl font-sans tracking-wide leading-relaxed animate-slide-up"
+          style="animation-delay: 300ms"
+        >
+          Experience the pinnacle of Competency-Based Curriculum management.
         </p>
       </div>
+
       <div
-        class="hidden md:flex items-center justify-center w-20 h-20 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10 relative z-10"
+        class="hidden lg:flex relative z-10 group-hover:rotate-12 group-hover:scale-125 transition-all duration-700"
       >
-        <span class="text-4xl drop-shadow-md">🎓</span>
+        <div
+          class="absolute inset-0 bg-school-red/20 blur-2xl rounded-full animate-pulse-glow"
+        ></div>
+        <div
+          class="w-32 h-32 bg-gradient-to-br from-white/20 to-white/5 rounded-3xl backdrop-blur-xl border border-white/30 flex items-center justify-center shadow-[0_0_40px_rgba(255,255,255,0.1)] transform -rotate-6"
+        >
+          <span class="text-6xl drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] animate-float">🎓</span>
+        </div>
       </div>
     </div>
 
     <!-- Loading State -->
-    <div
-      v-if="loading"
-      class="flex flex-col justify-center items-center py-20 text-slate-400 space-y-4"
-    >
-      <div
-        class="w-10 h-10 border-4 border-slate-200 border-t-school-navy rounded-full animate-spin"
-      ></div>
-      <span class="text-sm font-medium tracking-widest uppercase">Compiling analytics...</span>
+    <div v-if="loading" class="flex flex-col justify-center items-center py-32 relative z-10">
+      <div class="relative w-24 h-24">
+        <div class="absolute inset-0 border-8 border-slate-100 rounded-full"></div>
+        <div
+          class="absolute inset-0 border-8 border-school-red border-t-transparent rounded-full animate-spin"
+        ></div>
+        <div class="absolute inset-4 bg-school-navy rounded-full animate-pulse-glow"></div>
+      </div>
+      <span
+        class="mt-8 font-black font-heading text-xl tracking-[0.2em] text-school-navy uppercase animate-pulse"
+        >Compiling Extravagance...</span
+      >
     </div>
 
-    <div v-else class="space-y-8">
+    <div v-else class="space-y-12 relative z-10">
       <!-- Key Metrics -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Students Card -->
-        <div
-          class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group"
-        >
+        <div class="relative group">
           <div
-            class="absolute top-0 left-0 w-1 h-full bg-school-navy group-hover:w-2 transition-all duration-300"
+            class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-school-navy rounded-[2rem] blur opacity-20 group-hover:opacity-100 transition duration-500 group-hover:duration-200"
           ></div>
-          <div class="flex justify-between items-start">
-            <div>
-              <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
-                Total Enrolled
-              </p>
-              <h2 class="text-4xl font-black text-slate-800 tracking-tight">{{ totalStudents }}</h2>
+          <div
+            class="relative bg-white/80 backdrop-blur-xl rounded-[2rem] p-8 shadow-xl border border-white hover:-translate-y-2 transition-all duration-300 h-full"
+          >
+            <div class="flex justify-between items-start">
+              <div>
+                <p
+                  class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2 font-heading"
+                >
+                  Total Enrolled
+                </p>
+                <h2
+                  class="text-6xl font-black font-heading text-school-navy tracking-tighter drop-shadow-sm animate-count-up"
+                >
+                  {{ totalStudents }}
+                </h2>
+              </div>
+              <div
+                class="p-5 bg-gradient-to-br from-blue-50 to-white rounded-2xl text-4xl shadow-inner border border-blue-100 group-hover:rotate-[20deg] group-hover:scale-125 transition-all duration-500"
+              >
+                👨‍🎓
+              </div>
             </div>
-            <div
-              class="p-3.5 bg-slate-50 rounded-xl text-school-navy/80 text-xl border border-slate-100 shadow-sm group-hover:bg-school-navy group-hover:text-white transition-colors duration-300"
-            >
-              👨‍🎓
+            <div class="mt-8 pt-6 border-t border-slate-100/50">
+              <p
+                class="text-sm text-slate-500 font-bold uppercase tracking-wider flex items-center gap-3"
+              >
+                <span
+                  class="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)] animate-pulse"
+                ></span>
+                Across all grades
+              </p>
             </div>
           </div>
-          <p class="text-[13px] text-slate-500 mt-5 font-medium flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            Across all CBC grades
-          </p>
         </div>
 
         <!-- Revenue Card -->
-        <div
-          class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group"
-        >
+        <div class="relative group">
           <div
-            class="absolute top-0 left-0 w-1 h-full bg-school-red group-hover:w-2 transition-all duration-300"
+            class="absolute -inset-0.5 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-[2rem] blur opacity-20 group-hover:opacity-100 transition duration-500 group-hover:duration-200"
           ></div>
-          <div class="flex justify-between items-start">
-            <div>
-              <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
-                Total Revenue
-              </p>
-              <h2 class="text-3xl font-black text-slate-800 tracking-tight mt-1">
-                {{ formatCurrency(totalRevenue) }}
-              </h2>
+          <div
+            class="relative bg-white/80 backdrop-blur-xl rounded-[2rem] p-8 shadow-xl border border-white hover:-translate-y-2 transition-all duration-300 h-full"
+          >
+            <div class="flex justify-between items-start">
+              <div>
+                <p
+                  class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] mb-2 font-heading"
+                >
+                  Total Revenue
+                </p>
+                <h2
+                  class="text-5xl font-black font-heading text-slate-800 tracking-tighter drop-shadow-sm animate-count-up"
+                  style="animation-delay: 100ms"
+                >
+                  {{ formatCurrency(totalRevenue) }}
+                </h2>
+              </div>
+              <div
+                class="p-5 bg-gradient-to-br from-emerald-50 to-white rounded-2xl text-4xl shadow-inner border border-emerald-100 group-hover:-rotate-[20deg] group-hover:scale-125 transition-all duration-500"
+              >
+                💰
+              </div>
             </div>
-            <div
-              class="p-3.5 bg-slate-50 rounded-xl text-school-red/80 text-xl border border-slate-100 shadow-sm group-hover:bg-school-red group-hover:text-white transition-colors duration-300"
-            >
-              💰
+            <div class="mt-8 pt-6 border-t border-slate-100/50">
+              <p
+                class="text-sm text-slate-500 font-bold uppercase tracking-wider flex items-center gap-3"
+              >
+                <span
+                  class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)] animate-pulse"
+                ></span>
+                Historical Payments
+              </p>
             </div>
           </div>
-          <p class="text-[13px] text-slate-500 mt-5 font-medium flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            All historical payments
-          </p>
         </div>
 
         <!-- Staff Card -->
-        <div
-          class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group"
-        >
+        <div class="relative group">
           <div
-            class="absolute top-0 left-0 w-1 h-full bg-slate-400 group-hover:w-2 transition-all duration-300"
+            class="absolute -inset-0.5 bg-gradient-to-r from-school-red to-orange-500 rounded-[2rem] blur opacity-20 group-hover:opacity-100 transition duration-500 group-hover:duration-200"
           ></div>
-          <div class="flex justify-between items-start">
-            <div>
-              <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
-                Active Staff
-              </p>
-              <h2 class="text-4xl font-black text-slate-800 tracking-tight">{{ totalStaff }}</h2>
+          <div
+            class="relative bg-white/80 backdrop-blur-xl rounded-[2rem] p-8 shadow-xl border border-white hover:-translate-y-2 transition-all duration-300 h-full"
+          >
+            <div class="flex justify-between items-start">
+              <div>
+                <p
+                  class="text-[10px] font-black text-school-red uppercase tracking-[0.3em] mb-2 font-heading"
+                >
+                  Active Staff
+                </p>
+                <h2
+                  class="text-6xl font-black font-heading text-slate-800 tracking-tighter drop-shadow-sm animate-count-up"
+                  style="animation-delay: 200ms"
+                >
+                  {{ totalStaff }}
+                </h2>
+              </div>
+              <div
+                class="p-5 bg-gradient-to-br from-red-50 to-white rounded-2xl text-4xl shadow-inner border border-red-100 group-hover:rotate-[20deg] group-hover:scale-125 transition-all duration-500"
+              >
+                🧑‍🏫
+              </div>
             </div>
-            <div
-              class="p-3.5 bg-slate-50 rounded-xl text-slate-600 text-xl border border-slate-100 shadow-sm group-hover:bg-slate-600 group-hover:text-white transition-colors duration-300"
-            >
-              🧑‍🏫
+            <div class="mt-8 pt-6 border-t border-slate-100/50">
+              <p
+                class="text-sm text-slate-500 font-bold uppercase tracking-wider flex items-center gap-3"
+              >
+                <span
+                  class="w-3 h-3 rounded-full bg-school-red shadow-[0_0_10px_rgba(211,47,47,0.6)] animate-pulse"
+                ></span>
+                Teachers & Admin
+              </p>
             </div>
           </div>
-          <p class="text-[13px] text-slate-500 mt-5 font-medium flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            Teachers & Administrators
-          </p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Main Column (Quick Actions) -->
-        <div class="lg:col-span-2 space-y-8">
-          <!-- Quick Actions -->
+        <div class="lg:col-span-2">
           <div
-            class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 hover:shadow-md transition-shadow duration-300"
+            class="bg-white/70 backdrop-blur-2xl rounded-[2rem] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.05)] border border-white p-10 hover:shadow-2xl transition-shadow duration-500 h-full"
           >
-            <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
-              <h3 class="text-lg font-black font-heading text-slate-800 tracking-tight">
+            <div class="flex items-center justify-between mb-10 pb-6 border-b border-slate-200/50">
+              <h3
+                class="text-2xl font-black font-heading text-school-navy tracking-tight flex items-center gap-4"
+              >
+                <span class="p-2.5 bg-blue-50 text-blue-600 rounded-xl animate-float">⚡</span>
                 Quick Actions
               </h3>
-              <span class="text-xs font-bold text-slate-400 uppercase tracking-widest"
-                >Common Tasks</span
+              <span
+                class="px-4 py-2 bg-slate-100 rounded-full text-xs font-black text-slate-400 uppercase tracking-widest shadow-inner"
+                >Command Center</span
               >
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <router-link
-                to="/academics/attendance"
-                class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-navy/20 transition-all duration-200 group text-center bg-white shadow-sm hover:-translate-y-1"
-              >
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              <router-link to="/academics/attendance" class="relative group">
                 <div
-                  class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-navy/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100 shadow-inner text-2xl"
+                  class="absolute inset-0 bg-school-navy rounded-2xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                ></div>
+                <div
+                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-school-navy transition-all duration-300 transform group-hover:-translate-y-2 shadow-sm group-hover:shadow-xl"
                 >
-                  📋
+                  <div
+                    class="w-16 h-16 flex items-center justify-center bg-slate-50 rounded-2xl mb-6 group-hover:bg-school-navy group-hover:text-white transition-all duration-500 shadow-inner group-hover:shadow-[0_10px_20px_rgba(10,25,47,0.3)] group-hover:rotate-12"
+                  >
+                    <span class="text-3xl">📋</span>
+                  </div>
+                  <p
+                    class="font-black text-base text-slate-700 group-hover:text-school-navy font-heading"
+                  >
+                    Roll Call
+                  </p>
                 </div>
-                <p
-                  class="font-bold text-sm text-slate-700 group-hover:text-school-navy font-heading"
-                >
-                  Roll Call
-                </p>
-                <p class="text-[11px] text-slate-400 mt-1 uppercase tracking-wider font-bold">
-                  Mark attendance
-                </p>
               </router-link>
 
-              <router-link
-                to="/finance"
-                class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-red/20 transition-all duration-200 group text-center bg-white shadow-sm hover:-translate-y-1"
-              >
+              <router-link to="/finance" class="relative group" style="animation-delay: 100ms">
                 <div
-                  class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-red/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100 shadow-inner text-2xl"
+                  class="absolute inset-0 bg-emerald-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                ></div>
+                <div
+                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-emerald-500 transition-all duration-300 transform group-hover:-translate-y-2 shadow-sm group-hover:shadow-xl"
                 >
-                  💵
+                  <div
+                    class="w-16 h-16 flex items-center justify-center bg-slate-50 rounded-2xl mb-6 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-500 shadow-inner group-hover:shadow-[0_10px_20px_rgba(16,185,129,0.3)] group-hover:-rotate-12"
+                  >
+                    <span class="text-3xl">💵</span>
+                  </div>
+                  <p
+                    class="font-black text-base text-slate-700 group-hover:text-emerald-600 font-heading"
+                  >
+                    Log Payment
+                  </p>
                 </div>
-                <p
-                  class="font-bold text-sm text-slate-700 group-hover:text-school-red font-heading"
-                >
-                  Log Payment
-                </p>
-                <p class="text-[11px] text-slate-400 mt-1 uppercase tracking-wider font-bold">
-                  Record fee
-                </p>
               </router-link>
 
-              <router-link
-                to="/academics"
-                class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-school-navy/20 transition-all duration-200 group text-center bg-white shadow-sm hover:-translate-y-1"
-              >
+              <router-link to="/academics" class="relative group" style="animation-delay: 200ms">
                 <div
-                  class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-school-navy/5 group-hover:scale-110 transition-transform duration-300 border border-slate-100 shadow-inner text-2xl"
+                  class="absolute inset-0 bg-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                ></div>
+                <div
+                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-purple-500 transition-all duration-300 transform group-hover:-translate-y-2 shadow-sm group-hover:shadow-xl"
                 >
-                  📝
+                  <div
+                    class="w-16 h-16 flex items-center justify-center bg-slate-50 rounded-2xl mb-6 group-hover:bg-purple-500 group-hover:text-white transition-all duration-500 shadow-inner group-hover:shadow-[0_10px_20px_rgba(168,85,247,0.3)] group-hover:rotate-12"
+                  >
+                    <span class="text-3xl">📝</span>
+                  </div>
+                  <p
+                    class="font-black text-base text-slate-700 group-hover:text-purple-600 font-heading"
+                  >
+                    Enter Grades
+                  </p>
                 </div>
-                <p
-                  class="font-bold text-sm text-slate-700 group-hover:text-school-navy font-heading"
-                >
-                  Enter Grades
-                </p>
-                <p class="text-[11px] text-slate-400 mt-1 uppercase tracking-wider font-bold">
-                  Update scores
-                </p>
               </router-link>
 
-              <router-link
-                to="/office"
-                class="flex flex-col items-center justify-center p-6 border border-slate-100 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 group text-center bg-white shadow-sm hover:-translate-y-1"
-              >
+              <router-link to="/office" class="relative group" style="animation-delay: 300ms">
                 <div
-                  class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-full mb-4 group-hover:bg-slate-200 group-hover:scale-110 transition-transform duration-300 border border-slate-100 shadow-inner text-2xl"
+                  class="absolute inset-0 bg-school-red rounded-2xl blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                ></div>
+                <div
+                  class="relative flex flex-col items-center p-8 bg-white border-2 border-slate-100 rounded-2xl group-hover:border-school-red transition-all duration-300 transform group-hover:-translate-y-2 shadow-sm group-hover:shadow-xl"
                 >
-                  ➕
+                  <div
+                    class="w-16 h-16 flex items-center justify-center bg-slate-50 rounded-2xl mb-6 group-hover:bg-school-red group-hover:text-white transition-all duration-500 shadow-inner group-hover:shadow-[0_10px_20px_rgba(211,47,47,0.3)] group-hover:-rotate-12"
+                  >
+                    <span class="text-3xl">➕</span>
+                  </div>
+                  <p
+                    class="font-black text-base text-slate-700 group-hover:text-school-red font-heading"
+                  >
+                    Admit
+                  </p>
                 </div>
-                <p class="font-bold text-sm text-slate-700 group-hover:text-slate-900 font-heading">
-                  Admit Student
-                </p>
-                <p class="text-[11px] text-slate-400 mt-1 uppercase tracking-wider font-bold">
-                  New enrollment
-                </p>
               </router-link>
             </div>
           </div>
@@ -218,41 +320,72 @@
         <!-- Sidebar Column (Activity Feed) -->
         <div class="lg:col-span-1">
           <div
-            class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 h-full hover:shadow-md transition-shadow duration-300"
+            class="bg-white/70 backdrop-blur-2xl rounded-[2rem] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.05)] border border-white p-8 h-full hover:shadow-2xl transition-shadow duration-500 relative overflow-hidden"
           >
-            <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
-              <h3 class="text-lg font-black font-heading text-slate-800 tracking-tight">
-                Recent Activity
+            <!-- Decorative background element -->
+            <div
+              class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-slate-100 to-transparent rounded-bl-[100px] -z-10"
+            ></div>
+
+            <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-200/50">
+              <h3
+                class="text-xl font-black font-heading text-slate-800 tracking-tight flex items-center gap-3"
+              >
+                <span class="animate-pulse-glow text-2xl">📡</span> Live Feed
               </h3>
               <button
-                class="text-xs font-bold text-school-navy hover:text-school-red uppercase tracking-widest transition-colors"
+                class="text-[10px] font-black text-school-red bg-red-50 px-3 py-1.5 rounded-full hover:bg-school-red hover:text-white uppercase tracking-[0.2em] transition-all hover:shadow-[0_0_15px_rgba(211,47,47,0.4)]"
               >
-                View All
+                All Logs
               </button>
             </div>
 
             <div class="space-y-6">
-              <div v-for="activity in recentActivity" :key="activity.id" class="flex gap-4 group">
+              <div
+                v-for="(activity, index) in recentActivity"
+                :key="activity.id"
+                class="flex gap-5 group p-3 rounded-2xl hover:bg-white hover:shadow-[0_10px_20px_rgba(0,0,0,0.03)] transition-all duration-300 border border-transparent hover:border-slate-100"
+                :style="`animation-delay: ${index * 100}ms`"
+                :class="'animate-slide-up'"
+              >
                 <div class="flex-shrink-0">
                   <div
                     :class="[
-                      'w-10 h-10 rounded-full flex items-center justify-center text-lg',
+                      'w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform duration-500',
                       activity.bg,
                     ]"
                   >
-                    {{ activity.icon }}
+                    <span class="group-hover:animate-bounce-slow">{{ activity.icon }}</span>
                   </div>
                 </div>
-                <div>
+                <div class="flex flex-col justify-center">
                   <p
-                    class="text-sm font-medium text-slate-800 leading-snug group-hover:text-school-navy transition-colors"
+                    class="text-sm font-black text-slate-800 leading-snug group-hover:text-school-navy transition-colors font-heading"
                   >
                     {{ activity.action }}
                   </p>
-                  <div class="flex items-center gap-2 mt-1.5 text-xs text-slate-500 font-medium">
-                    <span :class="activity.color">{{ activity.user }}</span>
+                  <div
+                    class="flex items-center gap-3 mt-2 text-[11px] text-slate-500 font-bold uppercase tracking-wider"
+                  >
+                    <span
+                      :class="[
+                        'px-2 py-0.5 rounded-full bg-opacity-10',
+                        activity.color,
+                        activity.bg.replace('/10', '/30'),
+                      ]"
+                      >{{ activity.user }}</span
+                    >
                     <span>•</span>
-                    <span>{{ activity.time }}</span>
+                    <span class="flex items-center gap-1"
+                      ><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg
+                      >{{ activity.time }}</span
+                    >
                   </div>
                 </div>
               </div>
@@ -279,51 +412,51 @@ const recentActivity = ref([
   {
     id: 1,
     type: 'payment',
-    user: 'Finance Dept',
-    action: 'Recorded Term 1 fees for John Doe (Grade 3)',
-    time: '10 minutes ago',
+    user: 'Finance',
+    action: 'Recorded Term 1 fees for John Doe',
+    time: '10m ago',
     icon: '💰',
-    color: 'text-emerald-500',
+    color: 'text-emerald-600',
     bg: 'bg-emerald-50',
   },
   {
     id: 2,
     type: 'attendance',
     user: 'Mr. Smith',
-    action: 'Marked Grade 4 attendance (100% present)',
-    time: '1 hour ago',
+    action: 'Marked Grade 4 attendance (100%)',
+    time: '1h ago',
     icon: '📋',
     color: 'text-school-navy',
-    bg: 'bg-school-navy/10',
+    bg: 'bg-blue-50',
   },
   {
     id: 3,
     type: 'admission',
     user: 'Office',
-    action: 'Admitted new student: Sarah Jenkins (Playgroup)',
-    time: '2 hours ago',
+    action: 'Admitted Sarah Jenkins (Playgroup)',
+    time: '2h ago',
     icon: '👨‍🎓',
-    color: 'text-purple-500',
+    color: 'text-purple-600',
     bg: 'bg-purple-50',
   },
   {
     id: 4,
     type: 'grading',
     user: 'Ms. Alice',
-    action: 'Submitted Math assessment scores for Grade 2',
-    time: '3 hours ago',
+    action: 'Submitted Math scores for Grade 2',
+    time: '3h ago',
     icon: '📝',
-    color: 'text-blue-500',
-    bg: 'bg-blue-50',
+    color: 'text-orange-600',
+    bg: 'bg-orange-50',
   },
   {
     id: 5,
     type: 'system',
-    user: 'System Admin',
-    action: 'Weekly database backup completed successfully',
-    time: '5 hours ago',
+    user: 'System',
+    action: 'Weekly automated backup completed',
+    time: '5h ago',
     icon: '⚙️',
-    color: 'text-slate-500',
+    color: 'text-slate-600',
     bg: 'bg-slate-100',
   },
 ])
@@ -338,23 +471,21 @@ const formatCurrency = (amount) => {
 
 onMounted(async () => {
   try {
-    // We use Promise.all to fetch everything at the exact same time
     const [students, fees, staff] = await Promise.all([
       studentService.getAllStudents().catch(() => []),
       feeService.getAllFees().catch(() => []),
       staffService.getAllStaff().catch(() => []),
     ])
 
-    // Calculate the totals
     totalStudents.value = students.length
     totalStaff.value = staff.length
-
-    // Add up every single payment in the ledger
     totalRevenue.value = fees.reduce((sum, fee) => sum + (fee.amount || 0), 0)
   } catch (error) {
     console.error('Failed to load dashboard analytics', error)
   } finally {
-    loading.value = false
+    setTimeout(() => {
+      loading.value = false
+    }, 800) // Artificial delay to show off loading animation
   }
 })
 </script>
@@ -363,15 +494,15 @@ onMounted(async () => {
 @keyframes countUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px) scale(0.9);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .animate-count-up {
-  animation: countUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: countUp 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 </style>
