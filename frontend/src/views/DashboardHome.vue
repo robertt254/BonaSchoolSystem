@@ -1,8 +1,8 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative">
+  <div class="max-w-7xl mx-auto space-y-6">
     <!-- Welcome Banner -->
     <div
-      class="relative rounded-[18px] p-8 overflow-hidden flex flex-col sm:flex-row items-center justify-between shadow-sm animate-slide-in"
+      class="relative rounded-2xl p-7 overflow-hidden flex flex-col sm:flex-row items-center justify-between shadow-sm animate-slide-in"
       style="background: linear-gradient(130deg, #0a192f 0%, #1a0f40 50%, #0f172a 100%)"
     >
       <!-- Decorative Layers -->
@@ -86,20 +86,20 @@
       </div>
     </div>
 
-    <div v-else class="space-y-[18px] relative z-10">
+    <div v-else class="space-y-4">
       <!-- Stats Grid -->
       <div
-        class="grid grid-cols-1 md:grid-cols-3 gap-8"
+        class="grid grid-cols-1 md:grid-cols-3 gap-4"
         style="animation: slideIn 0.4s 0.08s ease both"
       >
         <!-- Total Enrolled -->
         <div
-          class="bg-white border border-[#E2E8F0] rounded-[12px] p-[20px_22px] relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-[2px] hover:shadow-[0_8px_28px_rgba(0,0,0,0.07)] hover:border-[#CBD5E1]"
+          class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
         >
           <span
             class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-[#2563EB] to-[#818CF8]"
           ></span>
-          <div class="flex items-start justify-between mb-[12px]">
+          <div class="flex items-start justify-between mb-3">
             <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
               >Total Enrolled</span
             >
@@ -123,7 +123,7 @@
             </div>
           </div>
           <h2
-            class="font-heading text-[34px] font-extrabold text-[#0F172A] leading-none mb-[7px] animate-count-up"
+            class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5 animate-count-up"
             style="animation-delay: 0.05s"
           >
             {{ totalStudents }}
@@ -139,12 +139,12 @@
 
         <!-- Total Revenue -->
         <div
-          class="bg-white border border-[#E2E8F0] rounded-[12px] p-[20px_22px] relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-[2px] hover:shadow-[0_8px_28px_rgba(0,0,0,0.07)] hover:border-[#CBD5E1]"
+          class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
         >
           <span
             class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-[#059669] to-[#34D399]"
           ></span>
-          <div class="flex items-start justify-between mb-[12px]">
+          <div class="flex items-start justify-between mb-3">
             <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
               >Total Revenue</span
             >
@@ -166,7 +166,7 @@
             </div>
           </div>
           <h2
-            class="font-heading text-[34px] font-extrabold text-[#0F172A] leading-none mb-[7px] animate-count-up"
+            class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5 animate-count-up"
             style="animation-delay: 0.1s"
           >
             {{ formatCurrency(totalRevenue) }}
@@ -182,12 +182,12 @@
 
         <!-- Active Staff -->
         <div
-          class="bg-white border border-[#E2E8F0] rounded-[12px] p-[20px_22px] relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-[2px] hover:shadow-[0_8px_28px_rgba(0,0,0,0.07)] hover:border-[#CBD5E1]"
+          class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
         >
           <span
             class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-school-red to-red-400"
           ></span>
-          <div class="flex items-start justify-between mb-[12px]">
+          <div class="flex items-start justify-between mb-3">
             <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
               >Active Staff</span
             >
@@ -211,7 +211,7 @@
             </div>
           </div>
           <h2
-            class="font-heading text-[34px] font-extrabold text-[#0F172A] leading-none mb-[7px] animate-count-up"
+            class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5 animate-count-up"
             style="animation-delay: 0.15s"
           >
             {{ totalStaff }}
@@ -228,12 +228,12 @@
 
       <!-- Two-Column Section -->
       <div
-        class="grid grid-cols-1 lg:grid-cols-2 gap-8"
+        class="grid grid-cols-1 lg:grid-cols-2 gap-4"
         style="animation: slideIn 0.4s 0.18s ease both"
       >
         <!-- Quick Actions Panel -->
         <div class="bg-white border border-[#E2E8F0] rounded-[12px] overflow-hidden">
-          <div class="flex items-center justify-between p-8 border-b border-[#E2E8F0]">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
             <div>
               <h3 class="font-heading text-[14.5px] font-bold text-[#0F172A]">Quick Actions</h3>
               <p class="text-[11.5px] text-[#94A3B8] mt-[1px]">Common tasks and shortcuts</p>
@@ -243,10 +243,10 @@
               >View All</span
             >
           </div>
-          <div class="grid grid-cols-2 gap-[10px] p-8">
+          <div class="grid grid-cols-2 gap-3 p-4">
             <router-link
               to="/academics/attendance"
-              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(211,47,47,0.12)] text-school-red"
@@ -272,7 +272,7 @@
 
             <router-link
               to="/finance"
-              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(5,150,105,0.1)] text-[#059669]"
@@ -298,7 +298,7 @@
 
             <router-link
               to="/academics"
-              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(37,99,235,0.1)] text-[#2563EB]"
@@ -325,7 +325,7 @@
 
             <router-link
               to="/office"
-              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(217,119,6,0.1)] text-[#D97706]"
@@ -352,7 +352,7 @@
 
             <router-link
               to="/academics/report-card"
-              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(211,47,47,0.12)] text-school-red"
@@ -380,7 +380,7 @@
 
             <router-link
               to="/finance/statements"
-              class="flex items-center gap-6 p-8 rounded-[10px] bg-school-grey border border-[#E2E8F0] cursor-pointer transition-all duration-[180ms] hover:bg-white hover:border-school-red/30 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(211,47,47,0.09)]"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(37,99,235,0.1)] text-[#2563EB]"
@@ -409,7 +409,7 @@
 
         <!-- Activity Feed Panel -->
         <div class="bg-white border border-[#E2E8F0] rounded-[12px] overflow-hidden">
-          <div class="flex items-center justify-between p-8 border-b border-[#E2E8F0]">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
             <div>
               <h3 class="font-heading text-[14.5px] font-bold text-[#0F172A]">Activity Feed</h3>
               <p class="text-[11.5px] text-[#94A3B8] mt-[1px]">Latest system events</p>
@@ -424,7 +424,7 @@
             <div
               v-for="activity in recentActivity"
               :key="activity.id"
-              class="flex items-start gap-6 p-8 border-b border-[#E2E8F0] last:border-b-0 cursor-pointer transition-colors hover:bg-[#F8FAFC]"
+              class="flex items-start gap-3 px-5 py-3.5 border-b border-slate-100 last:border-b-0 transition-colors hover:bg-slate-50"
             >
               <div
                 class="w-[34px] h-[34px] rounded-full flex items-center justify-center font-heading font-bold text-[13px] flex-shrink-0 mt-[1px]"
