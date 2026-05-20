@@ -8,23 +8,25 @@ from audit import log_action
 
 router = APIRouter(prefix="/api/fees", tags=["Finance & Fees"])
 
-# Legacy hardcoded structure — used only when no FeeStructure rows exist for the year.
 CBC_TERMLY_FEES_FALLBACK = {
     "Play Group": 12000.00,
     "PP1": 15000.00,
     "PP2": 15000.00,
     "Grade 1": 18000.00,
-    "Grade 2": 15000.00,
+    "Grade 2": 18000.00,
     "Grade 3": 18000.00,
     "Grade 4": 20000.00,
     "Grade 5": 20000.00,
     "Grade 6": 20000.00,
 }
 
+TERM_ORDER = {"Term 1": 1, "Term 2": 2, "Term 3": 3}
+TERM_BY_NUM = {1: "Term 1", 2: "Term 2", 3: "Term 3"}
+
 FINANCE_ROLES = {"accountant", "admin", "principal"}
 
 
-# ── Receipt number ────────────────────────────────────────────────────────────
+# ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _generate_receipt_number(db: Session) -> str:
     year = datetime.now().year
@@ -58,6 +60,21 @@ def _get_expected_fee(db: Session, grade_level: str, term: str) -> float:
     if structure:
         return float(structure.amount)
     return CBC_TERMLY_FEES_FALLBACK.get(grade_level, 0.0)
+
+
+def _get_rollover_credit(db: Session, student_id: int, grade_level: str, up_to_term_num: int) -> float:
+    """Return the cumulative overpayment from all terms before up_to_term_num."""
+    cumulative_expected = 0.0
+    cumulative_paid = 0.0
+    for num in range(1, up_to_term_num):
+        t = TERM_BY_NUM[num]
+        cumulative_expected += _get_expected_fee(db, grade_level, t)
+        paid = db.query(func.sum(models.FeePayment.amount)).filter(
+            models.FeePayment.student_id == student_id,
+            models.FeePayment.term == t,
+        ).scalar() or 0.0
+        cumulative_paid += float(paid)
+    return max(0.0, round(cumulative_paid - cumulative_expected, 2))
 
 
 # ── Payment endpoints ─────────────────────────────────────────────────────────
@@ -142,12 +159,22 @@ def get_student_balance(
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
 
+    current_term_num = TERM_ORDER.get(term, 1)
     expected = _get_expected_fee(db, student.grade_level, term)
 
-    total_paid = db.query(func.sum(models.FeePayment.amount)).filter(
-        models.FeePayment.student_id == student_id,
-        models.FeePayment.term == term,
-    ).scalar() or 0.0
+    total_paid = float(
+        db.query(func.sum(models.FeePayment.amount)).filter(
+            models.FeePayment.student_id == student_id,
+            models.FeePayment.term == term,
+        ).scalar() or 0.0
+    )
+
+    # Credit carried forward from any overpayments in earlier terms
+    rollover_credit = _get_rollover_credit(db, student_id, student.grade_level, current_term_num)
+
+    # Outstanding cannot be negative (overpayment of current term is not rolled here,
+    # it will become credit when the next term is queried)
+    outstanding = round(max(0.0, expected - total_paid - rollover_credit), 2)
 
     return {
         "student_id": student.id,
@@ -155,9 +182,73 @@ def get_student_balance(
         "grade_level": student.grade_level,
         "term_checked": term,
         "expected_term_fee": expected,
-        "total_paid_this_term": float(total_paid),
-        "outstanding_balance": round(expected - float(total_paid), 2),
+        "total_paid_this_term": total_paid,
+        "rollover_credit": rollover_credit,
+        "outstanding_balance": outstanding,
     }
+
+
+@router.get("/term-summary")
+def get_term_summary(
+    term: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Expected vs collected for a given term across all active students."""
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized to view financials")
+
+    students = db.query(models.Student).filter(
+        models.Student.is_deleted == False,
+        models.Student.status == "Active",
+    ).all()
+
+    total_expected = sum(_get_expected_fee(db, s.grade_level, term) for s in students)
+
+    total_collected = float(
+        db.query(func.sum(models.FeePayment.amount))
+        .filter(models.FeePayment.term == term)
+        .scalar() or 0.0
+    )
+
+    pct = round(total_collected / total_expected * 100, 1) if total_expected > 0 else 0.0
+
+    return {
+        "term": term,
+        "total_expected": round(total_expected, 2),
+        "total_collected": round(total_collected, 2),
+        "percentage": pct,
+    }
+
+
+@router.get("/monthly-collection")
+def get_monthly_collection(
+    year: int = None,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Fee payments totalled by calendar month for a given year (defaults to current year)."""
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized to view financials")
+
+    if year is None:
+        year = datetime.now().year
+
+    rows = (
+        db.query(
+            func.extract("month", models.FeePayment.payment_date).label("month"),
+            func.sum(models.FeePayment.amount).label("total"),
+        )
+        .filter(func.extract("year", models.FeePayment.payment_date) == year)
+        .group_by(func.extract("month", models.FeePayment.payment_date))
+        .order_by(func.extract("month", models.FeePayment.payment_date))
+        .all()
+    )
+
+    monthly = {int(r.month): float(r.total) for r in rows}
+    labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    return [{"month": labels[m - 1], "total": monthly.get(m, 0.0)} for m in range(1, 13)]
 
 
 @router.get("/defaulters")
@@ -172,15 +263,19 @@ def get_defaulters(
 
     students = db.query(models.Student).filter(models.Student.is_deleted == False).all()
     defaulters = []
+    current_term_num = TERM_ORDER.get(term, 1)
     for s in students:
         expected = _get_expected_fee(db, s.grade_level, term)
         if expected == 0:
             continue
-        paid = db.query(func.sum(models.FeePayment.amount)).filter(
-            models.FeePayment.student_id == s.id,
-            models.FeePayment.term == term,
-        ).scalar() or 0.0
-        balance = round(expected - float(paid), 2)
+        paid = float(
+            db.query(func.sum(models.FeePayment.amount)).filter(
+                models.FeePayment.student_id == s.id,
+                models.FeePayment.term == term,
+            ).scalar() or 0.0
+        )
+        credit = _get_rollover_credit(db, s.id, s.grade_level, current_term_num)
+        balance = round(max(0.0, expected - paid - credit), 2)
         if balance > 0:
             defaulters.append({
                 "student_id": s.id,
@@ -188,7 +283,8 @@ def get_defaulters(
                 "admission_number": s.admission_number,
                 "grade_level": s.grade_level,
                 "expected_fee": expected,
-                "total_paid": float(paid),
+                "total_paid": paid,
+                "rollover_credit": credit,
                 "outstanding_balance": balance,
             })
     return defaulters

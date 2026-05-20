@@ -97,6 +97,41 @@
         </div>
       </div>
 
+      <!-- Monthly Collection Chart -->
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden">
+        <div class="border-b border-slate-100 px-8 py-5 flex items-center justify-between bg-slate-50">
+          <div>
+            <h3 class="text-lg font-bold text-slate-800 tracking-tight">Monthly Collections</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Fee payments received per month · {{ new Date().getFullYear() }}</p>
+          </div>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">KES</span>
+        </div>
+        <div class="px-8 py-6">
+          <div v-if="monthlyCollection.some(m => m.total > 0)" class="flex items-end gap-1.5 h-36">
+            <div
+              v-for="m in monthlyCollection"
+              :key="m.month"
+              class="flex-1 flex flex-col items-center gap-1 group"
+            >
+              <span class="text-[9px] font-bold text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                {{ m.total > 0 ? formatCurrencyShort(m.total) : '' }}
+              </span>
+              <div class="w-full flex flex-col justify-end rounded overflow-hidden bg-slate-100" style="height:88px">
+                <div
+                  class="w-full bg-school-navy/80 hover:bg-school-navy rounded transition-all duration-700"
+                  :style="{ height: (m.total / maxMonthly * 88) + 'px' }"
+                  :title="m.month + ': ' + formatCurrency(m.total)"
+                ></div>
+              </div>
+              <span class="text-[9px] text-slate-400 font-semibold">{{ m.month }}</span>
+            </div>
+          </div>
+          <div v-else class="h-36 flex items-center justify-center">
+            <p class="text-sm text-slate-400">No payments recorded for {{ new Date().getFullYear() }}.</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Payroll Module -->
       <div
         class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
@@ -549,6 +584,8 @@ const activeStaff = ref([])
 const payrollLedger = ref([])
 const expenses = ref([])
 const loading = ref(true)
+const termSummary = ref({ total_expected: 0, total_collected: 0, percentage: 0 })
+const monthlyCollection = ref([])
 
 const showPayrollModal = ref(false)
 const showExpenseModal = ref(false)
@@ -578,18 +615,22 @@ const expenseForm = reactive({
 const loadData = async () => {
   loading.value = true
   try {
-    const [fetchedFees, fetchedStudents, fetchedStaff, fetchedPayroll, fetchedExpenses] = await Promise.all([
+    const [fetchedFees, fetchedStudents, fetchedStaff, fetchedPayroll, fetchedExpenses, fetchedSummary, fetchedMonthly] = await Promise.all([
       feeService.getAllFees().catch(() => []),
       studentService.getAllStudents().catch(() => []),
       staffService.getAllStaff().catch(() => []),
       financeService.getPayrollLedger().catch(() => []),
       financeService.getExpenses().catch(() => []),
+      feeService.getTermSummary(appStore.currentTerm).catch(() => ({ total_expected: 0, total_collected: 0, percentage: 0 })),
+      feeService.getMonthlyCollection().catch(() => []),
     ])
     fees.value = fetchedFees
     students.value = fetchedStudents
-    activeStaff.value = fetchedStaff // you could filter by active if staff had a status
-    payrollLedger.value = fetchedPayroll.sort((a, b) => b.id - a.id) // simplistic sort latest first
+    activeStaff.value = fetchedStaff
+    payrollLedger.value = fetchedPayroll.sort((a, b) => b.id - a.id)
     expenses.value = fetchedExpenses.sort((a, b) => b.id - a.id)
+    termSummary.value = fetchedSummary
+    monthlyCollection.value = fetchedMonthly
   } catch (error) {
     console.error('Error loading finance data:', error)
   } finally {
@@ -600,45 +641,23 @@ const loadData = async () => {
 onMounted(loadData)
 
 // --- COMPUTED FINANCE METRICS ---
-const filteredFees = computed(() => {
-  return fees.value
-    .filter((fee) => fee.term === appStore.currentTerm)
-    .sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date))
-})
+const totalRevenue = computed(() =>
+  fees.value.reduce((sum, fee) => sum + (fee.amount || 0), 0)
+)
 
-const totalRevenue = computed(() => {
-  return fees.value.reduce((sum, fee) => sum + (fee.amount || 0), 0)
-})
+const termCollected = computed(() => termSummary.value.total_collected)
+const termGoal      = computed(() => termSummary.value.total_expected)
+const collectionPercentage = computed(() => Math.min(termSummary.value.percentage, 100))
 
-const termCollected = computed(() => {
-  return filteredFees.value.reduce((sum, fee) => sum + (fee.amount || 0), 0)
-})
+const maxMonthly = computed(() =>
+  Math.max(...monthlyCollection.value.map((m) => m.total), 1)
+)
 
-const feeStructure = {
-  'Play Group': 12000,
-  PP1: 15000,
-  PP2: 15000,
-  'Grade 1': 18000,
-  'Grade 2': 18000,
-  'Grade 3': 18000,
-  'Grade 4': 20000,
-  'Grade 5': 20000,
-  'Grade 6': 20000,
+const formatCurrencyShort = (v) => {
+  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`
+  if (v >= 1_000) return `${(v / 1_000).toFixed(0)}K`
+  return String(v)
 }
-
-const termGoal = computed(() => {
-  const activeStudents = students.value.filter((s) => s.status === 'Active')
-  return activeStudents.reduce((total, student) => {
-    const fee = feeStructure[student.grade_level] || 0
-    return total + fee
-  }, 0)
-})
-
-const collectionPercentage = computed(() => {
-  if (termGoal.value === 0) return 0
-  const pct = (termCollected.value / termGoal.value) * 100
-  return Math.min(Math.round(pct), 100)
-})
 
 // --- FEE MODAL ---
 const openFeeModal = () => {

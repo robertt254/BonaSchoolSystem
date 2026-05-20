@@ -87,6 +87,10 @@
               <td class="py-3 px-2 text-emerald-800 font-medium">Total Paid This Term</td>
               <td class="py-3 px-2 text-right font-bold text-emerald-700">− {{ formatCurrency(statementData.total_paid_this_term) }}</td>
             </tr>
+            <tr v-if="statementData.rollover_credit > 0" class="border-b border-slate-200 bg-blue-50/40">
+              <td class="py-3 px-2 text-blue-700 font-medium">Credit from Previous Terms</td>
+              <td class="py-3 px-2 text-right font-bold text-blue-700">− {{ formatCurrency(statementData.rollover_credit) }}</td>
+            </tr>
             <tr>
               <td class="py-4 text-lg font-black text-slate-800 uppercase tracking-wide">Outstanding Balance</td>
               <td class="py-4 text-right text-2xl font-black" :class="statementData.outstanding_balance > 0 ? 'text-school-red' : 'text-emerald-600'">
