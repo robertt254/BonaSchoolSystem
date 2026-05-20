@@ -10,7 +10,7 @@
         class="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:22px_22px]"
       ></div>
       <div
-        class="pointer-events-none absolute top-[-60px] right-[-40px] w-[220px] h-[220px] rounded-full bg-[radial-gradient(circle,rgba(211,47,47,0.25)_0%,transparent_65%)]"
+        class="pointer-events-none absolute top-[-60px] right-[-40px] w-[220px] h-[220px] rounded-full bg-[radial-gradient(circle,rgba(109,40,217,0.25)_0%,transparent_65%)]"
       ></div>
       <div
         class="pointer-events-none absolute bottom-[-60px] right-[160px] w-[180px] h-[180px] rounded-full bg-[radial-gradient(circle,rgba(16,185,129,0.12)_0%,transparent_65%)]"
@@ -185,14 +185,14 @@
           class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
         >
           <span
-            class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-school-red to-red-400"
+            class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-school-purple to-school-purple-ll"
           ></span>
           <div class="flex items-start justify-between mb-3">
             <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
               >Active Staff</span
             >
             <div
-              class="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[rgba(211,47,47,0.1)] text-school-red"
+              class="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[rgba(109,40,217,0.1)] text-school-purple"
             >
               <svg
                 class="w-5 h-5"
@@ -239,17 +239,17 @@
               <p class="text-[11.5px] text-[#94A3B8] mt-[1px]">Common tasks and shortcuts</p>
             </div>
             <span
-              class="text-[12px] font-semibold text-school-red cursor-pointer hover:text-red-700 transition-colors"
+              class="text-[12px] font-semibold text-school-purple-ll cursor-pointer hover:text-school-purple-l transition-colors"
               >View All</span
             >
           </div>
           <div class="grid grid-cols-2 gap-3 p-4">
             <router-link
               to="/academics/attendance"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
             >
               <div
-                class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(211,47,47,0.12)] text-school-red"
+                class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(109,40,217,0.12)] text-school-purple"
               >
                 <svg
                   class="w-5 h-5"
@@ -272,7 +272,7 @@
 
             <router-link
               to="/finance"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(5,150,105,0.1)] text-[#059669]"
@@ -298,7 +298,7 @@
 
             <router-link
               to="/academics"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(37,99,235,0.1)] text-[#2563EB]"
@@ -325,7 +325,7 @@
 
             <router-link
               to="/office"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(217,119,6,0.1)] text-[#D97706]"
@@ -352,10 +352,10 @@
 
             <router-link
               to="/academics/report-card"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
             >
               <div
-                class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(211,47,47,0.12)] text-school-red"
+                class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(109,40,217,0.12)] text-school-purple"
               >
                 <svg
                   class="w-5 h-5"
@@ -380,7 +380,7 @@
 
             <router-link
               to="/finance/statements"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-red/30 hover:shadow-sm"
+              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
             >
               <div
                 class="w-[40px] h-[40px] rounded-[10px] flex items-center justify-center flex-shrink-0 bg-[rgba(37,99,235,0.1)] text-[#2563EB]"
@@ -415,7 +415,7 @@
               <p class="text-[11.5px] text-[#94A3B8] mt-[1px]">Latest system events</p>
             </div>
             <span
-              class="text-[12px] font-semibold text-school-red cursor-pointer hover:text-red-700 transition-colors"
+              class="text-[12px] font-semibold text-school-purple-ll cursor-pointer hover:text-school-purple-l transition-colors"
               >All Activity</span
             >
           </div>
@@ -473,9 +473,9 @@ const RESOURCE_STYLE = {
   fee:        { avatar: 'bg-[rgba(5,150,105,0.1)] text-[#059669]',   dot: 'bg-[#059669]' },
   assessment: { avatar: 'bg-[rgba(37,99,235,0.1)] text-[#2563EB]',   dot: 'bg-[#2563EB]' },
   attendance: { avatar: 'bg-[rgba(37,99,235,0.1)] text-[#2563EB]',   dot: 'bg-[#2563EB]' },
-  staff:      { avatar: 'bg-[rgba(211,47,47,0.12)] text-school-red', dot: 'bg-school-red' },
+  staff:      { avatar: 'bg-[rgba(109,40,217,0.12)] text-school-purple', dot: 'bg-school-purple' },
   payroll:    { avatar: 'bg-[rgba(5,150,105,0.1)] text-[#059669]',   dot: 'bg-[#059669]' },
-  expense:    { avatar: 'bg-[rgba(211,47,47,0.12)] text-school-red', dot: 'bg-school-red' },
+  expense:    { avatar: 'bg-[rgba(109,40,217,0.12)] text-school-purple', dot: 'bg-school-purple' },
 }
 
 const ACTION_LABELS = { CREATE: 'created', UPDATE: 'updated', DELETE: 'deleted' }

@@ -11,7 +11,7 @@
       >
         <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-white/5 blur-3xl"></div>
         <div
-          class="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-school-red/10 blur-2xl"
+          class="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-school-purple/10 blur-2xl"
         ></div>
         <div class="relative z-10">
           <h1 class="text-3xl font-extrabold font-heading tracking-tight uppercase mb-2">
@@ -66,7 +66,7 @@
               type="text"
               required
               placeholder="e.g. j.doe"
-              class="w-full px-4 py-3.5 rounded-[9px] border border-slate-300 focus:ring-2 focus:ring-school-red/10 focus:border-school-red transition duration-150 outline-none"
+              class="w-full px-4 py-3.5 rounded-[9px] border border-slate-300 focus:ring-2 focus:ring-school-purple/10 focus:border-school-purple transition duration-150 outline-none"
             />
           </div>
 
@@ -78,7 +78,7 @@
               type="password"
               required
               placeholder="••••••••"
-              class="w-full px-4 py-3.5 rounded-[9px] border border-slate-300 focus:ring-2 focus:ring-school-red/10 focus:border-school-red transition duration-150 outline-none"
+              class="w-full px-4 py-3.5 rounded-[9px] border border-slate-300 focus:ring-2 focus:ring-school-purple/10 focus:border-school-purple transition duration-150 outline-none"
             />
           </div>
 
@@ -87,7 +87,7 @@
             <button
               type="submit"
               :disabled="isLoading"
-              class="w-full bg-school-red text-white font-semibold px-8 py-4 rounded-[9px] shadow-none hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 active:scale-[0.98] disabled:bg-school-grey disabled:text-slate-500 flex justify-center items-center"
+              class="w-full bg-school-purple text-white font-semibold px-8 py-4 rounded-[9px] shadow-none hover:bg-school-purple-l focus:outline-none focus:ring-2 focus:ring-school-purple focus:ring-offset-2 transition duration-200 active:scale-[0.98] disabled:bg-school-grey disabled:text-slate-500 flex justify-center items-center"
             >
               <span v-if="isLoading" class="animate-spin mr-2">
                 <!-- simple SVG spinner inline -->

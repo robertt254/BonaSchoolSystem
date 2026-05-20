@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen min-w-0 bg-slate-100 font-sans">
+  <div class="flex h-screen min-w-0 bg-school-grey font-sans">
     <!-- Mobile overlay -->
     <div
       v-if="isSidebarOpen"
@@ -12,12 +12,12 @@
       :class="[
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
         'fixed inset-y-0 left-0 z-50 md:relative md:translate-x-0',
-        'flex flex-col w-64 shrink-0 bg-[#0A192F] transition-transform duration-300 ease-out',
+        'flex flex-col w-64 shrink-0 bg-school-navy transition-transform duration-300 ease-out',
       ]"
     >
       <!-- Logo -->
-      <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-school-red to-red-400 flex items-center justify-center font-bold text-sm text-white shadow-lg shrink-0">
+      <div class="flex items-center gap-3 px-5 py-5 border-b border-white/8">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center font-bold text-sm text-white shadow-lg shrink-0">
           BS
         </div>
         <div>
@@ -121,10 +121,10 @@
       </nav>
 
       <!-- Footer -->
-      <div class="shrink-0 border-t border-white/10 p-3 space-y-1">
+      <div class="shrink-0 border-t border-white/8 p-3 space-y-1">
         <!-- User card -->
         <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-school-red to-red-400 font-bold text-xs text-white flex items-center justify-center shrink-0">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A855F7] font-bold text-xs text-white flex items-center justify-center shrink-0">
             {{ userNameInitial }}
           </div>
           <div class="flex-1 min-w-0">
@@ -144,7 +144,7 @@
         </button>
         <button
           @click="logout"
-          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-white/40 hover:bg-red-500/10 hover:text-red-400 transition-colors"
+          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-white/40 hover:bg-[rgba(225,29,72,0.12)] hover:text-[#FDA4AF] transition-colors"
         >
           <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
@@ -197,13 +197,13 @@
             <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
-            <span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-school-red"></span>
+            <span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-school-purple"></span>
           </button>
         </div>
       </header>
 
       <!-- Page content -->
-      <main class="flex-1 overflow-y-auto bg-slate-100">
+      <main class="flex-1 overflow-y-auto bg-school-grey">
         <div class="p-6 lg:p-8">
           <router-view v-slot="{ Component }">
             <transition name="page-fade" mode="out-in">
@@ -245,12 +245,12 @@ const NavItem = defineComponent({
       class: [
         'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group relative',
         isActive.value
-          ? 'bg-white/12 text-white'
+          ? 'bg-[rgba(109,40,217,0.14)] text-violet-300'
           : 'text-white/50 hover:bg-white/7 hover:text-white/80',
       ].join(' '),
     }, () => [
       isActive.value && h('span', {
-        class: 'absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-school-red rounded-r',
+        class: 'absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-[#8B5CF6] rounded-r',
       }),
       h('span', {
         class: ['w-5 h-5 shrink-0', isActive.value ? 'opacity-100' : 'opacity-60 group-hover:opacity-90'].join(' '),

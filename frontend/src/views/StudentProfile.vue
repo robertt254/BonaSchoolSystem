@@ -84,7 +84,7 @@
             @click="activeTab = t.id"
             class="px-6 py-4 text-sm font-semibold transition-colors"
             :class="activeTab === t.id
-              ? 'border-b-2 border-school-red text-school-red'
+              ? 'border-b-2 border-school-purple text-school-purple'
               : 'text-slate-500 hover:text-slate-700'"
           >
             {{ t.label }}
