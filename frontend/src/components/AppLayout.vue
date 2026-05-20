@@ -65,7 +65,7 @@
           Dashboard
         </router-link>
 
-        <template v-if="['senior_teacher', 'principal', 'admin'].includes(userRole)">
+        <template v-if="['teacher', 'principal', 'admin'].includes(userRole)">
           <div class="pt-[16px] pb-[5px]">
             <span
               class="text-[9.5px] font-bold uppercase tracking-[0.1em] text-white/20 px-[10px] block"
@@ -176,7 +176,7 @@
           </router-link>
         </template>
 
-        <template v-if="['finance', 'principal', 'admin'].includes(userRole)">
+        <template v-if="['accountant', 'principal', 'admin'].includes(userRole)">
           <div class="pt-[16px] pb-[5px]">
             <span
               class="text-[9.5px] font-bold uppercase tracking-[0.1em] text-white/20 px-[10px] block"
@@ -263,7 +263,7 @@
             Console
           </router-link>
           <router-link
-            to="/hr"
+            to="/admin/staff"
             class="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[9px] text-[13.5px] font-medium text-white/50 transition-all duration-150 cursor-pointer mb-[1px] hover:bg-white/[0.07] hover:text-white/85 relative group"
             active-class="bg-[rgba(211,47,47,0.12)] text-red-300 active-nav-item hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
           >
@@ -318,6 +318,16 @@
           </svg>
         </div>
         <button
+          @click="showChangePassword = true"
+          class="w-full flex items-center justify-center gap-2 p-[7px_10px] rounded-[8px] cursor-pointer mt-[4px] text-white/30 text-[12.5px] font-medium transition-all hover:bg-white/[0.07] hover:text-white/70"
+        >
+          <svg class="w-[14px] h-[14px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          Change Password
+        </button>
+        <button
           @click="logout"
           class="w-full flex items-center justify-center gap-2 p-[7px_10px] rounded-[8px] cursor-pointer mt-[4px] text-white/30 text-[12.5px] font-medium transition-all hover:bg-[rgba(211,47,47,0.12)] hover:text-red-300"
         >
@@ -338,6 +348,8 @@
         </button>
       </div>
     </aside>
+
+    <ChangePasswordModal v-if="showChangePassword" @close="showChangePassword = false" />
 
     <!-- MAIN CONTENT WRAPPER -->
     <div class="flex-1 flex flex-col min-w-0 bg-school-grey overflow-hidden relative">
@@ -467,6 +479,9 @@ import { computed, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
+import ChangePasswordModal from '@/components/ChangePasswordModal.vue'
+
+const showChangePassword = ref(false)
 
 const router = useRouter()
 const route = useRoute()

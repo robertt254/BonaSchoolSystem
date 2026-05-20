@@ -23,6 +23,8 @@ class Student(Base):
     admission_number = Column(String(20), unique=True, index=True, nullable=False)
     grade_level = Column(String(20), nullable=False)
     status = Column(String(20), nullable=False, default="Active")
+    guardian_name = Column(String(100), nullable=True)
+    guardian_phone = Column(String(20), nullable=True)
     # Soft delete — never hard-delete student records
     is_deleted = Column(Boolean, nullable=False, default=False, server_default="false")
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

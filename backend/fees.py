@@ -93,6 +93,28 @@ def record_payment(
     return new_fee
 
 
+@router.get("/student/{student_id}", response_model=list[schemas.FeeResponse])
+def get_student_payments(
+    student_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized to view fee records")
+    student = db.query(models.Student).filter(
+        models.Student.id == student_id,
+        models.Student.is_deleted == False,
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return (
+        db.query(models.FeePayment)
+        .filter(models.FeePayment.student_id == student_id)
+        .order_by(models.FeePayment.payment_date.desc())
+        .all()
+    )
+
+
 @router.get("/", response_model=list[schemas.FeeResponse])
 def get_all_payments(
     db: Session = Depends(get_db),

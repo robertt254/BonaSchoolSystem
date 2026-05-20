@@ -56,6 +56,8 @@ class StudentBase(BaseModel):
     admission_number: str = Field(..., min_length=1, max_length=20)
     grade_level: GradeLevel
     status: StudentStatus = StudentStatus.active
+    guardian_name: Optional[str] = Field(None, max_length=100)
+    guardian_phone: Optional[str] = Field(None, max_length=20)
 
 
 class StudentCreate(StudentBase):
@@ -74,6 +76,8 @@ class StudentUpdate(BaseModel):
     last_name: Optional[str] = Field(None, min_length=1, max_length=100)
     grade_level: Optional[GradeLevel] = None
     status: Optional[StudentStatus] = None
+    guardian_name: Optional[str] = Field(None, max_length=100)
+    guardian_phone: Optional[str] = Field(None, max_length=20)
 
 
 class FeeBase(BaseModel):
@@ -91,9 +95,15 @@ class FeeResponse(FeeBase):
     id: int
     payment_date: datetime
     recorded_by: str
+    receipt_number: Optional[str] = None
 
     class Config:
         from_attributes = True
+
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str = Field(..., min_length=8)
 
 
 class UserBase(BaseModel):

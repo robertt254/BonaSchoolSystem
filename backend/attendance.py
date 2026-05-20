@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 from database import get_db
 import models, schemas, auth
 from audit import log_action
@@ -55,6 +55,48 @@ def log_bulk_attendance(
                {"date": str(today), "count": len(records)})
     db.commit()
     return {"message": "Attendance updated successfully"}
+
+
+@router.get("/student/{student_id}")
+def get_student_attendance(
+    student_id: int,
+    limit: int = 60,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    student = db.query(models.Student).filter(
+        models.Student.id == student_id,
+        models.Student.is_deleted == False,
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    total = db.query(func.count(models.Attendance.id)).filter(
+        models.Attendance.student_id == student_id
+    ).scalar() or 0
+    present = db.query(func.count(models.Attendance.id)).filter(
+        models.Attendance.student_id == student_id,
+        models.Attendance.is_present == True,
+    ).scalar() or 0
+
+    records = (
+        db.query(models.Attendance)
+        .filter(models.Attendance.student_id == student_id)
+        .order_by(models.Attendance.date.desc())
+        .limit(limit)
+        .all()
+    )
+
+    return {
+        "student_id": student_id,
+        "total_days": total,
+        "days_present": present,
+        "attendance_percentage": round(present / total * 100) if total > 0 else 100,
+        "records": [
+            {"date": str(r.date), "is_present": r.is_present, "remarks": r.remarks or ""}
+            for r in records
+        ],
+    }
 
 
 @router.get("/today/{grade}")
