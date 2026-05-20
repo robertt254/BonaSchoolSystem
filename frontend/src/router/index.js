@@ -38,7 +38,7 @@ const router = createRouter({
         {
           path: 'admin/staff',
           name: 'staff-directory',
-          component: () => import('../views/StaffDirectory.vue'),
+          component: () => import('../views/HRDashboard.vue'),
           meta: { requiresAuth: true, roles: ['admin'] },
         },
         {
@@ -56,7 +56,7 @@ const router = createRouter({
         {
           path: 'finance',
           name: 'accountant-dash',
-          component: () => import('../views/Finance/AccountantDashboard.vue'),
+          component: () => import('../views/Finance/FinanceDashboard.vue'),
           meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin'] },
         },
         {
