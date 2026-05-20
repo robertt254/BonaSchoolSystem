@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from sqlalchemy import text
 
 import auth
 import models
@@ -14,7 +15,7 @@ import fees
 import staff
 import academics
 import attendance
-from database import engine
+from database import engine, SessionLocal
 from limiter import limiter
 
 logging.basicConfig(
@@ -77,8 +78,26 @@ async def startup():
     missing = [k for k in required_vars if not os.getenv(k)]
     if missing:
         raise RuntimeError(f"Cannot start — missing environment variables: {missing}")
+
+    # Create new tables (create_all is a no-op for tables that already exist)
     models.Base.metadata.create_all(bind=engine)
     logger.info("Database schema synced.")
+
+    # Safely add columns that may be missing from tables created before these
+    # columns were introduced (create_all does not ALTER existing tables).
+    _safe_add_columns = [
+        "ALTER TABLE students ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE",
+        "ALTER TABLE fees ADD COLUMN IF NOT EXISTS receipt_number VARCHAR(20) UNIQUE",
+    ]
+    try:
+        with engine.connect() as conn:
+            for stmt in _safe_add_columns:
+                conn.execute(text(stmt))
+            conn.commit()
+        logger.info("Schema migration checks complete.")
+    except Exception as exc:
+        logger.error("Schema migration failed: %s", exc)
+
     if os.path.exists(FRONTEND_DIST):
         logger.info("Frontend dist found at %s", FRONTEND_DIST)
     else:
@@ -97,7 +116,22 @@ app.include_router(attendance.router)
 # ── Health check (used by Render's healthCheckPath) ───────────────────────────
 @app.get("/health", tags=["Health"])
 def health_check():
-    return {"status": "online", "system": "Bona School Backend API"}
+    db_status = "unknown"
+    db_error = None
+    try:
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
+        db.close()
+        db_status = "connected"
+    except Exception as exc:
+        db_status = "error"
+        db_error = str(exc)
+    return {
+        "status": "online",
+        "system": "Bona School Backend API",
+        "db": db_status,
+        **({"db_error": db_error} if db_error else {}),
+    }
 
 
 # ── Serve Vite-built frontend static assets ───────────────────────────────────
