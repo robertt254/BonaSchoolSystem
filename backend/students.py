@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 from database import get_db
 import models, schemas
 import auth
@@ -77,7 +78,7 @@ def get_student_profile(
         'Grade 6': 20000,
     }
 
-    total_paid = sum(f.amount for f in db.query(models.FeePayment).filter(models.FeePayment.student_id == student_id).all())
+    total_paid = db.query(func.sum(models.FeePayment.amount)).filter(models.FeePayment.student_id == student_id).scalar() or 0.0
     expected_term_fee = fee_structure.get(db_student.grade_level, 0)
     # The application operates on a 3-Term academic year schedule. Wait, is the fee per term or per year?
     # In AccountantDashboard, termGoal was calculated by summing feeStructure[grade_level] per term (e.g. `const fee = feeStructure[student.grade_level] || 0; return total + fee;`). So feeStructure maps to the *Term* fee, not the year fee. We should calculate balance per term or total expected?
