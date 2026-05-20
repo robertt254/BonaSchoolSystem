@@ -1,8 +1,9 @@
 import os
 import logging
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -22,6 +23,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Absolute path to the Vue build output — works regardless of CWD
+FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend", "dist")
+
 app = FastAPI(title="Bona School Management API")
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -37,12 +41,13 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     response.headers["Content-Security-Policy"] = (
-        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';"
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
     )
     return response
 
 
-# ── CORS (origins come from environment, comma-separated) ────────────────────
+# ── CORS ─────────────────────────────────────────────────────────────────────
 _raw_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:5174")
 origins = [o.strip() for o in _raw_origins.split(",")]
 
@@ -55,7 +60,7 @@ app.add_middleware(
 )
 
 
-# ── Global exception handler — prevents stack traces leaking to clients ───────
+# ── Global exception handler ─────────────────────────────────────────────────
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error("Unhandled error on %s %s: %s", request.method, request.url, exc, exc_info=True)
@@ -65,7 +70,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
-# ── Startup: validate required env vars, then sync DB schema ─────────────────
+# ── Startup: validate env, sync DB schema ────────────────────────────────────
 @app.on_event("startup")
 async def startup():
     required_vars = ["SECRET_KEY", "DATABASE_URL"]
@@ -74,9 +79,13 @@ async def startup():
         raise RuntimeError(f"Cannot start — missing environment variables: {missing}")
     models.Base.metadata.create_all(bind=engine)
     logger.info("Database schema synced.")
+    if os.path.exists(FRONTEND_DIST):
+        logger.info("Frontend dist found at %s", FRONTEND_DIST)
+    else:
+        logger.warning("Frontend dist NOT found at %s — SPA will not be served", FRONTEND_DIST)
 
 
-# ── Routers ───────────────────────────────────────────────────────────────────
+# ── API routers (must be registered BEFORE the SPA catch-all) ────────────────
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(students.router)
 app.include_router(fees.router)
@@ -85,6 +94,26 @@ app.include_router(academics.router)
 app.include_router(attendance.router)
 
 
-@app.get("/")
-def read_root():
+# ── Health check (used by Render's healthCheckPath) ───────────────────────────
+@app.get("/health", tags=["Health"])
+def health_check():
     return {"status": "online", "system": "Bona School Backend API"}
+
+
+# ── Serve Vite-built frontend static assets ───────────────────────────────────
+_assets_dir = os.path.join(FRONTEND_DIST, "assets")
+if os.path.exists(_assets_dir):
+    app.mount("/assets", StaticFiles(directory=_assets_dir), name="static-assets")
+
+
+# ── SPA catch-all: serve index.html for every non-API route ──────────────────
+# This MUST be the last route registered so it doesn't shadow any API endpoint.
+@app.get("/{full_path:path}", include_in_schema=False)
+async def serve_spa(full_path: str):
+    # Let unmatched /api/* calls return 404 instead of HTML
+    if full_path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="Not found")
+    index = os.path.join(FRONTEND_DIST, "index.html")
+    if os.path.exists(index):
+        return FileResponse(index)
+    raise HTTPException(status_code=404, detail="Frontend not built. Run npm run build.")
