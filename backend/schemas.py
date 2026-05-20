@@ -138,6 +138,13 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8)
+    job_title: Optional[str] = Field(None, max_length=100)
+    contract_type: Optional[str] = Field(None, max_length=50)
+    date_of_hire: Optional[date] = None
+    kra_pin: Optional[str] = Field(None, max_length=20)
+    nssf_number: Optional[str] = Field(None, max_length=30)
+    nhif_number: Optional[str] = Field(None, max_length=30)
+    accrued_leave_days: Optional[int] = Field(21, ge=0)
 
 
 class UserUpdate(BaseModel):
@@ -145,10 +152,26 @@ class UserUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     role: Optional[UserRole] = None
     password: Optional[str] = Field(None, min_length=8)
+    job_title: Optional[str] = Field(None, max_length=100)
+    contract_type: Optional[str] = Field(None, max_length=50)
+    date_of_hire: Optional[date] = None
+    kra_pin: Optional[str] = Field(None, max_length=20)
+    nssf_number: Optional[str] = Field(None, max_length=30)
+    nhif_number: Optional[str] = Field(None, max_length=30)
+    accrued_leave_days: Optional[int] = Field(None, ge=0)
 
 
 class UserResponse(UserBase):
     id: int
+    job_title: Optional[str] = None
+    contract_type: Optional[str] = None
+    date_of_hire: Optional[date] = None
+    kra_pin: Optional[str] = None
+    nssf_number: Optional[str] = None
+    nhif_number: Optional[str] = None
+    accrued_leave_days: int = 21
+    leave_days_used: int = 0
+    leave_days_left: int = 21
 
     class Config:
         from_attributes = True

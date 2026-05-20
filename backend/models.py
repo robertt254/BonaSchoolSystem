@@ -11,6 +11,13 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     name = Column(String(100), nullable=False)
     role = Column(String(20), nullable=False)
+    job_title = Column(String(100), nullable=True)
+    contract_type = Column(String(50), nullable=True)
+    date_of_hire = Column(Date, nullable=True)
+    kra_pin = Column(String(20), nullable=True)
+    nssf_number = Column(String(30), nullable=True)
+    nhif_number = Column(String(30), nullable=True)
+    accrued_leave_days = Column(Integer, nullable=False, default=21, server_default="21")
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 

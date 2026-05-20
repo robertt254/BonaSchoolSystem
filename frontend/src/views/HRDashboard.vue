@@ -51,11 +51,16 @@
               <th class="py-5 px-8 font-bold">Role & Title</th>
               <th class="py-5 px-8 font-bold">Contract</th>
               <th class="py-5 px-8 font-bold">Compliance (KRA/NSSF/NHIF)</th>
-              <th class="py-5 px-8 font-bold">Leave Days</th>
+              <th class="py-5 px-8 font-bold text-center">Leave Days</th>
               <th class="py-5 px-8 pr-6 font-bold text-right">Actions</th>
             </tr>
           </thead>
           <tbody class="text-sm">
+            <tr v-if="staffList.length === 0">
+              <td colspan="6" class="py-16 text-center text-slate-400 text-sm font-medium">
+                No staff records found.
+              </td>
+            </tr>
             <tr
               v-for="staff in staffList"
               :key="staff.id"
@@ -87,7 +92,22 @@
                   <span class="font-bold text-slate-700">{{ staff.nhif_number || 'Pending' }}</span>
                 </div>
               </td>
-              <td class="py-5 px-8 font-bold text-slate-700">{{ staff.accrued_leave_days }}</td>
+              <td class="py-5 px-8 text-center">
+                <div class="text-xs font-bold text-slate-700">{{ staff.accrued_leave_days }} days</div>
+                <div class="flex items-center justify-center gap-1 mt-1">
+                  <div class="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      class="h-full rounded-full transition-all"
+                      :class="staff.leave_days_left > 7 ? 'bg-emerald-400' : staff.leave_days_left > 0 ? 'bg-amber-400' : 'bg-red-400'"
+                      :style="{ width: staff.accrued_leave_days > 0 ? `${Math.round((staff.leave_days_used / staff.accrued_leave_days) * 100)}%` : '0%' }"
+                    ></div>
+                  </div>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-0.5">
+                  <span class="text-school-red font-semibold">{{ staff.leave_days_used }} used</span>
+                  · <span class="text-emerald-600 font-semibold">{{ staff.leave_days_left }} left</span>
+                </div>
+              </td>
               <td class="py-5 px-8 pr-6 text-right">
                 <button
                   @click="openModal(staff)"
@@ -96,7 +116,7 @@
                   Edit
                 </button>
                 <button
-                  v-if="appStore.user?.username !== staff.username"
+                  v-if="authStore.user?.username !== staff.username"
                   @click="terminateStaff(staff.id)"
                   class="text-xs font-bold text-school-red/70 hover:text-school-red transition-colors"
                 >
@@ -191,7 +211,7 @@
                   class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 >
                   <option value="teacher">Teacher</option>
-                  <option value="finance">Finance Officer</option>
+                  <option value="accountant">Accountant / Finance Officer</option>
                   <option value="secretary">Secretary</option>
                   <option value="principal">Principal</option>
                   <option value="admin">System Admin</option>
@@ -323,16 +343,16 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import staffService from '@/services/staffService'
-import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 
-const appStore = useAppStore()
+const authStore = useAuthStore()
 const staffList = ref([])
 const loading = ref(true)
 const showModal = ref(false)
 const isEditing = ref(false)
 const editId = ref(null)
 
-const formData = reactive({
+const BLANK_FORM = {
   name: '',
   username: '',
   password: '',
@@ -343,8 +363,10 @@ const formData = reactive({
   kra_pin: '',
   nssf_number: '',
   nhif_number: '',
-  accrued_leave_days: 0,
-})
+  accrued_leave_days: 21,
+}
+
+const formData = reactive({ ...BLANK_FORM })
 
 const loadStaff = async () => {
   loading.value = true
@@ -369,19 +391,7 @@ const openModal = (staff = null) => {
   } else {
     isEditing.value = false
     editId.value = null
-    Object.assign(formData, {
-      name: '',
-      username: '',
-      password: '',
-      role: 'teacher',
-      job_title: '',
-      contract_type: 'Permanent',
-      date_of_hire: '',
-      kra_pin: '',
-      nssf_number: '',
-      nhif_number: '',
-      accrued_leave_days: 0,
-    })
+    Object.assign(formData, { ...BLANK_FORM })
   }
   showModal.value = true
 }

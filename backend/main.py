@@ -107,6 +107,14 @@ async def startup():
         "ALTER TABLE students ADD COLUMN IF NOT EXISTS guardian2_phone VARCHAR(20)",
         "ALTER TABLE students ADD COLUMN IF NOT EXISTS address         VARCHAR(200)",
         "ALTER TABLE students ADD COLUMN IF NOT EXISTS previous_school VARCHAR(200)",
+        # HR fields on users table
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS job_title         VARCHAR(100)",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS contract_type     VARCHAR(50)",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS date_of_hire      DATE",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS kra_pin           VARCHAR(20)",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS nssf_number       VARCHAR(30)",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS nhif_number       VARCHAR(30)",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS accrued_leave_days INTEGER NOT NULL DEFAULT 21",
     ]
     try:
         with engine.connect() as conn:

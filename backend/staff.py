@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import extract
+from datetime import date
 from database import get_db
 import models, schemas, auth
 from audit import log_action
@@ -21,7 +23,37 @@ def verify_staff_reader(current_user: models.User = Depends(auth.get_current_use
 
 @router.get("/", response_model=list[schemas.UserResponse])
 def get_all_staff(db: Session = Depends(get_db), current_user: models.User = Depends(verify_staff_reader)):
-    return db.query(models.User).all()
+    users = db.query(models.User).order_by(models.User.name).all()
+    current_year = date.today().year
+    result = []
+    for user in users:
+        approved_leaves = (
+            db.query(models.LeaveRequest)
+            .filter(
+                models.LeaveRequest.staff_id == user.id,
+                models.LeaveRequest.status == "approved",
+                extract("year", models.LeaveRequest.start_date) == current_year,
+            )
+            .all()
+        )
+        days_used = sum((l.end_date - l.start_date).days + 1 for l in approved_leaves)
+        entitlement = user.accrued_leave_days if user.accrued_leave_days is not None else 21
+        result.append(schemas.UserResponse(
+            id=user.id,
+            username=user.username,
+            name=user.name,
+            role=user.role,
+            job_title=user.job_title,
+            contract_type=user.contract_type,
+            date_of_hire=user.date_of_hire,
+            kra_pin=user.kra_pin,
+            nssf_number=user.nssf_number,
+            nhif_number=user.nhif_number,
+            accrued_leave_days=entitlement,
+            leave_days_used=days_used,
+            leave_days_left=max(0, entitlement - days_used),
+        ))
+    return result
 
 
 @router.post("/", response_model=schemas.UserResponse)
@@ -38,6 +70,13 @@ def create_staff(
         name=user.name,
         role=user.role,
         hashed_password=auth.get_password_hash(user.password),
+        job_title=user.job_title,
+        contract_type=user.contract_type,
+        date_of_hire=user.date_of_hire,
+        kra_pin=user.kra_pin,
+        nssf_number=user.nssf_number,
+        nhif_number=user.nhif_number,
+        accrued_leave_days=user.accrued_leave_days if user.accrued_leave_days is not None else 21,
     )
     db.add(new_user)
     db.flush()
