@@ -27,7 +27,7 @@
       <!-- Actions Section -->
       <div class="flex items-center gap-4">
         <button
-          v-if="['finance', 'admin', 'principal', 'secretary'].includes(authStore.user?.role)"
+          v-if="['accountant', 'admin', 'principal', 'secretary'].includes(authStore.user?.role)"
           @click="openFeeModal"
           class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-[12px] font-bold transition-all shadow-sm text-sm flex items-center gap-2"
         >
@@ -129,6 +129,40 @@
           <div v-else class="h-36 flex items-center justify-center">
             <p class="text-sm text-slate-400">No payments recorded for {{ new Date().getFullYear() }}.</p>
           </div>
+        </div>
+      </div>
+
+      <!-- Recent Fee Payments -->
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+        <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between bg-slate-50">
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm">Recent Fee Payments</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Latest {{ recentFees.length }} transactions</p>
+          </div>
+          <router-link to="/finance/statements" class="text-xs font-semibold text-school-purple hover:text-school-purple-l transition-colors">
+            View All Statements →
+          </router-link>
+        </div>
+        <div class="divide-y divide-slate-50">
+          <div
+            v-for="fee in recentFees"
+            :key="fee.id"
+            class="flex items-center justify-between px-6 py-3 hover:bg-slate-50 transition-colors"
+          >
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-slate-800">{{ getStudentName(fee.student_id) }}</p>
+                <p class="text-xs text-slate-400">{{ fee.term }} · {{ fee.payment_type }}{{ fee.receipt_number ? ' · ' + fee.receipt_number : '' }}</p>
+              </div>
+            </div>
+            <span class="text-sm font-bold text-emerald-700">{{ formatCurrency(fee.amount) }}</span>
+          </div>
+          <div v-if="!recentFees.length" class="px-6 py-8 text-center text-slate-400 text-sm">No payments recorded yet.</div>
         </div>
       </div>
 
@@ -252,6 +286,11 @@
                 <td colspan="5" class="p-8 text-center text-slate-400 text-sm font-medium">
                   No expenses recorded.
                 </td>
+              </tr>
+              <tr v-if="expenses.length > 0" class="bg-slate-50 border-t-2 border-slate-200">
+                <td class="p-4 pl-6 font-bold text-slate-700" colspan="3">Total ({{ expenses.length }} entries)</td>
+                <td class="p-4 font-bold text-slate-500 text-right"></td>
+                <td class="p-4 pr-6 text-right font-extrabold text-school-red">{{ formatCurrency(totalExpenses) }}</td>
               </tr>
             </tbody>
           </table>
@@ -652,6 +691,19 @@ const collectionPercentage = computed(() => Math.min(termSummary.value.percentag
 const maxMonthly = computed(() =>
   Math.max(...monthlyCollection.value.map((m) => m.total), 1)
 )
+
+const totalExpenses = computed(() =>
+  expenses.value.reduce((sum, e) => sum + (e.amount || 0), 0)
+)
+
+const recentFees = computed(() =>
+  [...fees.value].sort((a, b) => b.id - a.id).slice(0, 10)
+)
+
+const getStudentName = (id) => {
+  const s = students.value.find((st) => st.id === id)
+  return s ? `${s.first_name} ${s.last_name}` : 'Unknown'
+}
 
 const formatCurrencyShort = (v) => {
   if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`

@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, cast, Date
+from datetime import date
 from database import get_db
 import models, auth
 
@@ -12,9 +13,26 @@ GRADE_ORDER = [
     "Grade 4", "Grade 5", "Grade 6",
 ]
 
+CBC_TERMLY_FEES_FALLBACK = {
+    "Play Group": 12000.0, "PP1": 15000.0, "PP2": 15000.0,
+    "Grade 1": 18000.0, "Grade 2": 18000.0, "Grade 3": 18000.0,
+    "Grade 4": 20000.0, "Grade 5": 20000.0, "Grade 6": 20000.0,
+}
+
+
+def _expected_fee(db: Session, grade: str, term: str) -> float:
+    year = date.today().year
+    fs = db.query(models.FeeStructure).filter(
+        models.FeeStructure.grade_level == grade,
+        models.FeeStructure.term == term,
+        models.FeeStructure.academic_year == year,
+    ).first()
+    return float(fs.amount) if fs else CBC_TERMLY_FEES_FALLBACK.get(grade, 0.0)
+
 
 @router.get("/stats")
 def get_dashboard_stats(
+    term: str = Query(default="Term 1"),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
@@ -24,35 +42,107 @@ def get_dashboard_stats(
 
     total_staff = db.query(func.count(models.User.id)).scalar() or 0
 
-    total_revenue = float(
-        db.query(func.sum(models.FeePayment.amount)).scalar() or 0
+    total_revenue = float(db.query(func.sum(models.FeePayment.amount)).scalar() or 0)
+
+    # Today's attendance rate
+    today = date.today()
+    today_records = db.query(func.count(models.Attendance.id)).filter(
+        cast(models.Attendance.date, Date) == today
+    ).scalar() or 0
+    today_present = db.query(func.count(models.Attendance.id)).filter(
+        cast(models.Attendance.date, Date) == today,
+        models.Attendance.is_present == True,
+    ).scalar() or 0
+    today_attendance_pct = (
+        round(today_present / today_records * 100) if today_records > 0 else None
     )
 
+    # Term fee collection
+    active_students = db.query(models.Student).filter(
+        models.Student.is_deleted == False,
+        models.Student.status == "Active",
+    ).all()
+    term_expected = sum(_expected_fee(db, s.grade_level, term) for s in active_students)
+    term_collected = float(
+        db.query(func.sum(models.FeePayment.amount))
+        .filter(models.FeePayment.term == term)
+        .scalar() or 0
+    )
+    term_pct = round(term_collected / term_expected * 100) if term_expected > 0 else 0
+
+    # Defaulters count for term
+    defaulters_count = 0
+    for s in active_students:
+        paid = float(
+            db.query(func.sum(models.FeePayment.amount))
+            .filter(models.FeePayment.student_id == s.id, models.FeePayment.term == term)
+            .scalar() or 0
+        )
+        if paid < _expected_fee(db, s.grade_level, term):
+            defaulters_count += 1
+
+    # Recent activity feed with richer detail
     recent_logs = (
         db.query(models.AuditLog, models.User)
         .outerjoin(models.User, models.AuditLog.user_id == models.User.id)
         .order_by(models.AuditLog.timestamp.desc())
-        .limit(10)
+        .limit(12)
         .all()
     )
 
-    activity = [
-        {
+    import json
+    activity = []
+    for log, user in recent_logs:
+        detail = {}
+        if log.detail:
+            try:
+                detail = json.loads(log.detail)
+            except Exception:
+                pass
+        # Build a human-readable description
+        if log.resource == "student":
+            name = f"{detail.get('first_name', '')} {detail.get('last_name', '')}".strip()
+            desc = f"admitted {name}" if log.action == "CREATE" and name else \
+                   f"updated student record" if log.action == "UPDATE" else \
+                   f"removed a student record"
+        elif log.resource == "fee":
+            amount = detail.get("amount")
+            desc = f"recorded KES {int(amount):,} payment" if amount else "recorded a fee payment"
+        elif log.resource == "staff":
+            name = detail.get("username", "")
+            desc = f"hired staff @{name}" if log.action == "CREATE" and name else \
+                   f"updated staff record" if log.action == "UPDATE" else \
+                   f"terminated staff @{name}"
+        elif log.resource == "assessment":
+            desc = "entered CBC assessment scores"
+        elif log.resource == "attendance":
+            desc = "marked attendance"
+        elif log.resource == "payroll":
+            desc = "executed payroll"
+        elif log.resource == "expense":
+            desc = "recorded an expense"
+        else:
+            desc = f"{log.action.lower()}d a {log.resource} record"
+
+        activity.append({
             "id": log.id,
             "action": log.action,
             "resource": log.resource,
-            "resource_id": log.resource_id,
-            "detail": log.detail,
+            "description": desc,
             "timestamp": log.timestamp.isoformat() if log.timestamp else None,
             "user_name": user.name if user else "System",
-        }
-        for log, user in recent_logs
-    ]
+        })
 
     return {
         "total_students": total_students,
         "total_staff": total_staff,
         "total_revenue": total_revenue,
+        "today_attendance_pct": today_attendance_pct,
+        "today_records": today_records,
+        "term_collected": term_collected,
+        "term_expected": term_expected,
+        "term_pct": min(term_pct, 100),
+        "defaulters_count": defaulters_count,
         "recent_activity": activity,
     }
 

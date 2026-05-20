@@ -1,175 +1,182 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-gray-50 min-h-screen">
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-slate-900">Office Dashboard</h1>
-      <p class="text-slate-500 mt-1">Daily operations and student management.</p>
-    </div>
+  <div class="max-w-7xl mx-auto space-y-6">
 
-    <!-- Stats -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
-      <div class="bg-white p-8 rounded-[12px] shadow-sm border border-[#E2E8F0]">
-        <div class="text-sm font-semibold text-slate-500 uppercase">Total Students</div>
-        <div class="mt-2 text-3xl font-bold text-school-navy">{{ students.length }}</div>
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-800">Office Dashboard</h1>
+        <p class="text-sm text-slate-400 mt-0.5">Student admissions and daily operations.</p>
       </div>
-      <div class="bg-white p-8 rounded-[12px] shadow-sm border border-[#E2E8F0]">
-        <div class="text-sm font-semibold text-slate-500 uppercase">Active Students</div>
-        <div class="mt-2 text-3xl font-bold text-emerald-600">
-          {{ students.filter(s => s.status === 'Active').length }}
-        </div>
-      </div>
-    </div>
-
-    <!-- Toolbar -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-12">
-      <h2 class="text-2xl font-bold text-gray-800">Student Directory</h2>
       <button
         @click="openAddModal"
-        class="bg-school-navy text-white px-6 py-3.5 rounded shadow hover:bg-school-navy/90 transition shrink-0"
+        class="inline-flex items-center gap-2 bg-school-purple text-white px-5 py-2.5 rounded-[10px] font-semibold text-sm hover:bg-school-purple-l transition-all shadow-sm"
       >
-        + Add New Student
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+        Enroll New Student
       </button>
     </div>
 
-    <!-- Search & Filter bar -->
-    <div class="flex flex-col sm:flex-row gap-3">
-      <div class="relative flex-1">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
-        </svg>
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search by name or admission number…"
-          class="w-full border border-slate-300 rounded-lg pl-9 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none"
-          @input="onSearchInput"
-        />
+    <!-- Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
+        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Students</p>
+        <p class="text-3xl font-extrabold text-slate-800">{{ students.length }}</p>
       </div>
-      <select
-        v-model="gradeFilter"
-        @change="fetchStudents"
-        class="border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-white"
-      >
-        <option value="">All Grades</option>
-        <option value="Play Group">Play Group</option>
-        <option value="PP1">PP1</option>
-        <option value="PP2">PP2</option>
-        <option value="Grade 1">Grade 1</option>
-        <option value="Grade 2">Grade 2</option>
-        <option value="Grade 3">Grade 3</option>
-        <option value="Grade 4">Grade 4</option>
-        <option value="Grade 5">Grade 5</option>
-        <option value="Grade 6">Grade 6</option>
-      </select>
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
+        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Active</p>
+        <p class="text-3xl font-extrabold text-emerald-600">{{ activeCount }}</p>
+      </div>
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
+        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Male</p>
+        <p class="text-3xl font-extrabold text-blue-600">{{ maleCount }}</p>
+      </div>
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
+        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Female</p>
+        <p class="text-3xl font-extrabold text-pink-500">{{ femaleCount }}</p>
+      </div>
     </div>
 
-    <div v-if="loading" class="flex justify-center items-center py-12 text-gray-500">
-      <span class="animate-pulse text-lg">Fetching student records...</span>
+    <!-- Search & Filter bar -->
+    <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-4 flex flex-wrap gap-3 items-end">
+      <div class="flex-1 min-w-48">
+        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
+        <div class="relative">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+          </svg>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Name or admission number…"
+            class="w-full border border-slate-300 rounded-lg pl-9 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none"
+            @input="onSearchInput"
+          />
+        </div>
+      </div>
+      <div>
+        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
+        <select
+          v-model="gradeFilter"
+          @change="fetchStudents"
+          class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none bg-white"
+        >
+          <option value="">All Grades</option>
+          <option v-for="g in GRADES" :key="g" :value="g">{{ g }}</option>
+        </select>
+      </div>
+      <div class="text-sm text-slate-400 self-end pb-1">{{ students.length }} result{{ students.length !== 1 ? 's' : '' }}</div>
     </div>
 
-    <div v-else class="bg-white rounded-[12px] shadow-sm border border-gray-100 overflow-hidden">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider border-b border-gray-200">
-            <th class="py-5 px-6 font-semibold">Name</th>
-            <th class="py-5 px-6 font-semibold">Admission No.</th>
-            <th class="py-5 px-6 font-semibold">Grade</th>
-            <th class="py-5 px-6 font-semibold hidden sm:table-cell">Guardian</th>
-            <th class="py-5 px-6 font-semibold">Status</th>
-            <th class="py-5 px-6 font-semibold text-right">Actions</th>
-          </tr>
-        </thead>
+    <!-- Student table -->
+    <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+      <div v-if="loading" class="py-16 flex justify-center">
+        <div class="w-8 h-8 border-4 border-slate-200 border-t-school-purple rounded-full animate-spin"></div>
+      </div>
 
-        <tbody class="text-gray-700">
-          <tr
-            v-for="student in students"
-            :key="student.id"
-            class="border-b border-gray-50 hover:bg-gray-50 transition duration-150"
-          >
-            <td class="py-4 px-6 font-medium">{{ student.first_name }} {{ student.last_name }}</td>
-            <td class="py-4 px-6 text-gray-500 font-mono text-xs">{{ student.admission_number }}</td>
-            <td class="py-4 px-6">{{ student.grade_level }}</td>
-            <td class="py-4 px-6 hidden sm:table-cell text-sm text-slate-500">
-              <span v-if="student.guardian_name">
-                {{ student.guardian_name }}
-                <span v-if="student.guardian_phone" class="block text-xs text-slate-400">{{ student.guardian_phone }}</span>
-              </span>
-              <span v-else class="text-slate-300">—</span>
-            </td>
-            <td class="py-4 px-6">
-              <span
-                class="px-3 py-1 text-xs font-bold rounded-full"
-                :class="{
-                  'bg-green-100 text-green-700': student.status === 'Active',
-                  'bg-red-100 text-red-700': student.status !== 'Active',
-                }"
-              >{{ student.status }}</span>
-            </td>
-            <td class="py-4 px-6 text-right space-x-3">
-              <router-link
-                :to="`/students/${student.id}`"
-                class="text-slate-500 hover:text-school-navy font-medium text-sm"
-              >View</router-link>
-              <button
-                @click="openEditModal(student)"
-                class="text-school-navy/70 hover:text-school-navy/90 font-medium text-sm"
-              >Edit</button>
-              <button
-                @click="deleteStudent(student)"
-                class="text-red-600 hover:text-red-800 font-medium text-sm"
-              >Delete</button>
-            </td>
-          </tr>
+      <div v-else-if="students.length === 0" class="py-16 text-center text-slate-400 text-sm">
+        {{ searchQuery || gradeFilter ? 'No students match your search.' : 'No students enrolled yet.' }}
+      </div>
 
-          <tr v-if="students.length === 0">
-            <td colspan="6" class="py-6 px-8 text-center text-gray-500 italic">
-              {{ searchQuery || gradeFilter ? 'No students match your search.' : 'No students are currently enrolled in the system.' }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-else class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <th class="text-left px-6 py-3">Student</th>
+              <th class="text-left px-6 py-3">Adm No.</th>
+              <th class="text-left px-6 py-3">Grade</th>
+              <th class="text-left px-6 py-3 hidden sm:table-cell">Guardian</th>
+              <th class="text-left px-6 py-3">Status</th>
+              <th class="text-right px-6 py-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-50">
+            <tr
+              v-for="student in students"
+              :key="student.id"
+              class="hover:bg-slate-50 transition-colors"
+            >
+              <td class="px-6 py-3.5">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0"
+                    :class="student.gender === 'Female' ? 'bg-pink-100 text-pink-600' : 'bg-blue-100 text-blue-600'"
+                  >
+                    {{ student.first_name.charAt(0) }}{{ student.last_name.charAt(0) }}
+                  </div>
+                  <div>
+                    <p class="font-semibold text-slate-800">{{ student.first_name }} {{ student.last_name }}</p>
+                    <p v-if="student.date_of_birth" class="text-xs text-slate-400">{{ calcAge(student.date_of_birth) }}y old</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-3.5 font-mono text-xs text-school-navy font-semibold">{{ student.admission_number }}</td>
+              <td class="px-6 py-3.5 text-slate-600">{{ student.grade_level }}</td>
+              <td class="px-6 py-3.5 hidden sm:table-cell text-xs text-slate-600">
+                <span v-if="student.guardian_name">
+                  <p class="font-medium">{{ student.guardian_name }}</p>
+                  <p v-if="student.guardian_phone" class="text-slate-400">{{ student.guardian_phone }}</p>
+                </span>
+                <span v-else class="text-slate-300">—</span>
+              </td>
+              <td class="px-6 py-3.5">
+                <span
+                  class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full"
+                  :class="student.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+                >{{ student.status }}</span>
+              </td>
+              <td class="px-6 py-3.5 text-right space-x-3">
+                <router-link :to="`/students/${student.id}`" class="text-xs font-semibold text-school-purple hover:text-school-purple-l transition">View</router-link>
+                <button @click="openEditModal(student)" class="text-xs font-semibold text-slate-500 hover:text-slate-700 transition">Edit</button>
+                <button @click="deleteStudent(student)" class="text-xs font-semibold text-school-red hover:text-red-700 transition">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Enroll / Edit Modal -->
     <div
       v-if="showModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 animate-fade-in"
     >
-      <div class="bg-white rounded-[12px] shadow-xl w-full max-w-lg overflow-hidden max-h-[90vh] overflow-y-auto">
-        <div class="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
-          <h2 class="text-xl font-bold text-gray-800">
-            {{ isEditing ? 'Edit Student' : 'Enroll New Student' }}
+      <div class="bg-white rounded-[12px] shadow-2xl w-full max-w-lg overflow-hidden max-h-[90vh] overflow-y-auto border border-[#E2E8F0]">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 sticky top-0 z-10">
+          <h2 class="text-lg font-extrabold text-slate-800">
+            {{ isEditing ? 'Edit Student Record' : 'Enroll New Student' }}
           </h2>
-          <button @click="closeModal" class="text-gray-400 hover:text-gray-600 font-bold text-xl">
-            &times;
+          <button @click="closeModal" class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 h-8 w-8 rounded-full flex items-center justify-center transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
           </button>
         </div>
 
         <form @submit.prevent="saveStudent" class="p-6 space-y-5">
 
-          <!-- Section: Student Details -->
-          <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Student Details</p>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Student Details</p>
 
-          <!-- Name row -->
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">First Name <span class="text-school-red">*</span></label>
-              <input v-model="formData.first_name" required type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">First Name <span class="text-school-red">*</span></label>
+              <input v-model="formData.first_name" required type="text" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Last Name <span class="text-school-red">*</span></label>
-              <input v-model="formData.last_name" required type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Last Name <span class="text-school-red">*</span></label>
+              <input v-model="formData.last_name" required type="text" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
           </div>
 
-          <!-- DOB + Gender -->
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-              <input v-model="formData.date_of_birth" type="date" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Date of Birth</label>
+              <input v-model="formData.date_of_birth" type="date" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-              <select v-model="formData.gender" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm">
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Gender</label>
+              <select v-model="formData.gender" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm">
                 <option value="">— Select —</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -177,40 +184,29 @@
             </div>
           </div>
 
-          <!-- Admission number -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Admission Number</label>
+            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Admission Number</label>
             <input
               v-model="formData.admission_number"
               :disabled="isEditing"
               type="text"
               :placeholder="isEditing ? '' : 'Leave blank to auto-generate (BNS/YYYY/NNNN)'"
-              class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm"
-              :class="isEditing ? 'bg-gray-100 text-gray-500' : ''"
+              class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm"
+              :class="isEditing ? 'bg-slate-50 text-slate-400 cursor-not-allowed' : ''"
             />
-            <p v-if="!isEditing" class="text-xs text-gray-400 mt-1">Auto-generated if left blank.</p>
-            <p v-if="isEditing" class="text-xs text-gray-500 mt-1">Admission numbers cannot be changed.</p>
+            <p class="text-xs text-slate-400 mt-1">{{ isEditing ? 'Admission numbers cannot be changed.' : 'Auto-generated if left blank.' }}</p>
           </div>
 
-          <!-- Grade + Status -->
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Grade Level <span class="text-school-red">*</span></label>
-              <select v-model="formData.grade_level" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm">
-                <option value="Play Group">Play Group</option>
-                <option value="PP1">PP1</option>
-                <option value="PP2">PP2</option>
-                <option value="Grade 1">Grade 1</option>
-                <option value="Grade 2">Grade 2</option>
-                <option value="Grade 3">Grade 3</option>
-                <option value="Grade 4">Grade 4</option>
-                <option value="Grade 5">Grade 5</option>
-                <option value="Grade 6">Grade 6</option>
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade Level <span class="text-school-red">*</span></label>
+              <select v-model="formData.grade_level" required class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm">
+                <option v-for="g in GRADES" :key="g" :value="g">{{ g }}</option>
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <select v-model="formData.status" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm">
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Status</label>
+              <select v-model="formData.status" required class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm">
                 <option value="Active">Active</option>
                 <option value="Graduated">Graduated</option>
                 <option value="Transferred">Transferred</option>
@@ -218,59 +214,52 @@
             </div>
           </div>
 
-          <!-- Address + Previous school -->
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Home Address / Estate</label>
-              <input v-model="formData.address" type="text" placeholder="e.g. Ruaka, Nairobi" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Home Address</label>
+              <input v-model="formData.address" type="text" placeholder="e.g. Ruaka, Nairobi" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Previous School</label>
-              <input v-model="formData.previous_school" type="text" placeholder="Transfer from (optional)" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Previous School</label>
+              <input v-model="formData.previous_school" type="text" placeholder="Transfer from (optional)" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
           </div>
 
-          <!-- Section: Primary Guardian -->
-          <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 pt-2">Primary Guardian / Parent</p>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 pt-2">Primary Guardian / Parent</p>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-              <input v-model="formData.guardian_name" type="text" placeholder="Full name" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Name</label>
+              <input v-model="formData.guardian_name" type="text" placeholder="Full name" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-              <input v-model="formData.guardian_phone" type="tel" placeholder="07XX XXX XXX" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Phone</label>
+              <input v-model="formData.guardian_phone" type="tel" placeholder="07XX XXX XXX" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
           </div>
 
-          <!-- Section: Second Guardian -->
-          <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 pt-2">Second Guardian / Parent (optional)</p>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 pt-2">Second Guardian / Parent <span class="normal-case font-normal text-slate-300">(optional)</span></p>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-              <input v-model="formData.guardian2_name" type="text" placeholder="Full name" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Name</label>
+              <input v-model="formData.guardian2_name" type="text" placeholder="Full name" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-              <input v-model="formData.guardian2_phone" type="tel" placeholder="07XX XXX XXX" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Phone</label>
+              <input v-model="formData.guardian2_phone" type="tel" placeholder="07XX XXX XXX" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
           </div>
 
-          <div class="flex justify-end gap-4 pt-4 border-t border-gray-100 mt-2">
+          <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
             <button
               type="button"
               @click="closeModal"
-              class="px-5 py-3 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition text-sm"
-            >
-              Cancel
-            </button>
+              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-[9px] font-semibold transition text-sm"
+            >Cancel</button>
             <button
               type="submit"
               :disabled="saving"
-              class="px-5 py-3 bg-school-navy text-white rounded-lg font-medium hover:bg-school-navy/90 transition text-sm disabled:opacity-50"
-            >
-              {{ saving ? 'Saving…' : isEditing ? 'Save Changes' : 'Enroll Student' }}
-            </button>
+              class="px-5 py-2.5 bg-school-purple text-white rounded-[9px] font-semibold hover:bg-school-purple-l transition text-sm disabled:opacity-50"
+            >{{ saving ? 'Saving…' : isEditing ? 'Save Changes' : 'Enroll Student' }}</button>
           </div>
         </form>
       </div>
@@ -279,8 +268,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import studentService from '@/services/studentService'
+
+const GRADES = ['Play Group', 'PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6']
 
 const students = ref([])
 const loading = ref(true)
@@ -293,6 +284,12 @@ const currentStudentId = ref(null)
 const searchQuery = ref('')
 const gradeFilter = ref('')
 let searchTimer = null
+
+const activeCount = computed(() => students.value.filter(s => s.status === 'Active').length)
+const maleCount = computed(() => students.value.filter(s => s.gender === 'Male').length)
+const femaleCount = computed(() => students.value.filter(s => s.gender === 'Female').length)
+
+const calcAge = (dob) => Math.floor((Date.now() - new Date(dob).getTime()) / (1000 * 60 * 60 * 24 * 365.25))
 
 const formData = reactive({
   first_name: '',

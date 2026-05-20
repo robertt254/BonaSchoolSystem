@@ -3,17 +3,23 @@
 
     <!-- Mode toggle -->
     <div class="bg-white rounded-xl border border-slate-200 p-5 print:hidden">
-      <div class="flex gap-2 mb-5">
-        <button
-          @click="mode = 'single'"
-          :class="mode === 'single' ? 'bg-school-purple text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-          class="px-4 py-2 rounded-lg text-sm font-bold transition"
-        >Single Student</button>
-        <button
-          @click="mode = 'bulk'"
-          :class="mode === 'bulk' ? 'bg-school-purple text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-          class="px-4 py-2 rounded-lg text-sm font-bold transition"
-        >Bulk Grade Export</button>
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-bold text-slate-800 text-sm">CBC Report Cards</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Generate and print student report cards.</p>
+        </div>
+        <div class="flex gap-2">
+          <button
+            @click="mode = 'single'"
+            :class="mode === 'single' ? 'bg-school-purple text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+            class="px-4 py-2 rounded-lg text-sm font-bold transition"
+          >Single Student</button>
+          <button
+            @click="mode = 'bulk'"
+            :class="mode === 'bulk' ? 'bg-school-purple text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+            class="px-4 py-2 rounded-lg text-sm font-bold transition"
+          >Bulk Grade Export</button>
+        </div>
       </div>
 
       <!-- Single mode controls -->
@@ -134,68 +140,99 @@ const ReportCardDoc = defineComponent({
   setup(props) {
     return () => h('div', {}, [
       // Header
-      h('div', { class: 'bg-school-navy text-white px-10 py-8 print:px-8 print:py-6' }, [
+      h('div', { class: 'bg-school-navy text-white px-10 py-7 print:px-8 print:py-5' }, [
         h('div', { class: 'flex items-start justify-between' }, [
           h('div', {}, [
             h('h1', { class: 'text-2xl font-black uppercase tracking-wider' }, 'The Bona School'),
-            h('p', { class: 'text-white/60 text-sm mt-1' }, 'Competency-Based Curriculum (CBC) · Nairobi, Kenya'),
+            h('p', { class: 'text-white/50 text-xs mt-1 font-medium' }, 'Competency-Based Curriculum (CBC) · Nairobi, Kenya'),
           ]),
           h('div', { class: 'text-right' }, [
-            h('p', { class: 'text-white/40 text-xs uppercase tracking-widest font-bold' }, 'Report Card'),
-            h('p', { class: 'text-white font-bold mt-0.5' }, `${props.data.term} · ${new Date().getFullYear()}`),
+            h('p', { class: 'text-white/40 text-[10px] uppercase tracking-widest font-bold' }, 'Official Report Card'),
+            h('p', { class: 'text-white font-extrabold text-lg mt-0.5' }, props.data.term),
+            h('p', { class: 'text-white/50 text-xs' }, `Academic Year ${new Date().getFullYear()}`),
           ]),
         ]),
       ]),
-      // Student info strip
-      h('div', { class: 'grid grid-cols-3 gap-0 border-b border-slate-200 bg-slate-50 divide-x divide-slate-200' }, [
-        h('div', { class: 'px-6 py-4' }, [
-          h('p', { class: 'text-[10px] font-bold uppercase tracking-widest text-slate-400' }, 'Student Name'),
-          h('p', { class: 'font-bold text-slate-800 mt-0.5' }, props.data.student_name),
+      // Student info strip — 4 columns
+      h('div', { class: 'grid grid-cols-2 sm:grid-cols-4 border-b border-slate-200 bg-slate-50 divide-x divide-slate-200' }, [
+        h('div', { class: 'px-5 py-4' }, [
+          h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Student Name'),
+          h('p', { class: 'font-bold text-slate-800 text-sm' }, props.data.student_name),
         ]),
-        h('div', { class: 'px-6 py-4' }, [
-          h('p', { class: 'text-[10px] font-bold uppercase tracking-widest text-slate-400' }, 'Admission No.'),
-          h('p', { class: 'font-bold text-slate-800 mt-0.5 font-mono' }, props.data.admission_number),
+        h('div', { class: 'px-5 py-4' }, [
+          h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Admission No.'),
+          h('p', { class: 'font-bold text-slate-800 text-sm font-mono' }, props.data.admission_number),
         ]),
-        h('div', { class: 'px-6 py-4' }, [
-          h('p', { class: 'text-[10px] font-bold uppercase tracking-widest text-slate-400' }, 'Grade / Term'),
-          h('p', { class: 'font-bold text-slate-800 mt-0.5' }, `${props.data.grade_level} · ${props.data.term}`),
+        h('div', { class: 'px-5 py-4' }, [
+          h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Grade Level'),
+          h('p', { class: 'font-bold text-slate-800 text-sm' }, props.data.grade_level),
+        ]),
+        h('div', { class: 'px-5 py-4' }, [
+          h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Term / Year'),
+          h('p', { class: 'font-bold text-slate-800 text-sm' }, `${props.data.term} · ${new Date().getFullYear()}`),
         ]),
       ]),
       // Results table
       h('div', { class: 'px-8 py-6' }, [
-        h('h3', { class: 'text-xs font-bold uppercase tracking-widest text-slate-400 mb-4' }, 'CBC Assessment Results'),
-        h('table', { class: 'w-full border-collapse border border-slate-200 text-sm' }, [
-          h('thead', {}, h('tr', { class: 'bg-slate-50' }, [
-            h('th', { class: 'border border-slate-200 px-5 py-3 text-left font-bold text-slate-600 uppercase text-xs tracking-wider' }, 'Learning Area'),
-            h('th', { class: 'border border-slate-200 px-5 py-3 text-center font-bold text-slate-600 uppercase text-xs tracking-wider w-24' }, 'Score'),
-            h('th', { class: 'border border-slate-200 px-5 py-3 text-left font-bold text-slate-600 uppercase text-xs tracking-wider' }, 'Remarks'),
-          ])),
-          h('tbody', {}, props.data.results.length
-            ? props.data.results.map(r => h('tr', { key: r.learning_area }, [
-                h('td', { class: 'border border-slate-200 px-5 py-3 font-medium text-slate-800' }, r.learning_area),
-                h('td', { class: 'border border-slate-200 px-5 py-3 text-center' },
+        h('p', { class: 'text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4' }, 'CBC Assessment Results'),
+        props.data.results.length
+          ? h('table', { class: 'w-full border-collapse text-sm' }, [
+              h('thead', {}, h('tr', { class: 'bg-slate-50 border-y border-slate-200' }, [
+                h('th', { class: 'px-5 py-3 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider' }, 'Learning Area'),
+                h('th', { class: 'px-5 py-3 text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider w-28' }, 'Score'),
+                h('th', { class: 'px-5 py-3 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider' }, "Teacher's Remarks"),
+              ])),
+              h('tbody', {}, props.data.results.map((r, i) => h('tr', {
+                key: r.learning_area,
+                class: i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50',
+              }, [
+                h('td', { class: 'border-b border-slate-100 px-5 py-3 font-semibold text-slate-800' }, r.learning_area),
+                h('td', { class: 'border-b border-slate-100 px-5 py-3 text-center' },
                   h('span', { class: `inline-block px-3 py-0.5 rounded-full text-xs font-black ${scoreClass(r.score)}` }, r.score)
                 ),
-                h('td', { class: 'border border-slate-200 px-5 py-3 text-slate-500 italic text-xs' }, r.remarks || '—'),
-              ]))
-            : [h('tr', {}, h('td', { colspan: 3, class: 'border border-slate-200 px-5 py-8 text-center text-slate-400' }, 'No assessments recorded for this term.'))]
-          ),
-        ]),
+                h('td', { class: 'border-b border-slate-100 px-5 py-3 text-slate-500 text-xs italic' }, r.remarks || '—'),
+              ])))
+            ])
+          : h('div', { class: 'py-10 text-center text-slate-400 text-sm border border-slate-200 rounded-lg' }, 'No assessments recorded for this term.'),
       ]),
       // Grading key
-      h('div', { class: 'mx-8 mb-6 bg-slate-50 border border-slate-200 rounded-lg p-4' }, [
-        h('p', { class: 'text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2' }, 'CBC Grading Key'),
+      h('div', { class: 'mx-8 mb-5 bg-slate-50 border border-slate-200 rounded-lg p-4' }, [
+        h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-2' }, 'CBC Grading Scale'),
         h('div', { class: 'grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs' }, [
-          h('span', {}, [h('strong', { class: 'text-emerald-700' }, 'EE (4)'), ' — Exceeding Expectations']),
-          h('span', {}, [h('strong', { class: 'text-blue-700' }, 'ME (3)'), ' — Meeting Expectations']),
-          h('span', {}, [h('strong', { class: 'text-amber-600' }, 'AE (2)'), ' — Approaching Expectations']),
-          h('span', {}, [h('strong', { class: 'text-red-600' }, 'BE (1)'), ' — Below Expectations']),
+          h('div', { class: 'flex items-center gap-2' }, [
+            h('span', { class: 'inline-block w-7 text-center bg-emerald-100 text-emerald-700 rounded font-black text-[11px] py-0.5' }, 'EE'),
+            h('span', { class: 'text-slate-500' }, 'Exceeding Expectations'),
+          ]),
+          h('div', { class: 'flex items-center gap-2' }, [
+            h('span', { class: 'inline-block w-7 text-center bg-blue-100 text-blue-700 rounded font-black text-[11px] py-0.5' }, 'ME'),
+            h('span', { class: 'text-slate-500' }, 'Meeting Expectations'),
+          ]),
+          h('div', { class: 'flex items-center gap-2' }, [
+            h('span', { class: 'inline-block w-7 text-center bg-amber-100 text-amber-700 rounded font-black text-[11px] py-0.5' }, 'AE'),
+            h('span', { class: 'text-slate-500' }, 'Approaching Expectations'),
+          ]),
+          h('div', { class: 'flex items-center gap-2' }, [
+            h('span', { class: 'inline-block w-7 text-center bg-red-100 text-red-600 rounded font-black text-[11px] py-0.5' }, 'BE'),
+            h('span', { class: 'text-slate-500' }, 'Below Expectations'),
+          ]),
         ]),
       ]),
       // Signatures
-      h('div', { class: 'mx-8 mb-8 flex justify-between' }, [
-        h('div', { class: 'w-52 border-t-2 border-slate-800 pt-2 text-center' }, h('p', { class: 'text-xs font-bold text-slate-600' }, 'Class Teacher')),
-        h('div', { class: 'w-52 border-t-2 border-slate-800 pt-2 text-center' }, h('p', { class: 'text-xs font-bold text-slate-600' }, 'Principal')),
+      h('div', { class: 'mx-8 mb-8 flex justify-between items-end' }, [
+        h('div', { class: 'text-center' }, [
+          h('div', { class: 'w-48 border-t-2 border-slate-700 pt-2' }),
+          h('p', { class: 'text-xs font-bold text-slate-600 mt-1' }, 'Class Teacher Signature'),
+          h('p', { class: 'text-[10px] text-slate-400' }, 'Name & Date'),
+        ]),
+        h('div', { class: 'text-center text-[10px] text-slate-400 italic' }, [
+          h('p', {}, 'This is an official document of'),
+          h('p', { class: 'font-semibold text-slate-600 not-italic text-xs' }, 'The Bona School'),
+        ]),
+        h('div', { class: 'text-center' }, [
+          h('div', { class: 'w-48 border-t-2 border-slate-700 pt-2' }),
+          h('p', { class: 'text-xs font-bold text-slate-600 mt-1' }, "Principal's Signature"),
+          h('p', { class: 'text-[10px] text-slate-400' }, 'Name & Date'),
+        ]),
       ]),
     ])
   },

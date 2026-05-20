@@ -89,7 +89,7 @@
     <div v-else class="space-y-4">
       <!-- Stats Grid -->
       <div
-        class="grid grid-cols-1 md:grid-cols-3 gap-4"
+        class="grid grid-cols-2 lg:grid-cols-4 gap-4"
         style="animation: slideIn 0.4s 0.08s ease both"
       >
         <!-- Total Enrolled -->
@@ -100,39 +100,17 @@
             class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-[#2563EB] to-[#818CF8]"
           ></span>
           <div class="flex items-start justify-between mb-3">
-            <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
-              >Total Enrolled</span
-            >
-            <div
-              class="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[rgba(37,99,235,0.1)] text-[#2563EB]"
-            >
-              <svg
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                viewBox="0 0 24 24"
-              >
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]">Total Enrolled</span>
+            <div class="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[rgba(37,99,235,0.1)] text-[#2563EB]">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
             </div>
           </div>
-          <h2
-            class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5 animate-count-up"
-            style="animation-delay: 0.05s"
-          >
-            {{ totalStudents }}
-          </h2>
+          <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">{{ totalStudents }}</h2>
           <div class="flex items-center gap-[6px]">
-            <span
-              class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold bg-[rgba(100,116,139,0.09)] text-[#64748B]"
-              >Active</span
-            >
+            <span class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold bg-[rgba(100,116,139,0.09)] text-[#64748B]">Active</span>
             <span class="text-[12px] text-[#94A3B8]">Across all grades</span>
           </div>
         </div>
@@ -141,42 +119,19 @@
         <div
           class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
         >
-          <span
-            class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-[#059669] to-[#34D399]"
-          ></span>
+          <span class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-[#059669] to-[#34D399]"></span>
           <div class="flex items-start justify-between mb-3">
-            <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
-              >Total Revenue</span
-            >
-            <div
-              class="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[rgba(5,150,105,0.1)] text-[#059669]"
-            >
-              <svg
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                viewBox="0 0 24 24"
-              >
-                <rect x="2" y="5" width="20" height="14" rx="2" />
-                <line x1="2" y1="10" x2="22" y2="10" />
+            <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]">Total Revenue</span>
+            <div class="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[rgba(5,150,105,0.1)] text-[#059669]">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
               </svg>
             </div>
           </div>
-          <h2
-            class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5 animate-count-up"
-            style="animation-delay: 0.1s"
-          >
-            {{ formatCurrency(totalRevenue) }}
-          </h2>
+          <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">{{ formatCurrency(totalRevenue) }}</h2>
           <div class="flex items-center gap-[6px]">
-            <span
-              class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold bg-[rgba(100,116,139,0.09)] text-[#64748B]"
-              >YTD</span
-            >
-            <span class="text-[12px] text-[#94A3B8]">Historical Payments</span>
+            <span class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold bg-[rgba(100,116,139,0.09)] text-[#64748B]">YTD</span>
+            <span class="text-[12px] text-[#94A3B8]">Historical payments</span>
           </div>
         </div>
 
@@ -184,45 +139,74 @@
         <div
           class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
         >
-          <span
-            class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-school-purple to-school-purple-ll"
-          ></span>
+          <span class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-school-purple to-school-purple-ll"></span>
           <div class="flex items-start justify-between mb-3">
-            <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
-              >Active Staff</span
-            >
-            <div
-              class="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[rgba(109,40,217,0.1)] text-school-purple"
-            >
-              <svg
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                viewBox="0 0 24 24"
-              >
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]">Active Staff</span>
+            <div class="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[rgba(109,40,217,0.1)] text-school-purple">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
             </div>
           </div>
-          <h2
-            class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5 animate-count-up"
-            style="animation-delay: 0.15s"
-          >
-            {{ totalStaff }}
+          <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">{{ totalStaff }}</h2>
+          <div class="flex items-center gap-[6px]">
+            <span class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold bg-[rgba(100,116,139,0.09)] text-[#64748B]">Active</span>
+            <span class="text-[12px] text-[#94A3B8]">Teachers & admin</span>
+          </div>
+        </div>
+
+        <!-- Today's Attendance -->
+        <div
+          class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
+        >
+          <span class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-[#D97706] to-[#FBBF24]"></span>
+          <div class="flex items-start justify-between mb-3">
+            <span class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]">Today's Attendance</span>
+            <div class="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[rgba(217,119,6,0.1)] text-[#D97706]">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+              </svg>
+            </div>
+          </div>
+          <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">
+            {{ todayAttendancePct !== null ? todayAttendancePct + '%' : '—' }}
           </h2>
           <div class="flex items-center gap-[6px]">
-            <span
-              class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold bg-[rgba(100,116,139,0.09)] text-[#64748B]"
-              >Active</span
-            >
-            <span class="text-[12px] text-[#94A3B8]">Teachers & Admin</span>
+            <span class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold"
+              :class="todayAttendancePct !== null ? 'bg-[rgba(217,119,6,0.09)] text-[#D97706]' : 'bg-[rgba(100,116,139,0.09)] text-[#64748B]'">
+              {{ todayAttendancePct !== null ? 'Live' : 'No Data' }}
+            </span>
+            <span class="text-[12px] text-[#94A3B8]">{{ todayAttendancePct !== null ? 'Students present' : 'Not marked yet' }}</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Term Fee Collection Progress -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5" style="animation: slideIn 0.4s 0.14s ease both">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]">{{ appStore.currentTerm }} Fee Collection</p>
+            <h3 class="font-heading text-2xl font-extrabold text-slate-800 mt-0.5">{{ formatCurrency(termCollected) }}</h3>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-extrabold"
+              :class="termPct >= 80 ? 'text-emerald-600' : termPct >= 50 ? 'text-amber-500' : 'text-school-red'">
+              {{ termPct }}%
+            </div>
+            <div class="text-xs text-[#94A3B8]">Target: {{ formatCurrency(termExpected) }}</div>
+          </div>
+        </div>
+        <div class="w-full bg-slate-100 rounded-full h-2 mb-3">
+          <div
+            class="h-2 rounded-full transition-all duration-1000"
+            :class="termPct >= 80 ? 'bg-emerald-500' : termPct >= 50 ? 'bg-amber-400' : 'bg-school-red'"
+            :style="{ width: Math.min(termPct, 100) + '%' }"
+          ></div>
+        </div>
+        <div class="flex items-center justify-between text-xs text-[#94A3B8]">
+          <span>{{ defaultersCount }} student{{ defaultersCount !== 1 ? 's' : '' }} with outstanding balance</span>
+          <router-link to="/finance" class="font-semibold text-school-purple hover:text-school-purple-l transition-colors">View Finance →</router-link>
         </div>
       </div>
 
@@ -466,6 +450,11 @@ const loading = ref(true)
 const totalStudents = ref(0)
 const totalRevenue = ref(0)
 const totalStaff = ref(0)
+const todayAttendancePct = ref(null)
+const termCollected = ref(0)
+const termExpected = ref(0)
+const termPct = ref(0)
+const defaultersCount = ref(0)
 const recentActivity = ref([])
 
 const RESOURCE_STYLE = {
@@ -499,10 +488,16 @@ function formatCurrency(amount) {
 
 onMounted(async () => {
   try {
-    const stats = await apiFetch('/api/dashboard/stats')
-    totalStudents.value = stats.total_students
-    totalStaff.value    = stats.total_staff
-    totalRevenue.value  = stats.total_revenue
+    const term = encodeURIComponent(appStore.currentTerm)
+    const stats = await apiFetch(`/api/dashboard/stats?term=${term}`)
+    totalStudents.value    = stats.total_students
+    totalStaff.value       = stats.total_staff
+    totalRevenue.value     = stats.total_revenue
+    todayAttendancePct.value = stats.today_attendance_pct ?? null
+    termCollected.value    = stats.term_collected ?? 0
+    termExpected.value     = stats.term_expected ?? 0
+    termPct.value          = stats.term_pct ?? 0
+    defaultersCount.value  = stats.defaulters_count ?? 0
 
     recentActivity.value = (stats.recent_activity || []).map((log) => {
       const style = RESOURCE_STYLE[log.resource] || RESOURCE_STYLE.staff
@@ -510,7 +505,7 @@ onMounted(async () => {
         id:          log.id,
         type:        log.resource,
         user:        log.user_name || 'System',
-        action:      `${ACTION_LABELS[log.action] || log.action} a ${log.resource} record`,
+        action:      log.description || `${ACTION_LABELS[log.action] || log.action} a ${log.resource} record`,
         time:        formatRelativeTime(log.timestamp),
         avatarClass: style.avatar,
         dotClass:    style.dot,

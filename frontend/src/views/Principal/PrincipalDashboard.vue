@@ -19,7 +19,40 @@
         <StatCard label="Total Students" :value="String(stats.total_students)" sub="Active enrolment" color="blue" />
         <StatCard label="Staff Members"  :value="String(stats.total_staff)"    sub="Teaching & admin"  color="red"  />
         <StatCard label="Total Revenue"  :value="formatCurrency(stats.total_revenue)" sub="All-time fee payments" color="green" />
-        <StatCard label="Avg Attendance" :value="avgAttendance !== null ? avgAttendance + '%' : '—'" sub="School-wide rate" color="amber" />
+        <StatCard
+          label="Today's Attendance"
+          :value="stats.today_attendance_pct !== null && stats.today_attendance_pct !== undefined ? stats.today_attendance_pct + '%' : '—'"
+          sub="Students present today"
+          color="amber"
+        />
+      </div>
+
+      <!-- Term Fee Collection Progress -->
+      <div class="bg-white rounded-xl border border-slate-200 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">{{ appStore.currentTerm }} Fee Collection</p>
+            <p class="text-2xl font-extrabold text-slate-800 mt-0.5">{{ formatCurrency(stats.term_collected || 0) }}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-2xl font-extrabold"
+              :class="(stats.term_pct || 0) >= 80 ? 'text-emerald-600' : (stats.term_pct || 0) >= 50 ? 'text-amber-500' : 'text-school-red'">
+              {{ stats.term_pct || 0 }}%
+            </p>
+            <p class="text-xs text-slate-400">Target: {{ formatCurrency(stats.term_expected || 0) }}</p>
+          </div>
+        </div>
+        <div class="w-full bg-slate-100 rounded-full h-2 mb-3">
+          <div
+            class="h-2 rounded-full transition-all duration-1000"
+            :class="(stats.term_pct || 0) >= 80 ? 'bg-emerald-500' : (stats.term_pct || 0) >= 50 ? 'bg-amber-400' : 'bg-school-red'"
+            :style="{ width: Math.min(stats.term_pct || 0, 100) + '%' }"
+          ></div>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>{{ stats.defaulters_count || 0 }} student{{ (stats.defaulters_count || 0) !== 1 ? 's' : '' }} with outstanding balance</span>
+          <router-link to="/finance" class="font-semibold text-school-purple hover:text-school-purple-l transition-colors">View Finance →</router-link>
+        </div>
       </div>
 
       <!-- Two-column section -->
@@ -119,6 +152,9 @@
 <script setup>
 import { ref, computed, onMounted, defineComponent, h } from 'vue'
 import { apiFetch } from '@/services/api'
+import { useAppStore } from '@/stores/app'
+
+const appStore = useAppStore()
 
 // ── Stat Card sub-component ───────────────────────────────────────────────────
 const CARD_COLORS = {
