@@ -1,179 +1,207 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-gray-50 min-h-screen print:p-0 print:bg-white">
-    <div class="mb-8 bg-white p-8 rounded-[12px] shadow-sm border border-gray-100 print:hidden">
-      <h1 class="text-2xl font-bold text-gray-800 mb-4">Generate Fee Statement</h1>
+  <div class="max-w-3xl mx-auto space-y-5">
 
-      <div class="flex gap-8 items-end">
+    <!-- Controls (hidden when printing) -->
+    <div class="bg-white rounded-xl border border-slate-200 p-5 print:hidden">
+      <h2 class="text-base font-bold text-slate-800 mb-4">Generate Fee Statement</h2>
+      <div class="flex flex-col sm:flex-row gap-4 items-end">
         <div class="flex-1">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Select Student</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Student</label>
           <select
             v-model="selectedStudent"
-            class="w-full border border-gray-300 px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-emerald-600 outline-none"
+            class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none"
           >
-            <option disabled value="">-- Choose a student --</option>
-            <option v-for="student in students" :key="student.id" :value="student.id">
-              {{ student.first_name }} {{ student.last_name }} ({{ student.admission_number }})
+            <option disabled value="">— Choose a student —</option>
+            <option v-for="s in students" :key="s.id" :value="s.id">
+              {{ s.first_name }} {{ s.last_name }} · {{ s.admission_number }}
             </option>
           </select>
         </div>
-
-        <div class="w-48">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Academic Term</label>
+        <div class="w-40">
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Term</label>
           <select
             v-model="selectedTerm"
-            class="w-full border border-gray-300 px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-emerald-600 outline-none"
+            class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none"
           >
             <option value="Term 1">Term 1</option>
             <option value="Term 2">Term 2</option>
             <option value="Term 3">Term 3</option>
           </select>
         </div>
-
         <button
           @click="generateStatement"
-          :disabled="!selectedStudent"
-          class="bg-emerald-700 text-white px-6 py-3.5 rounded-lg shadow hover:bg-emerald-600 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+          :disabled="!selectedStudent || loading"
+          class="bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-600 transition disabled:opacity-50"
         >
-          Generate Report
+          {{ loading ? 'Loading…' : 'Generate Statement' }}
         </button>
       </div>
     </div>
 
-    <div v-if="loading" class="text-center py-12 text-gray-500 print:hidden">
-      <span class="animate-pulse">Calculating balances...</span>
-    </div>
-
+    <!-- Statement document -->
     <div
       v-if="statementData && !loading"
-      class="bg-white max-w-3xl mx-auto p-10 rounded-[12px] shadow-lg border border-gray-200 print:shadow-none print:border-none print:m-0 print:p-0"
+      id="fee-statement"
+      class="bg-white rounded-xl border border-slate-200 overflow-hidden print:rounded-none print:border-none"
     >
-      <div class="text-center border-b-2 border-gray-800 pb-6 mb-6">
-        <h2 class="text-3xl font-black text-gray-900 uppercase tracking-widest">The Bona School</h2>
-        <p class="text-gray-600 mt-1">Competency-Based Curriculum (CBC)</p>
-        <p class="text-gray-500 text-sm">Nairobi, Kenya • Finance Department</p>
-      </div>
-
-      <div class="flex justify-between items-center mb-8">
-        <h3 class="text-xl font-bold text-gray-800 bg-gray-100 px-4 py-2 rounded">
-          OFFICIAL FEE STATEMENT
-        </h3>
-        <p class="text-gray-600 font-medium">Date: {{ currentDate }}</p>
-      </div>
-
-      <div class="bg-gray-50 border border-gray-200 rounded-lg p-8 mb-8 grid grid-cols-2 gap-4">
-        <div>
-          <p class="text-sm text-gray-500 uppercase tracking-wider">Student Name</p>
-          <p class="text-lg font-bold text-gray-900">{{ statementData.student_name }}</p>
-        </div>
-        <div class="text-right">
-          <p class="text-sm text-gray-500 uppercase tracking-wider">Academic Level</p>
-          <p class="text-lg font-bold text-gray-900">{{ statementData.grade_level }}</p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500 uppercase tracking-wider">Billing Period</p>
-          <p class="text-lg font-bold text-gray-900">{{ statementData.term_checked }}</p>
+      <!-- Header band -->
+      <div class="bg-school-navy text-white px-8 py-7 print:py-5">
+        <div class="flex items-start justify-between">
+          <div>
+            <h1 class="text-xl font-black uppercase tracking-wider">The Bona School</h1>
+            <p class="text-white/50 text-xs mt-1">Nairobi, Kenya · Finance Department</p>
+          </div>
+          <div class="text-right">
+            <p class="text-xs font-bold uppercase tracking-widest text-white/40">Fee Statement</p>
+            <p class="text-white font-bold text-sm mt-0.5">{{ currentDate }}</p>
+          </div>
         </div>
       </div>
 
-      <table class="w-full mb-8">
-        <tbody>
-          <tr class="border-b border-gray-200">
-            <td class="py-6 px-8 text-gray-600 font-medium">
-              Expected Fee for {{ statementData.term_checked }}
-            </td>
-            <td class="py-6 px-8 text-right font-bold text-gray-900">
-              {{ formatCurrency(statementData.expected_term_fee) }}
-            </td>
-          </tr>
-          <tr class="border-b border-gray-200 bg-emerald-50">
-            <td class="py-6 px-8 text-emerald-800 font-medium">Total Installments Paid</td>
-            <td class="py-6 px-8 text-right font-bold text-emerald-800">
-              - {{ formatCurrency(statementData.total_paid_this_term) }}
-            </td>
-          </tr>
-          <tr class="border-b-4 border-gray-800">
-            <td class="py-8 px-8 text-xl font-black text-gray-900 uppercase">Outstanding Balance</td>
-            <td class="py-8 px-8 text-right text-2xl font-black text-red-600">
-              {{ formatCurrency(statementData.outstanding_balance) }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="mt-16 pt-8 flex justify-between">
-        <div class="w-64 border-t border-gray-400 text-center pt-2">
-          <p class="text-sm text-gray-600">Finance Officer Signature</p>
+      <!-- Student info strip -->
+      <div class="grid grid-cols-3 gap-0 border-b border-slate-200 bg-slate-50 divide-x divide-slate-200">
+        <div class="px-6 py-4">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Student</p>
+          <p class="font-bold text-slate-800 mt-0.5">{{ statementData.student_name }}</p>
         </div>
-        <div class="w-64 border-t border-gray-400 text-center pt-2">
-          <p class="text-sm text-gray-600">Parent/Guardian Signature</p>
+        <div class="px-6 py-4">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Grade</p>
+          <p class="font-bold text-slate-800 mt-0.5">{{ statementData.grade_level }}</p>
+        </div>
+        <div class="px-6 py-4">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Billing Period</p>
+          <p class="font-bold text-slate-800 mt-0.5">{{ statementData.term_checked }}</p>
         </div>
       </div>
 
-      <div class="mt-12 text-center print:hidden">
+      <!-- Summary table -->
+      <div class="px-8 py-6">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Fee Summary</h3>
+        <table class="w-full text-sm border-collapse">
+          <tbody>
+            <tr class="border-b border-slate-200">
+              <td class="py-3 text-slate-600 font-medium">Expected Term Fee ({{ statementData.term_checked }})</td>
+              <td class="py-3 text-right font-bold text-slate-800">{{ formatCurrency(statementData.expected_term_fee) }}</td>
+            </tr>
+            <tr class="border-b border-slate-200 bg-emerald-50/40">
+              <td class="py-3 px-2 text-emerald-800 font-medium">Total Paid This Term</td>
+              <td class="py-3 px-2 text-right font-bold text-emerald-700">− {{ formatCurrency(statementData.total_paid_this_term) }}</td>
+            </tr>
+            <tr>
+              <td class="py-4 text-lg font-black text-slate-800 uppercase tracking-wide">Outstanding Balance</td>
+              <td class="py-4 text-right text-2xl font-black" :class="statementData.outstanding_balance > 0 ? 'text-school-red' : 'text-emerald-600'">
+                {{ formatCurrency(statementData.outstanding_balance) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Itemized payment history for this term -->
+      <div v-if="termPayments.length" class="px-8 pb-6">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Payment History · {{ statementData.term_checked }}</h3>
+        <table class="w-full text-xs border-collapse border border-slate-200">
+          <thead>
+            <tr class="bg-slate-50">
+              <th class="border border-slate-200 px-4 py-2 text-left font-bold text-slate-500 uppercase tracking-wider">Receipt</th>
+              <th class="border border-slate-200 px-4 py-2 text-left font-bold text-slate-500 uppercase tracking-wider">Date</th>
+              <th class="border border-slate-200 px-4 py-2 text-left font-bold text-slate-500 uppercase tracking-wider">Type</th>
+              <th class="border border-slate-200 px-4 py-2 text-right font-bold text-slate-500 uppercase tracking-wider">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="p in termPayments" :key="p.id" class="hover:bg-slate-50/50">
+              <td class="border border-slate-200 px-4 py-2 font-mono text-school-navy">{{ p.receipt_number || '—' }}</td>
+              <td class="border border-slate-200 px-4 py-2 text-slate-500">{{ formatDate(p.payment_date) }}</td>
+              <td class="border border-slate-200 px-4 py-2 text-slate-600">{{ p.payment_type }}</td>
+              <td class="border border-slate-200 px-4 py-2 text-right font-bold text-emerald-700">{{ formatCurrency(p.amount) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Signatures -->
+      <div class="mx-8 pb-8 flex justify-between">
+        <div class="w-48 border-t border-slate-400 pt-2 text-center">
+          <p class="text-xs text-slate-500">Finance Officer Signature</p>
+        </div>
+        <div class="w-48 border-t border-slate-400 pt-2 text-center">
+          <p class="text-xs text-slate-500">Parent / Guardian Signature</p>
+        </div>
+      </div>
+
+      <!-- Print button -->
+      <div class="border-t border-slate-100 px-8 py-4 flex justify-end print:hidden">
         <button
-          @click="printDocument"
-          class="bg-gray-800 text-white px-8 py-4 rounded-lg shadow-lg hover:bg-black transition font-bold"
+          @click="window.print()"
+          class="inline-flex items-center gap-2 bg-slate-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-black transition"
         >
-          🖨️ Print Statement
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+            <rect x="6" y="14" width="12" height="8"/>
+          </svg>
+          Print Statement
         </button>
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import studentService from '@/services/studentService'
 import feeService from '@/services/feeService'
+import { apiFetch } from '@/services/api'
 
-// State
-const students = ref([])
+const students        = ref([])
 const selectedStudent = ref('')
-const selectedTerm = ref('Term 1')
-const statementData = ref(null)
-const loading = ref(false)
+const selectedTerm    = ref('Term 1')
+const statementData   = ref(null)
+const allPayments     = ref([])
+const loading         = ref(false)
 
-// Get today's date formatted
-const currentDate = computed(() => {
-  return new Date().toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-})
+const currentDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
-// Currency formatter for Ksh
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(amount)
-}
+const termPayments = computed(() =>
+  allPayments.value.filter(p => p.term === selectedTerm.value)
+    .sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date))
+)
 
-// Load dropdown data
+const formatCurrency = (v) =>
+  new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(v)
+
+const formatDate = (iso) =>
+  new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+
 onMounted(async () => {
-  try {
-    students.value = await studentService.getAllStudents()
-  } catch (error) {
-    console.error('Failed to load students', error)
-  }
+  try { students.value = await studentService.getAllStudents() }
+  catch (e) { console.error(e) }
 })
 
-// Fetch the math from Python
 const generateStatement = async () => {
   loading.value = true
+  statementData.value = null
+  allPayments.value   = []
   try {
-    statementData.value = await feeService.getStudentBalance(
-      selectedStudent.value,
-      selectedTerm.value,
-    )
-  } catch (error) {
-    alert('Failed to generate statement. Make sure the backend is running.')
-    console.error(error)
+    const [stmt, payments] = await Promise.all([
+      feeService.getStudentBalance(selectedStudent.value, selectedTerm.value),
+      apiFetch(`/api/fees/student/${selectedStudent.value}`),
+    ])
+    statementData.value = stmt
+    allPayments.value   = payments
+  } catch {
+    alert('Failed to generate statement.')
   } finally {
     loading.value = false
   }
 }
-
-// Trigger the browser's native print dialog
-const printDocument = () => {
-  window.print()
-}
 </script>
+
+<style>
+@media print {
+  body * { visibility: hidden; }
+  #fee-statement, #fee-statement * { visibility: visible; }
+  #fee-statement { position: fixed; top: 0; left: 0; width: 100%; }
+}
+</style>

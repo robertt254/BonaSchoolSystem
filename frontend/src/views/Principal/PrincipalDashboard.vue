@@ -1,281 +1,194 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-gray-50 min-h-screen">
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-3xl font-bold text-gray-800">Student Directory</h1>
-      <button
-        @click="openAddModal"
-        class="bg-school-navy text-white px-6 py-3.5 rounded shadow hover:bg-school-navy/90 transition"
-      >
-        + Add New Student
-      </button>
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-800">Principal Overview</h1>
+      <p class="text-sm text-slate-400 mt-0.5">School-wide performance at a glance.</p>
     </div>
 
-    <div v-if="loading" class="flex justify-center items-center py-12 text-gray-500">
-      <span class="animate-pulse text-lg">Fetching student records...</span>
+    <!-- Loading -->
+    <div v-if="loading" class="flex items-center gap-3 py-12 text-slate-400">
+      <div class="w-5 h-5 border-2 border-slate-200 border-t-school-navy rounded-full animate-spin"></div>
+      <span class="text-sm font-medium">Loading dashboard…</span>
     </div>
 
-    <div v-else class="bg-white rounded-[12px] shadow-sm border border-gray-100 overflow-hidden">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr
-            class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider border-b border-gray-200"
-          >
-            <th class="py-5 px-8 font-semibold">Name</th>
-            <th class="py-5 px-8 font-semibold">Admission No.</th>
-            <th class="py-5 px-8 font-semibold">Grade</th>
-            <th class="py-5 px-8 font-semibold">Status</th>
-            <th class="py-5 px-8 font-semibold text-right">Actions</th>
-          </tr>
-        </thead>
+    <template v-else>
+      <!-- Stat cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard label="Total Students" :value="String(stats.total_students)" sub="Active enrolment" color="blue" />
+        <StatCard label="Staff Members"  :value="String(stats.total_staff)"    sub="Teaching & admin"  color="red"  />
+        <StatCard label="Total Revenue"  :value="formatCurrency(stats.total_revenue)" sub="All-time fee payments" color="green" />
+        <StatCard label="Avg Attendance" :value="avgAttendance !== null ? avgAttendance + '%' : '—'" sub="School-wide rate" color="amber" />
+      </div>
 
-        <tbody class="text-gray-700">
-          <tr
-            v-for="student in students"
-            :key="student.id"
-            class="border-b border-gray-50 hover:bg-gray-50 transition duration-150"
-          >
-            <td class="py-5 px-8 font-medium">{{ student.first_name }} {{ student.last_name }}</td>
-            <td class="py-5 px-8 text-gray-500">{{ student.admission_number }}</td>
-            <td class="py-5 px-8">{{ student.grade_level }}</td>
-            <td class="py-5 px-8">
-              <span
-                class="px-3 py-1 text-xs font-bold rounded-full"
-                :class="{
-                  'bg-green-100 text-green-700': student.status === 'Active',
-                  'bg-red-100 text-red-700': student.status !== 'Active',
-                }"
-              >
-                {{ student.status }}
-              </span>
-            </td>
-            <td class="py-5 px-8 text-right gap-8">
-              <button
-                @click="openEditModal(student)"
-                class="text-school-navy/70 hover:text-school-navy/90 font-medium"
-              >
-                Edit
-              </button>
-              <button
-                @click="deleteStudent(student)"
-                class="text-red-600 hover:text-red-800 font-medium"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
+      <!-- Two-column section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-          <tr v-if="students.length === 0">
-            <td colspan="5" class="py-6 px-8 text-center text-gray-500 italic">
-              No students are currently enrolled in the system.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div
-      v-if="showModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-    >
-      <div class="bg-white rounded-[12px] shadow-xl w-full max-w-md overflow-hidden">
-        <div class="p-8 border-b border-gray-100 flex justify-between items-center">
-          <h2 class="text-xl font-bold text-gray-800">
-            {{ isEditing ? 'Edit Student' : 'Enroll New Student' }}
-          </h2>
-          <button @click="closeModal" class="text-gray-400 hover:text-gray-600 font-bold text-xl">
-            &times;
-          </button>
-        </div>
-
-        <form @submit.prevent="saveStudent" class="p-8 space-y-6">
-          <div class="grid grid-cols-2 gap-8">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-              <input
-                v-model="formData.first_name"
-                required
-                type="text"
-                class="w-full border border-gray-300 rounded-lg px-4 py-3.5 focus:ring-2 focus:ring-school-navy outline-none"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-              <input
-                v-model="formData.last_name"
-                required
-                type="text"
-                class="w-full border border-gray-300 rounded-lg px-4 py-3.5 focus:ring-2 focus:ring-school-navy outline-none"
-              />
-            </div>
+        <!-- Enrollment by Grade (horizontal bar chart) -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-100">
+            <h3 class="font-bold text-slate-800 text-sm">Enrollment by Grade</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Active students per CBC level</p>
           </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Admission Number</label>
-            <input
-              v-model="formData.admission_number"
-              :disabled="isEditing"
-              required
-              type="text"
-              class="w-full border border-gray-300 rounded-lg px-4 py-3.5 focus:ring-2 focus:ring-school-navy outline-none disabled:bg-gray-100 disabled:text-gray-500"
-            />
-            <p v-if="isEditing" class="text-xs text-gray-500 mt-1">
-              Admission numbers cannot be changed.
+          <div class="p-5 space-y-3">
+            <div
+              v-for="item in gradeStats"
+              :key="item.grade"
+              class="flex items-center gap-3"
+            >
+              <span class="w-20 text-right text-xs font-medium text-slate-500 shrink-0 leading-none">{{ item.grade }}</span>
+              <div class="flex-1 h-6 bg-slate-100 rounded-lg overflow-hidden">
+                <div
+                  class="h-full bg-school-navy rounded-lg transition-all duration-700"
+                  :style="{ width: maxEnrolment > 0 ? (item.count / maxEnrolment * 100) + '%' : '0%' }"
+                ></div>
+              </div>
+              <span class="w-7 text-xs font-bold text-slate-600 shrink-0">{{ item.count }}</span>
+            </div>
+            <p v-if="!gradeStats.some(g => g.count > 0)" class="text-sm text-slate-400 text-center py-4">
+              No active students found.
             </p>
           </div>
+        </div>
 
-          <div class="grid grid-cols-2 gap-8">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Grade Level</label>
-              <select
-                v-model="formData.grade_level"
-                required
-                class="w-full border border-gray-300 rounded-lg px-4 py-3.5 focus:ring-2 focus:ring-school-navy outline-none"
-              >
-                <option value="Play Group">Play Group</option>
-                <option value="PP1">PP1</option>
-                <option value="PP2">PP2</option>
-                <option value="Grade 1">Grade 1</option>
-                <option value="Grade 2">Grade 2</option>
-                <option value="Grade 3">Grade 3</option>
-                <option value="Grade 4">Grade 4</option>
-                <option value="Grade 5">Grade 5</option>
-                <option value="Grade 6">Grade 6</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <select
-                v-model="formData.status"
-                required
-                class="w-full border border-gray-300 rounded-lg px-4 py-3.5 focus:ring-2 focus:ring-school-navy outline-none"
-              >
-                <option value="Active">Active</option>
-                <option value="Graduated">Graduated</option>
-                <option value="Transferred">Transferred</option>
-              </select>
-            </div>
+        <!-- Attendance Summary per grade -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-100">
+            <h3 class="font-bold text-slate-800 text-sm">Attendance Overview</h3>
+            <p class="text-xs text-slate-400 mt-0.5">All-time records per grade</p>
           </div>
-
-          <div class="flex justify-end gap-6 pt-4 border-t border-gray-100 mt-6">
-            <button
-              type="button"
-              @click="closeModal"
-              class="px-6 py-3.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="px-6 py-3.5 bg-school-navy text-white rounded-lg font-medium hover:bg-school-navy/90 transition"
-            >
-              {{ isEditing ? 'Save Changes' : 'Enroll Student' }}
-            </button>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                  <th class="px-5 py-3 text-left">Grade</th>
+                  <th class="px-5 py-3 text-right">Records</th>
+                  <th class="px-5 py-3 text-right">Present</th>
+                  <th class="px-5 py-3 text-right">Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="row in attendanceSummary.filter(r => r.total_records > 0)"
+                  :key="row.grade"
+                  class="border-b border-slate-50 hover:bg-slate-50 transition-colors"
+                >
+                  <td class="px-5 py-3 font-medium text-slate-700">{{ row.grade }}</td>
+                  <td class="px-5 py-3 text-right text-slate-500">{{ row.total_records }}</td>
+                  <td class="px-5 py-3 text-right text-slate-500">{{ row.present }}</td>
+                  <td class="px-5 py-3 text-right">
+                    <span
+                      class="inline-block px-2 py-0.5 rounded-full text-xs font-bold"
+                      :class="rateClass(row.percentage)"
+                    >{{ row.percentage !== null ? row.percentage + '%' : '—' }}</span>
+                  </td>
+                </tr>
+                <tr v-if="!attendanceSummary.some(r => r.total_records > 0)">
+                  <td colspan="4" class="px-5 py-8 text-center text-slate-400 text-sm">No attendance data yet.</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
+
+      <!-- Quick Actions -->
+      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100">
+          <h3 class="font-bold text-slate-800 text-sm">Quick Reports</h3>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4">
+          <router-link
+            v-for="action in quickActions"
+            :key="action.to"
+            :to="action.to"
+            class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 border border-slate-200 hover:bg-white hover:border-school-red/30 hover:shadow-sm transition-all text-center"
+          >
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" :class="action.iconBg">
+              <svg class="w-5 h-5" :class="action.iconColor" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" v-html="action.iconPath"></svg>
+            </div>
+            <span class="text-xs font-semibold text-slate-700">{{ action.label }}</span>
+          </router-link>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import studentService from '@/services/studentService'
+import { ref, computed, onMounted, defineComponent, h } from 'vue'
+import { apiFetch } from '@/services/api'
 
-// --- STATE ---
-const students = ref([])
-const loading = ref(true)
+// ── Stat Card sub-component ───────────────────────────────────────────────────
+const CARD_COLORS = {
+  blue:  { bar: 'from-blue-500 to-indigo-400',  icon: 'bg-blue-50 text-blue-600'  },
+  red:   { bar: 'from-school-red to-red-400',   icon: 'bg-red-50 text-school-red' },
+  green: { bar: 'from-emerald-500 to-teal-400', icon: 'bg-emerald-50 text-emerald-600' },
+  amber: { bar: 'from-amber-400 to-yellow-300', icon: 'bg-amber-50 text-amber-600' },
+}
 
-// Modal Controls
-const showModal = ref(false)
-const isEditing = ref(false)
-const currentStudentId = ref(null)
-
-// The Form Data
-const formData = reactive({
-  first_name: '',
-  last_name: '',
-  admission_number: '',
-  grade_level: 'Play Group',
-  status: 'Active',
+const StatCard = defineComponent({
+  props: { label: String, value: String, sub: String, color: String },
+  setup(props) {
+    const c = computed(() => CARD_COLORS[props.color] || CARD_COLORS.blue)
+    return () => h('div', { class: 'bg-white rounded-xl border border-slate-200 p-5 relative overflow-hidden' }, [
+      h('span', { class: `absolute top-0 inset-x-0 h-0.5 rounded-t-xl bg-gradient-to-r ${c.value.bar}` }),
+      h('p', { class: 'text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2' }, props.label),
+      h('p', { class: 'text-3xl font-extrabold text-slate-800 leading-none mb-1' }, props.value),
+      h('p', { class: 'text-xs text-slate-400' }, props.sub),
+    ])
+  },
 })
 
-// --- DATA FETCHING ---
-const fetchStudents = async () => {
-  loading.value = true
+// ── State ─────────────────────────────────────────────────────────────────────
+const loading          = ref(true)
+const stats            = ref({ total_students: 0, total_staff: 0, total_revenue: 0 })
+const gradeStats       = ref([])
+const attendanceSummary = ref([])
+
+const maxEnrolment = computed(() => Math.max(...gradeStats.value.map(g => g.count), 1))
+
+const avgAttendance = computed(() => {
+  const rows = attendanceSummary.value.filter(r => r.total_records > 0)
+  if (!rows.length) return null
+  const totalPresent = rows.reduce((s, r) => s + r.present, 0)
+  const totalRecords = rows.reduce((s, r) => s + r.total_records, 0)
+  return totalRecords > 0 ? Math.round(totalPresent / totalRecords * 100) : null
+})
+
+const rateClass = (pct) => {
+  if (pct === null) return 'bg-slate-100 text-slate-400'
+  if (pct >= 90)    return 'bg-emerald-50 text-emerald-700'
+  if (pct >= 75)    return 'bg-amber-50 text-amber-700'
+  return 'bg-red-50 text-red-600'
+}
+
+const formatCurrency = (v) =>
+  new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(v)
+
+const quickActions = [
+  { to: '/office',              label: 'Student Directory',  iconBg: 'bg-blue-50',    iconColor: 'text-blue-600',    iconPath: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>' },
+  { to: '/finance',             label: 'Fee Dashboard',      iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600', iconPath: '<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>' },
+  { to: '/academics/report-card', label: 'Report Cards',    iconBg: 'bg-red-50',     iconColor: 'text-school-red',  iconPath: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>' },
+  { to: '/finance/statements',  label: 'Fee Statements',     iconBg: 'bg-indigo-50',  iconColor: 'text-indigo-600',  iconPath: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
+]
+
+// ── Data load ─────────────────────────────────────────────────────────────────
+onMounted(async () => {
   try {
-    students.value = await studentService.getAllStudents()
-  } catch (error) {
-    console.error('Failed to load students:', error)
+    const [s, g, a] = await Promise.all([
+      apiFetch('/api/dashboard/stats'),
+      apiFetch('/api/dashboard/grade-stats'),
+      apiFetch('/api/attendance/summary'),
+    ])
+    stats.value             = s
+    gradeStats.value        = g
+    attendanceSummary.value = a
+  } catch (err) {
+    console.error('Principal dashboard load failed', err)
   } finally {
     loading.value = false
   }
-}
-
-onMounted(fetchStudents)
-
-// --- MODAL LOGIC ---
-const openAddModal = () => {
-  isEditing.value = false
-  currentStudentId.value = null
-  // Reset form
-  Object.assign(formData, {
-    first_name: '',
-    last_name: '',
-    admission_number: '',
-    grade_level: 'Play Group',
-    status: 'Active',
-  })
-  showModal.value = true
-}
-
-const openEditModal = (student) => {
-  isEditing.value = true
-  currentStudentId.value = student.id
-  // Pre-fill form with clicked student's data
-  Object.assign(formData, {
-    first_name: student.first_name,
-    last_name: student.last_name,
-    admission_number: student.admission_number,
-    grade_level: student.grade_level,
-    status: student.status,
-  })
-  showModal.value = true
-}
-
-const closeModal = () => {
-  showModal.value = false
-}
-
-// --- CRUD ACTIONS ---
-const saveStudent = async () => {
-  try {
-    if (isEditing.value) {
-      await studentService.updateStudent(currentStudentId.value, formData)
-    } else {
-      await studentService.createStudent(formData)
-    }
-    closeModal()
-    await fetchStudents() // Refresh the table automatically
-  } catch (error) {
-    alert("An error occurred. Check the admission number isn't a duplicate.")
-    console.error(error)
-  }
-}
-
-const deleteStudent = async (student) => {
-  // Built-in browser safety check
-  const isConfirmed = window.confirm(
-    `Are you absolutely sure you want to delete ${student.first_name} ${student.last_name}? This cannot be undone.`,
-  )
-
-  if (isConfirmed) {
-    try {
-      await studentService.deleteStudent(student.id)
-      await fetchStudents() // Refresh the table
-    } catch (error) {
-      alert('Failed to delete the student.')
-      console.error(error)
-    }
-  }
-}
+})
 </script>

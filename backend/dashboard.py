@@ -6,6 +6,12 @@ import models, auth
 
 router = APIRouter(prefix="/api/dashboard", tags=["Dashboard"])
 
+GRADE_ORDER = [
+    "Play Group", "PP1", "PP2",
+    "Grade 1", "Grade 2", "Grade 3",
+    "Grade 4", "Grade 5", "Grade 6",
+]
+
 
 @router.get("/stats")
 def get_dashboard_stats(
@@ -49,3 +55,18 @@ def get_dashboard_stats(
         "total_revenue": total_revenue,
         "recent_activity": activity,
     }
+
+
+@router.get("/grade-stats")
+def get_grade_stats(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    rows = (
+        db.query(models.Student.grade_level, func.count(models.Student.id))
+        .filter(models.Student.is_deleted == False, models.Student.status == "Active")
+        .group_by(models.Student.grade_level)
+        .all()
+    )
+    counts = {g: c for g, c in rows}
+    return [{"grade": g, "count": counts.get(g, 0)} for g in GRADE_ORDER]

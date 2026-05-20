@@ -11,6 +11,12 @@ router = APIRouter(prefix="/api/attendance", tags=["Attendance"])
 
 MARK_ROLES = {"teacher", "principal", "admin"}
 
+GRADE_ORDER = [
+    "Play Group", "PP1", "PP2",
+    "Grade 1", "Grade 2", "Grade 3",
+    "Grade 4", "Grade 5", "Grade 6",
+]
+
 
 @router.post("/bulk")
 def log_bulk_attendance(
@@ -97,6 +103,41 @@ def get_student_attendance(
             for r in records
         ],
     }
+
+
+@router.get("/summary")
+def get_attendance_summary(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    total_rows = (
+        db.query(models.Student.grade_level, func.count(models.Attendance.id))
+        .join(models.Student, models.Attendance.student_id == models.Student.id)
+        .filter(models.Student.is_deleted == False)
+        .group_by(models.Student.grade_level)
+        .all()
+    )
+    present_rows = (
+        db.query(models.Student.grade_level, func.count(models.Attendance.id))
+        .join(models.Student, models.Attendance.student_id == models.Student.id)
+        .filter(models.Student.is_deleted == False, models.Attendance.is_present == True)
+        .group_by(models.Student.grade_level)
+        .all()
+    )
+    totals   = {g: c for g, c in total_rows}
+    presents = {g: c for g, c in present_rows}
+
+    result = []
+    for grade in GRADE_ORDER:
+        t = totals.get(grade, 0)
+        p = presents.get(grade, 0)
+        result.append({
+            "grade": grade,
+            "total_records": t,
+            "present": p,
+            "percentage": round(p / t * 100) if t > 0 else None,
+        })
+    return result
 
 
 @router.get("/today/{grade}")

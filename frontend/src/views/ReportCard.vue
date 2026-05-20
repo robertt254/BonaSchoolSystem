@@ -1,151 +1,141 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-slate-50 min-h-screen print:p-0 print:bg-white">
-    <div class="mb-8 bg-white p-8 rounded-[12px] shadow-sm border border-[#E2E8F0] print:hidden">
-      <h1 class="font-heading text-[22px] font-bold text-[#0F172A] mb-4">
-        Generate Official Report Card
-      </h1>
+  <div class="max-w-4xl mx-auto space-y-5">
 
-      <div class="flex gap-8 items-end">
+    <!-- Controls (hidden when printing) -->
+    <div class="bg-white rounded-xl border border-slate-200 p-5 print:hidden">
+      <h2 class="text-base font-bold text-slate-800 mb-4">Generate CBC Report Card</h2>
+      <div class="flex flex-col sm:flex-row gap-4 items-end">
         <div class="flex-1">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Select Student</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Student</label>
           <select
             v-model="selectedStudent"
-            class="w-full border px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
+            class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none"
           >
-            <option disabled value="">-- Choose a student --</option>
-            <option v-for="student in students" :key="student.id" :value="student.id">
-              {{ student.first_name }} {{ student.last_name }} ({{ student.admission_number }})
+            <option disabled value="">— Choose a student —</option>
+            <option v-for="s in students" :key="s.id" :value="s.id">
+              {{ s.first_name }} {{ s.last_name }} · {{ s.admission_number }}
             </option>
           </select>
         </div>
-
-        <div class="w-48">
-          <label class="block text-sm font-medium text-slate-700 mb-1">Academic Term</label>
+        <div class="w-40">
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Term</label>
           <select
             v-model="selectedTerm"
-            class="w-full border px-4 py-3.5 rounded-lg focus:ring-2 focus:ring-school-navy outline-none"
+            class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none"
           >
             <option value="Term 1">Term 1</option>
             <option value="Term 2">Term 2</option>
             <option value="Term 3">Term 3</option>
           </select>
         </div>
-
         <button
           @click="loadReport"
-          :disabled="!selectedStudent"
-          class="bg-school-navy text-white px-6 py-3.5 rounded-lg font-medium hover:bg-school-navy/90 transition disabled:bg-gray-300"
+          :disabled="!selectedStudent || generating"
+          class="bg-school-navy text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-school-navy/90 transition disabled:opacity-50"
         >
-          Generate Report
+          {{ generating ? 'Loading…' : 'Generate' }}
         </button>
       </div>
     </div>
 
+    <!-- Report card document -->
     <div
       v-if="reportData"
-      class="bg-white max-w-4xl mx-auto p-12 rounded-[12px] shadow-lg border border-gray-200 print:shadow-none print:border-none print:m-0 print:p-0"
+      id="report-card"
+      class="bg-white rounded-xl border border-slate-200 overflow-hidden print:rounded-none print:border-none print:shadow-none"
     >
-      <div class="text-center border-b-4 border-school-navy pb-6 mb-8">
-        <h1 class="text-4xl font-black text-gray-900 uppercase tracking-wider">The Bona School</h1>
-        <p class="text-lg text-gray-700 font-medium mt-2">
-          Competency-Based Curriculum (CBC) Performance Report
-        </p>
-      </div>
-
-      <div
-        class="flex justify-between items-center bg-school-grey/50 p-8 rounded-lg mb-8 border border-school-grey/80"
-      >
-        <div>
-          <p class="text-sm text-school-navy/90 font-bold uppercase tracking-wider">Student Name</p>
-          <p class="text-2xl font-black text-gray-900">{{ reportData.student_name }}</p>
-        </div>
-        <div class="text-right">
-          <p class="text-sm text-school-navy/90 font-bold uppercase tracking-wider">Details</p>
-          <p class="text-lg font-bold text-gray-900">
-            {{ reportData.grade_level }} • {{ reportData.term }}
-          </p>
-          <p class="text-sm text-gray-600">ADM: {{ reportData.admission_number }}</p>
+      <!-- Header band -->
+      <div class="bg-school-navy text-white px-10 py-8 print:px-8 print:py-6">
+        <div class="flex items-start justify-between">
+          <div>
+            <h1 class="text-2xl font-black uppercase tracking-wider">The Bona School</h1>
+            <p class="text-white/60 text-sm mt-1">Competency-Based Curriculum (CBC) · Nairobi, Kenya</p>
+          </div>
+          <div class="text-right">
+            <p class="text-white/40 text-xs uppercase tracking-widest font-bold">Report Card</p>
+            <p class="text-white font-bold mt-0.5">{{ reportData.term }} · {{ new Date().getFullYear() }}</p>
+          </div>
         </div>
       </div>
 
-      <table class="w-full mb-12 border-collapse border border-gray-300">
-        <thead>
-          <tr class="bg-gray-100">
-            <th
-              class="py-5 px-8 text-left font-bold text-gray-800 uppercase text-sm w-1/3"
-            >
-              Learning Area
-            </th>
-            <th
-              class="py-5 px-8 text-center font-bold text-gray-800 uppercase text-sm w-1/6"
-            >
-              Score
-            </th>
-            <th
-              class="py-5 px-8 text-left font-bold text-gray-800 uppercase text-sm"
-            >
-              Teacher's Remarks
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="result in reportData.results" :key="result.learning_area">
-            <td class="py-5 px-8 font-medium text-gray-900">
-              {{ result.learning_area }}
-            </td>
-            <td
-              class="py-5 px-8 text-center font-black text-lg"
-              :class="{
-                'text-green-600': result.score === 'EE',
-                'text-school-navy/70': result.score === 'ME',
-                'text-orange-500': result.score === 'AE',
-                'text-red-600': result.score === 'BE',
-              }"
-            >
-              {{ result.score }}
-            </td>
-            <td class="py-5 px-8 text-gray-700 italic">
-              {{ result.remarks || '---' }}
-            </td>
-          </tr>
-          <tr v-if="reportData.results.length === 0">
-            <td colspan="3" class="py-6 px-8 text-center text-gray-500 font-medium">
-              No assessments recorded for this term yet.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="bg-gray-50 border border-gray-200 p-8 rounded-lg mb-12">
-        <h4 class="font-bold text-gray-800 uppercase text-sm mb-4 border-b pb-2">
-          CBC Grading Key
-        </h4>
-        <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
-          <p><span class="font-bold text-green-600">EE (4):</span> Exceeding Expectations</p>
-          <p><span class="font-bold text-school-navy/70">ME (3):</span> Meeting Expectations</p>
-          <p><span class="font-bold text-orange-500">AE (2):</span> Approaching Expectations</p>
-          <p><span class="font-bold text-red-600">BE (1):</span> Below Expectations</p>
+      <!-- Student info strip -->
+      <div class="grid grid-cols-3 gap-0 border-b border-slate-200 bg-slate-50 divide-x divide-slate-200">
+        <div class="px-6 py-4">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Student Name</p>
+          <p class="font-bold text-slate-800 mt-0.5">{{ reportData.student_name }}</p>
+        </div>
+        <div class="px-6 py-4">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Admission No.</p>
+          <p class="font-bold text-slate-800 mt-0.5 font-mono">{{ reportData.admission_number }}</p>
+        </div>
+        <div class="px-6 py-4">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Grade / Term</p>
+          <p class="font-bold text-slate-800 mt-0.5">{{ reportData.grade_level }} · {{ reportData.term }}</p>
         </div>
       </div>
 
-      <div class="flex justify-between pt-12 mt-12">
-        <div class="w-64 border-t-2 border-gray-800 text-center pt-2">
-          <p class="font-bold text-gray-800">Class Teacher</p>
-        </div>
-        <div class="w-64 border-t-2 border-gray-800 text-center pt-2">
-          <p class="font-bold text-gray-800">Principal</p>
+      <!-- Assessment table -->
+      <div class="px-8 py-6 print:px-8">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">CBC Assessment Results</h3>
+        <table class="w-full border-collapse border border-slate-200 text-sm">
+          <thead>
+            <tr class="bg-slate-50">
+              <th class="border border-slate-200 px-5 py-3 text-left font-bold text-slate-600 uppercase text-xs tracking-wider">Learning Area</th>
+              <th class="border border-slate-200 px-5 py-3 text-center font-bold text-slate-600 uppercase text-xs tracking-wider w-24">Score</th>
+              <th class="border border-slate-200 px-5 py-3 text-left font-bold text-slate-600 uppercase text-xs tracking-wider">Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="r in reportData.results" :key="r.learning_area" class="hover:bg-slate-50/50">
+              <td class="border border-slate-200 px-5 py-3 font-medium text-slate-800">{{ r.learning_area }}</td>
+              <td class="border border-slate-200 px-5 py-3 text-center">
+                <span class="inline-block px-3 py-0.5 rounded-full text-xs font-black" :class="scoreClass(r.score)">{{ r.score }}</span>
+              </td>
+              <td class="border border-slate-200 px-5 py-3 text-slate-500 italic text-xs">{{ r.remarks || '—' }}</td>
+            </tr>
+            <tr v-if="!reportData.results.length">
+              <td colspan="3" class="border border-slate-200 px-5 py-8 text-center text-slate-400">No assessments recorded for this term.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Grading key -->
+      <div class="mx-8 mb-6 bg-slate-50 border border-slate-200 rounded-lg p-4 print:mx-8">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">CBC Grading Key</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <span><strong class="text-emerald-700">EE (4)</strong> — Exceeding Expectations</span>
+          <span><strong class="text-blue-700">ME (3)</strong> — Meeting Expectations</span>
+          <span><strong class="text-amber-600">AE (2)</strong> — Approaching Expectations</span>
+          <span><strong class="text-red-600">BE (1)</strong> — Below Expectations</span>
         </div>
       </div>
 
-      <div class="mt-16 text-center print:hidden">
+      <!-- Signatures -->
+      <div class="mx-8 mb-8 flex justify-between print:mx-8">
+        <div class="w-52 border-t-2 border-slate-800 pt-2 text-center">
+          <p class="text-xs font-bold text-slate-600">Class Teacher</p>
+        </div>
+        <div class="w-52 border-t-2 border-slate-800 pt-2 text-center">
+          <p class="text-xs font-bold text-slate-600">Principal</p>
+        </div>
+      </div>
+
+      <!-- Print button -->
+      <div class="border-t border-slate-100 px-8 py-4 flex justify-end print:hidden">
         <button
-          @click="printDoc"
-          class="bg-gray-900 text-white px-8 py-4 rounded-lg shadow-lg hover:bg-black font-bold"
+          @click="window.print()"
+          class="inline-flex items-center gap-2 bg-slate-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-black transition"
         >
-          🖨️ Print Report Card
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+            <rect x="6" y="14" width="12" height="8"/>
+          </svg>
+          Print Report Card
         </button>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -154,29 +144,41 @@ import { ref, onMounted } from 'vue'
 import studentService from '@/services/studentService'
 import academicService from '@/services/academicService'
 
-const students = ref([])
+const students       = ref([])
 const selectedStudent = ref('')
-const selectedTerm = ref('Term 1')
-const reportData = ref(null)
+const selectedTerm   = ref('Term 1')
+const reportData     = ref(null)
+const generating     = ref(false)
+
+const scoreClass = (s) => ({
+  EE: 'bg-emerald-100 text-emerald-700',
+  ME: 'bg-blue-100 text-blue-700',
+  AE: 'bg-amber-100 text-amber-700',
+  BE: 'bg-red-100 text-red-600',
+}[s] || 'bg-slate-100 text-slate-600')
 
 onMounted(async () => {
-  try {
-    students.value = await studentService.getAllStudents()
-  } catch (error) {
-    console.error(error)
-  }
+  try { students.value = await studentService.getAllStudents() }
+  catch (e) { console.error(e) }
 })
 
 const loadReport = async () => {
+  generating.value = true
+  reportData.value = null
   try {
-    reportData.value = await academicService.getReportCard(
-      selectedStudent.value,
-      selectedTerm.value,
-    )
+    reportData.value = await academicService.getReportCard(selectedStudent.value, selectedTerm.value)
   } catch {
     alert('Failed to load report card.')
+  } finally {
+    generating.value = false
   }
 }
-
-const printDoc = () => window.print()
 </script>
+
+<style>
+@media print {
+  body * { visibility: hidden; }
+  #report-card, #report-card * { visibility: visible; }
+  #report-card { position: fixed; top: 0; left: 0; width: 100%; }
+}
+</style>
