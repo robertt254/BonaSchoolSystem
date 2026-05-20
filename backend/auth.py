@@ -55,6 +55,11 @@ class Token(BaseModel):
     user_info: dict
 
 
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+
+
 @router.post("/login", response_model=Token)
 @limiter.limit("10/minute")
 async def login(
@@ -148,7 +153,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
 @router.post("/change-password")
 def change_password(
-    data: schemas.PasswordChange,
+    data: PasswordChange,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
