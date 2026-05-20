@@ -166,3 +166,36 @@ class AttendanceResponse(AttendanceCreate):
 
     class Config:
         from_attributes = True
+
+
+class PayrollCreate(BaseModel):
+    staff_id: int
+    payment_month: str = Field(..., pattern=r"^\d{4}-(0[1-9]|1[0-2])$")
+    basic_salary: float = Field(..., ge=0)
+    allowances: float = Field(0.0, ge=0)
+    deductions: float = Field(0.0, ge=0)
+    net_pay: float = Field(..., ge=0)
+
+
+class PayrollResponse(PayrollCreate):
+    id: int
+    recorded_by: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class ExpenseCreate(BaseModel):
+    amount: float = Field(..., gt=0)
+    category: Optional[str] = Field(None, max_length=100)
+    justification: str = Field(..., min_length=1, max_length=500)
+
+
+class ExpenseResponse(ExpenseCreate):
+    id: int
+    recorded_by: str
+    expense_date: datetime
+
+    class Config:
+        from_attributes = True

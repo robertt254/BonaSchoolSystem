@@ -413,9 +413,8 @@
               >
                 <option value="Tuition">Tuition</option>
                 <option value="Transport">Transport</option>
-                <option value="Uniform">Uniform</option>
-                <option value="Meals">Meals</option>
-                <option value="Other">Other</option>
+                <option value="Uniforms">Uniforms</option>
+                <option value="Exam Fees">Exam Fees</option>
               </select>
             </div>
           </div>

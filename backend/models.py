@@ -88,3 +88,30 @@ class AuditLog(Base):
     resource_id = Column(Integer, nullable=True)
     detail = Column(String(2000), nullable=True)      # JSON string for extra context
     timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
+
+
+class Payroll(Base):
+    """Monthly salary disbursement record per staff member."""
+    __tablename__ = "payroll"
+
+    id = Column(Integer, primary_key=True, index=True)
+    staff_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    payment_month = Column(String(7), nullable=False)          # YYYY-MM
+    basic_salary = Column(Numeric(10, 2), nullable=False)
+    allowances = Column(Numeric(10, 2), nullable=False, server_default="0")
+    deductions = Column(Numeric(10, 2), nullable=False, server_default="0")
+    net_pay = Column(Numeric(10, 2), nullable=False)
+    recorded_by = Column(String(100), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class Expense(Base):
+    """School operational expense record."""
+    __tablename__ = "expenses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    amount = Column(Numeric(10, 2), nullable=False)
+    category = Column(String(100), nullable=True)
+    justification = Column(String(500), nullable=False)
+    recorded_by = Column(String(100), nullable=False)
+    expense_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)

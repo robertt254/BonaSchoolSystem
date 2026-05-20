@@ -455,9 +455,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
-import studentService from '@/services/studentService'
-import feeService from '@/services/feeService'
-import staffService from '@/services/staffService'
+import { apiFetch } from '@/services/api'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
@@ -468,56 +466,30 @@ const loading = ref(true)
 const totalStudents = ref(0)
 const totalRevenue = ref(0)
 const totalStaff = ref(0)
+const recentActivity = ref([])
 
-const recentActivity = ref([
-  {
-    id: 1,
-    type: 'payment',
-    user: 'Finance Dept',
-    action: 'recorded Term 1 fees for John Doe',
-    time: '10m ago',
-    avatarClass: 'bg-[rgba(5,150,105,0.1)] text-[#059669]',
-    dotClass: 'bg-[#059669]',
-  },
-  {
-    id: 2,
-    type: 'attendance',
-    user: 'Mr. Smith',
-    action: 'marked Grade 4 attendance (100%)',
-    time: '1h ago',
-    avatarClass: 'bg-[rgba(37,99,235,0.1)] text-[#2563EB]',
-    dotClass: 'bg-[#2563EB]',
-  },
-  {
-    id: 3,
-    type: 'admission',
-    user: 'Main Office',
-    action: 'admitted Sarah Jenkins (Playgroup)',
-    time: '2h ago',
-    avatarClass: 'bg-[rgba(217,119,6,0.1)] text-[#D97706]',
-    dotClass: 'bg-[#D97706]',
-  },
-  {
-    id: 4,
-    type: 'grading',
-    user: 'Ms. Alice',
-    action: 'submitted Math scores for Grade 2',
-    time: '3h ago',
-    avatarClass: 'bg-[rgba(211,47,47,0.12)] text-school-red',
-    dotClass: 'bg-school-red',
-  },
-  {
-    id: 5,
-    type: 'system',
-    user: 'System Admin',
-    action: 'completed weekly automated backup',
-    time: '5h ago',
-    avatarClass: 'bg-[rgba(100,116,139,0.1)] text-[#64748B]',
-    dotClass: 'bg-[#64748B]',
-  },
-])
+const RESOURCE_STYLE = {
+  student:    { avatar: 'bg-[rgba(217,119,6,0.1)] text-[#D97706]',   dot: 'bg-[#D97706]' },
+  fee:        { avatar: 'bg-[rgba(5,150,105,0.1)] text-[#059669]',   dot: 'bg-[#059669]' },
+  assessment: { avatar: 'bg-[rgba(37,99,235,0.1)] text-[#2563EB]',   dot: 'bg-[#2563EB]' },
+  attendance: { avatar: 'bg-[rgba(37,99,235,0.1)] text-[#2563EB]',   dot: 'bg-[#2563EB]' },
+  staff:      { avatar: 'bg-[rgba(211,47,47,0.12)] text-school-red', dot: 'bg-school-red' },
+  payroll:    { avatar: 'bg-[rgba(5,150,105,0.1)] text-[#059669]',   dot: 'bg-[#059669]' },
+  expense:    { avatar: 'bg-[rgba(211,47,47,0.12)] text-school-red', dot: 'bg-school-red' },
+}
 
-const formatCurrency = (amount) => {
+const ACTION_LABELS = { CREATE: 'created', UPDATE: 'updated', DELETE: 'deleted' }
+
+function formatRelativeTime(isoString) {
+  if (!isoString) return ''
+  const diff = Math.floor((Date.now() - new Date(isoString)) / 1000)
+  if (diff < 60) return `${diff}s ago`
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+  return `${Math.floor(diff / 86400)}d ago`
+}
+
+function formatCurrency(amount) {
   return new Intl.NumberFormat('en-KE', {
     style: 'currency',
     currency: 'KES',
@@ -527,21 +499,27 @@ const formatCurrency = (amount) => {
 
 onMounted(async () => {
   try {
-    const [students, fees, staff] = await Promise.all([
-      studentService.getAllStudents().catch(() => []),
-      feeService.getAllFees().catch(() => []),
-      staffService.getAllStaff().catch(() => []),
-    ])
+    const stats = await apiFetch('/api/dashboard/stats')
+    totalStudents.value = stats.total_students
+    totalStaff.value    = stats.total_staff
+    totalRevenue.value  = stats.total_revenue
 
-    totalStudents.value = students.length
-    totalStaff.value = staff.length
-    totalRevenue.value = fees.reduce((sum, fee) => sum + (fee.amount || 0), 0)
+    recentActivity.value = (stats.recent_activity || []).map((log) => {
+      const style = RESOURCE_STYLE[log.resource] || RESOURCE_STYLE.staff
+      return {
+        id:          log.id,
+        type:        log.resource,
+        user:        log.user_name || 'System',
+        action:      `${ACTION_LABELS[log.action] || log.action} a ${log.resource} record`,
+        time:        formatRelativeTime(log.timestamp),
+        avatarClass: style.avatar,
+        dotClass:    style.dot,
+      }
+    })
   } catch (error) {
     console.error('Failed to load dashboard analytics', error)
   } finally {
-    setTimeout(() => {
-      loading.value = false
-    }, 800) // Keep short artificial delay for visual transition
+    loading.value = false
   }
 })
 </script>

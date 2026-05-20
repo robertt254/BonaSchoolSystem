@@ -59,6 +59,21 @@ def get_archived_students(
     return db.query(models.Student).filter(models.Student.is_deleted == True).all()
 
 
+@router.get("/{student_id}", response_model=schemas.StudentResponse)
+def get_student(
+    student_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    student = db.query(models.Student).filter(
+        models.Student.id == student_id,
+        models.Student.is_deleted == False,
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return student
+
+
 @router.put("/{student_id}", response_model=schemas.StudentResponse)
 def update_student(
     student_id: int,

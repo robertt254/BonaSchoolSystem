@@ -15,6 +15,8 @@ import fees
 import staff
 import academics
 import attendance
+import finance
+import dashboard
 from database import engine, SessionLocal
 from limiter import limiter
 
@@ -114,6 +116,8 @@ app.include_router(fees.router)
 app.include_router(staff.router)
 app.include_router(academics.router)
 app.include_router(attendance.router)
+app.include_router(finance.router)
+app.include_router(dashboard.router)
 
 
 # ── Health check (used by Render's healthCheckPath) ───────────────────────────
