@@ -10,6 +10,12 @@ services:
         fromDatabase:
           name: bona-school-db
           property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: https://bona-school-system.onrender.com
+      - key: LOG_LEVEL
+        value: INFO
 
 databases:
   - name: bona-school-db

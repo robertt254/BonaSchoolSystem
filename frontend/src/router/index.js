@@ -26,7 +26,6 @@ const router = createRouter({
           path: '',
           name: 'dashboard',
           component: DashboardHome,
-          // All authenticated roles can see the dashboard
           meta: { requiresAuth: true },
         },
         {
@@ -38,7 +37,8 @@ const router = createRouter({
         {
           path: 'admin/staff',
           name: 'staff-directory',
-          component: () => import('../views/StaffDirectory.vue'),
+          // StaffDirectory.vue was replaced by HRDashboard.vue in upstream
+          component: () => import('../views/HRDashboard.vue'),
           meta: { requiresAuth: true, roles: ['admin'] },
         },
         {
@@ -56,7 +56,8 @@ const router = createRouter({
         {
           path: 'finance',
           name: 'accountant-dash',
-          component: () => import('../views/Finance/AccountantDashboard.vue'),
+          // AccountantDashboard.vue was replaced by FinanceDashboard.vue in upstream
+          component: () => import('../views/Finance/FinanceDashboard.vue'),
           meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin'] },
         },
         {
@@ -83,6 +84,12 @@ const router = createRouter({
           component: () => import('../views/AttendancePage.vue'),
           meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin'] },
         },
+        {
+          path: 'students/:id',
+          name: 'student-profile',
+          component: () => import('../views/StudentProfile.vue'),
+          meta: { requiresAuth: true },
+        },
       ],
     },
   ],
@@ -93,17 +100,14 @@ router.beforeEach((to, _from, next) => {
   const isAuthenticated = !!token
   const userRole = localStorage.getItem('user_role')
 
-  // Redirect unauthenticated users to login
   if (to.meta.requiresAuth && !isAuthenticated) {
     return next({ name: 'Login', query: { redirect: to.fullPath } })
   }
 
-  // Redirect already-authenticated users away from login
   if (to.name === 'Login' && isAuthenticated) {
     return next({ name: 'dashboard' })
   }
 
-  // RBAC: check role against the route's allowed roles list
   const allowedRoles = to.meta.roles
   if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
     return next({ name: 'Forbidden' })
