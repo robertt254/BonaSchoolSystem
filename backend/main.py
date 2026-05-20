@@ -100,6 +100,13 @@ async def startup():
         # timetable & leave tables created via create_all; extra safety cols below
         "ALTER TABLE timetable       ADD COLUMN IF NOT EXISTS created_by   VARCHAR(100) NOT NULL DEFAULT 'system'",
         "ALTER TABLE leave_requests  ADD COLUMN IF NOT EXISTS reviewed_at  TIMESTAMPTZ",
+        # extended student fields
+        "ALTER TABLE students ADD COLUMN IF NOT EXISTS date_of_birth   DATE",
+        "ALTER TABLE students ADD COLUMN IF NOT EXISTS gender          VARCHAR(10)",
+        "ALTER TABLE students ADD COLUMN IF NOT EXISTS guardian2_name  VARCHAR(100)",
+        "ALTER TABLE students ADD COLUMN IF NOT EXISTS guardian2_phone VARCHAR(20)",
+        "ALTER TABLE students ADD COLUMN IF NOT EXISTS address         VARCHAR(200)",
+        "ALTER TABLE students ADD COLUMN IF NOT EXISTS previous_school VARCHAR(200)",
     ]
     try:
         with engine.connect() as conn:

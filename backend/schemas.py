@@ -56,8 +56,14 @@ class StudentBase(BaseModel):
     admission_number: str = Field(..., min_length=1, max_length=20)
     grade_level: GradeLevel
     status: StudentStatus = StudentStatus.active
+    date_of_birth: Optional[date] = None
+    gender: Optional[str] = Field(None, max_length=10)
     guardian_name: Optional[str] = Field(None, max_length=100)
     guardian_phone: Optional[str] = Field(None, max_length=20)
+    guardian2_name: Optional[str] = Field(None, max_length=100)
+    guardian2_phone: Optional[str] = Field(None, max_length=20)
+    address: Optional[str] = Field(None, max_length=200)
+    previous_school: Optional[str] = Field(None, max_length=200)
 
 
 class StudentCreate(BaseModel):
@@ -66,8 +72,14 @@ class StudentCreate(BaseModel):
     admission_number: Optional[str] = Field(None, max_length=20)
     grade_level: GradeLevel
     status: StudentStatus = StudentStatus.active
+    date_of_birth: Optional[date] = None
+    gender: Optional[str] = Field(None, max_length=10)
     guardian_name: Optional[str] = Field(None, max_length=100)
     guardian_phone: Optional[str] = Field(None, max_length=20)
+    guardian2_name: Optional[str] = Field(None, max_length=100)
+    guardian2_phone: Optional[str] = Field(None, max_length=20)
+    address: Optional[str] = Field(None, max_length=200)
+    previous_school: Optional[str] = Field(None, max_length=200)
 
 
 class StudentResponse(StudentBase):
@@ -82,8 +94,14 @@ class StudentUpdate(BaseModel):
     last_name: Optional[str] = Field(None, min_length=1, max_length=100)
     grade_level: Optional[GradeLevel] = None
     status: Optional[StudentStatus] = None
+    date_of_birth: Optional[date] = None
+    gender: Optional[str] = Field(None, max_length=10)
     guardian_name: Optional[str] = Field(None, max_length=100)
     guardian_phone: Optional[str] = Field(None, max_length=20)
+    guardian2_name: Optional[str] = Field(None, max_length=100)
+    guardian2_phone: Optional[str] = Field(None, max_length=20)
+    address: Optional[str] = Field(None, max_length=200)
+    previous_school: Optional[str] = Field(None, max_length=200)
 
 
 class FeeBase(BaseModel):

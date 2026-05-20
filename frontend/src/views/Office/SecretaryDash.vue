@@ -145,25 +145,35 @@
         </div>
 
         <form @submit.prevent="saveStudent" class="p-6 space-y-5">
+
+          <!-- Section: Student Details -->
+          <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Student Details</p>
+
           <!-- Name row -->
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-              <input
-                v-model="formData.first_name"
-                required
-                type="text"
-                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm"
-              />
+              <label class="block text-sm font-medium text-gray-700 mb-1">First Name <span class="text-school-red">*</span></label>
+              <input v-model="formData.first_name" required type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-              <input
-                v-model="formData.last_name"
-                required
-                type="text"
-                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm"
-              />
+              <label class="block text-sm font-medium text-gray-700 mb-1">Last Name <span class="text-school-red">*</span></label>
+              <input v-model="formData.last_name" required type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+            </div>
+          </div>
+
+          <!-- DOB + Gender -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+              <input v-model="formData.date_of_birth" type="date" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+              <select v-model="formData.gender" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm">
+                <option value="">— Select —</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
             </div>
           </div>
 
@@ -185,12 +195,8 @@
           <!-- Grade + Status -->
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Grade Level</label>
-              <select
-                v-model="formData.grade_level"
-                required
-                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm"
-              >
+              <label class="block text-sm font-medium text-gray-700 mb-1">Grade Level <span class="text-school-red">*</span></label>
+              <select v-model="formData.grade_level" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm">
                 <option value="Play Group">Play Group</option>
                 <option value="PP1">PP1</option>
                 <option value="PP2">PP2</option>
@@ -204,11 +210,7 @@
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <select
-                v-model="formData.status"
-                required
-                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm"
-              >
+              <select v-model="formData.status" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm">
                 <option value="Active">Active</option>
                 <option value="Graduated">Graduated</option>
                 <option value="Transferred">Transferred</option>
@@ -216,28 +218,41 @@
             </div>
           </div>
 
-          <!-- Guardian section -->
-          <div class="pt-2">
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Guardian / Parent Info</p>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Guardian Name</label>
-                <input
-                  v-model="formData.guardian_name"
-                  type="text"
-                  placeholder="Optional"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm"
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Guardian Phone</label>
-                <input
-                  v-model="formData.guardian_phone"
-                  type="tel"
-                  placeholder="Optional"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm"
-                />
-              </div>
+          <!-- Address + Previous school -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Home Address / Estate</label>
+              <input v-model="formData.address" type="text" placeholder="e.g. Ruaka, Nairobi" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Previous School</label>
+              <input v-model="formData.previous_school" type="text" placeholder="Transfer from (optional)" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+            </div>
+          </div>
+
+          <!-- Section: Primary Guardian -->
+          <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 pt-2">Primary Guardian / Parent</p>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <input v-model="formData.guardian_name" type="text" placeholder="Full name" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <input v-model="formData.guardian_phone" type="tel" placeholder="07XX XXX XXX" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+            </div>
+          </div>
+
+          <!-- Section: Second Guardian -->
+          <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 pt-2">Second Guardian / Parent (optional)</p>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <input v-model="formData.guardian2_name" type="text" placeholder="Full name" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <input v-model="formData.guardian2_phone" type="tel" placeholder="07XX XXX XXX" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm" />
             </div>
           </div>
 
@@ -285,8 +300,14 @@ const formData = reactive({
   admission_number: '',
   grade_level: 'Play Group',
   status: 'Active',
+  date_of_birth: '',
+  gender: '',
   guardian_name: '',
   guardian_phone: '',
+  guardian2_name: '',
+  guardian2_phone: '',
+  address: '',
+  previous_school: '',
 })
 
 const fetchStudents = async () => {
@@ -314,13 +335,12 @@ const openAddModal = () => {
   isEditing.value = false
   currentStudentId.value = null
   Object.assign(formData, {
-    first_name: '',
-    last_name: '',
-    admission_number: '',
-    grade_level: 'Play Group',
-    status: 'Active',
-    guardian_name: '',
-    guardian_phone: '',
+    first_name: '', last_name: '', admission_number: '',
+    grade_level: 'Play Group', status: 'Active',
+    date_of_birth: '', gender: '',
+    guardian_name: '', guardian_phone: '',
+    guardian2_name: '', guardian2_phone: '',
+    address: '', previous_school: '',
   })
   showModal.value = true
 }
@@ -334,8 +354,14 @@ const openEditModal = (student) => {
     admission_number: student.admission_number,
     grade_level: student.grade_level,
     status: student.status,
+    date_of_birth: student.date_of_birth || '',
+    gender: student.gender || '',
     guardian_name: student.guardian_name || '',
     guardian_phone: student.guardian_phone || '',
+    guardian2_name: student.guardian2_name || '',
+    guardian2_phone: student.guardian2_phone || '',
+    address: student.address || '',
+    previous_school: student.previous_school || '',
   })
   showModal.value = true
 }
@@ -346,9 +372,15 @@ const saveStudent = async () => {
   saving.value = true
   try {
     const payload = { ...formData }
+    if (!payload.admission_number) payload.admission_number = null
+    if (!payload.date_of_birth) payload.date_of_birth = null
+    if (!payload.gender) payload.gender = null
     if (!payload.guardian_name) payload.guardian_name = null
     if (!payload.guardian_phone) payload.guardian_phone = null
-    if (!payload.admission_number) payload.admission_number = null
+    if (!payload.guardian2_name) payload.guardian2_name = null
+    if (!payload.guardian2_phone) payload.guardian2_phone = null
+    if (!payload.address) payload.address = null
+    if (!payload.previous_school) payload.previous_school = null
 
     if (isEditing.value) {
       await studentService.updateStudent(currentStudentId.value, payload)

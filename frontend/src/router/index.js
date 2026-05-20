@@ -109,6 +109,18 @@ const router = createRouter({
           meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin'] },
         },
         {
+          path: 'academics/students',
+          name: 'students-dashboard',
+          component: () => import('../views/Academics/StudentsDashboard.vue'),
+          meta: { requiresAuth: true },
+        },
+        {
+          path: 'academics/classes',
+          name: 'classes-dashboard',
+          component: () => import('../views/Academics/ClassesDashboard.vue'),
+          meta: { requiresAuth: true },
+        },
+        {
           path: 'admin/leave',
           name: 'leave-management',
           component: () => import('../views/Admin/LeaveManagement.vue'),
