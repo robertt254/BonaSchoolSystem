@@ -86,8 +86,11 @@ async def startup():
     # Safely add columns that may be missing from tables created before these
     # columns were introduced (create_all does not ALTER existing tables).
     _safe_add_columns = [
-        "ALTER TABLE students ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE",
-        "ALTER TABLE fees ADD COLUMN IF NOT EXISTS receipt_number VARCHAR(20) UNIQUE",
+        "ALTER TABLE users      ADD COLUMN IF NOT EXISTS created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        "ALTER TABLE students   ADD COLUMN IF NOT EXISTS created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        "ALTER TABLE students   ADD COLUMN IF NOT EXISTS is_deleted  BOOLEAN     NOT NULL DEFAULT FALSE",
+        "ALTER TABLE fees       ADD COLUMN IF NOT EXISTS receipt_number VARCHAR(20)",
+        "ALTER TABLE assessments ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()",
     ]
     try:
         with engine.connect() as conn:
