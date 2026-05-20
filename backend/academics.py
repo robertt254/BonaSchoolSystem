@@ -52,6 +52,39 @@ def record_scores(
     return {"message": "Academic scores updated successfully"}
 
 
+@router.get("/grade/{grade}/{term}")
+def get_grade_assessments(
+    grade: str,
+    term: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Return all students in a grade with their existing scores for the given term (bulk entry support)."""
+    if current_user.role not in {"teacher", "admin", "principal"}:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    students = (
+        db.query(models.Student)
+        .filter(models.Student.grade_level == grade, models.Student.is_deleted == False)
+        .order_by(models.Student.last_name)
+        .all()
+    )
+
+    result = []
+    for s in students:
+        scores = db.query(models.Assessment).filter(
+            models.Assessment.student_id == s.id,
+            models.Assessment.term == term,
+        ).all()
+        result.append({
+            "student_id": s.id,
+            "student_name": f"{s.first_name} {s.last_name}",
+            "admission_number": s.admission_number,
+            "scores": {a.learning_area: {"score": a.score, "remarks": a.remarks} for a in scores},
+        })
+    return result
+
+
 @router.get("/report-card/{student_id}/{term}")
 def generate_report_card(
     student_id: int,

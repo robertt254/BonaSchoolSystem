@@ -1,10 +1,11 @@
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from database import get_db
 import models, schemas, auth
 from audit import log_action
+from notifications import notify_payment
 
 router = APIRouter(prefix="/api/fees", tags=["Finance & Fees"])
 
@@ -82,6 +83,7 @@ def _get_rollover_credit(db: Session, student_id: int, grade_level: str, up_to_t
 @router.post("/", response_model=schemas.FeeResponse)
 def record_payment(
     fee: schemas.FeeCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
@@ -107,6 +109,17 @@ def record_payment(
                {"receipt": receipt, "amount": str(fee.amount), "student_id": fee.student_id})
     db.commit()
     db.refresh(new_fee)
+
+    if student.guardian_phone:
+        background_tasks.add_task(
+            notify_payment,
+            f"{student.first_name} {student.last_name}",
+            student.guardian_phone,
+            float(fee.amount),
+            fee.term,
+            receipt,
+        )
+
     return new_fee
 
 

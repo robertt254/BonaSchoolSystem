@@ -64,6 +64,14 @@
             </template>
             Report Cards
           </NavItem>
+          <NavItem to="/academics/timetable">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </template>
+            Timetable
+          </NavItem>
         </template>
 
         <template v-if="['secretary','principal','admin'].includes(userRole)">
@@ -96,6 +104,22 @@
             </template>
             Statements
           </NavItem>
+          <NavItem to="/finance/defaulters">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </template>
+            Defaulters
+          </NavItem>
+          <NavItem v-if="['admin','principal'].includes(userRole)" to="/finance/fee-structure">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+              </svg>
+            </template>
+            Fee Structure
+          </NavItem>
         </template>
 
         <template v-if="['admin','principal'].includes(userRole)">
@@ -115,6 +139,14 @@
               </svg>
             </template>
             HR &amp; Staff
+          </NavItem>
+          <NavItem to="/admin/leave">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M20 9V7a2 2 0 0 0-2-2h-4L12 3l-2 2H6a2 2 0 0 0-2 2v2"/><path d="M9 22h6"/><path d="M12 22v-7"/><path d="M4 9h16"/><path d="M4 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/>
+              </svg>
+            </template>
+            Leave
           </NavItem>
         </template>
 
@@ -179,6 +211,21 @@
         <p class="md:hidden text-base font-bold text-slate-800">Bona School</p>
 
         <div class="flex items-center gap-2 ml-auto">
+          <!-- Year selector -->
+          <div class="relative flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 hover:border-slate-300 transition-colors">
+            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <select
+              v-model="appStore.currentYear"
+              class="bg-transparent text-sm font-semibold text-slate-700 outline-none cursor-pointer appearance-none pr-4"
+            >
+              <option v-for="y in appStore.years" :key="y" :value="y">{{ y }}</option>
+            </select>
+            <svg class="w-3.5 h-3.5 absolute right-2.5 pointer-events-none text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
           <!-- Term selector -->
           <div class="relative flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 hover:border-slate-300 transition-colors">
             <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
@@ -292,11 +339,15 @@ const pageTitle = computed(() => {
     'secretary-dash':  'Office & Admissions',
     'accountant-dash': 'Finance Dashboard',
     'fee-statement':   'Fee Statements',
+    'fee-defaulters':  'Fee Defaulters',
+    'fee-structure':   'Fee Structure',
     'teacher-dash':    'Grading',
     'report-card':     'Report Cards',
     'attendance-page': 'Roll Call',
     'student-profile': 'Student Profile',
     'principal-dash':  'Principal Dashboard',
+    'timetable':       'Class Timetable',
+    'leave-management': 'Leave Management',
   }
   return m[route.name] || 'Overview'
 })

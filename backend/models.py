@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, ForeignKey, DateTime, Date, Boolean
+from sqlalchemy import Column, Integer, String, Numeric, ForeignKey, DateTime, Date, Boolean, Text
 from sqlalchemy.sql import func
 from database import Base
 
@@ -117,3 +117,37 @@ class Expense(Base):
     justification = Column(String(500), nullable=False)
     recorded_by = Column(String(100), nullable=False)
     expense_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
+
+
+class Timetable(Base):
+    """Weekly class schedule entry per grade."""
+    __tablename__ = "timetable"
+
+    id = Column(Integer, primary_key=True, index=True)
+    grade_level = Column(String(20), nullable=False, index=True)
+    day_of_week = Column(String(10), nullable=False)
+    period = Column(Integer, nullable=False)
+    subject = Column(String(100), nullable=False)
+    teacher_name = Column(String(100), nullable=True)
+    start_time = Column(String(5), nullable=True)
+    end_time = Column(String(5), nullable=True)
+    term = Column(String(10), nullable=False)
+    academic_year = Column(Integer, nullable=False)
+    created_by = Column(String(100), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class LeaveRequest(Base):
+    """Staff leave application and approval record."""
+    __tablename__ = "leave_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    staff_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    leave_type = Column(String(50), nullable=False)
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
+    reason = Column(String(500), nullable=False)
+    status = Column(String(20), nullable=False, default="pending")
+    reviewed_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

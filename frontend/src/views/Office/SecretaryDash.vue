@@ -173,11 +173,12 @@
             <input
               v-model="formData.admission_number"
               :disabled="isEditing"
-              required
               type="text"
+              :placeholder="isEditing ? '' : 'Leave blank to auto-generate (BNS/YYYY/NNNN)'"
               class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-navy outline-none text-sm"
               :class="isEditing ? 'bg-gray-100 text-gray-500' : ''"
             />
+            <p v-if="!isEditing" class="text-xs text-gray-400 mt-1">Auto-generated if left blank.</p>
             <p v-if="isEditing" class="text-xs text-gray-500 mt-1">Admission numbers cannot be changed.</p>
           </div>
 
@@ -312,19 +313,10 @@ onMounted(fetchStudents)
 const openAddModal = () => {
   isEditing.value = false
   currentStudentId.value = null
-
-  let nextIdNum = 1
-  if (students.value.length > 0) {
-    const nums = students.value
-      .map(s => { const m = s.admission_number.match(/^BONA-(\d+)$/); return m ? parseInt(m[1], 10) : 0 })
-      .filter(n => n > 0)
-    if (nums.length) nextIdNum = Math.max(...nums) + 1
-  }
-
   Object.assign(formData, {
     first_name: '',
     last_name: '',
-    admission_number: `BONA-${nextIdNum.toString().padStart(4, '0')}`,
+    admission_number: '',
     grade_level: 'Play Group',
     status: 'Active',
     guardian_name: '',
@@ -356,6 +348,7 @@ const saveStudent = async () => {
     const payload = { ...formData }
     if (!payload.guardian_name) payload.guardian_name = null
     if (!payload.guardian_phone) payload.guardian_phone = null
+    if (!payload.admission_number) payload.admission_number = null
 
     if (isEditing.value) {
       await studentService.updateStudent(currentStudentId.value, payload)

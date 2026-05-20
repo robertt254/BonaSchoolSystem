@@ -17,6 +17,8 @@ import academics
 import attendance
 import finance
 import dashboard
+import timetable
+import leave
 from database import engine, SessionLocal
 from limiter import limiter
 
@@ -95,6 +97,9 @@ async def startup():
         "ALTER TABLE students   ADD COLUMN IF NOT EXISTS guardian_phone VARCHAR(20)",
         "ALTER TABLE fees       ADD COLUMN IF NOT EXISTS receipt_number VARCHAR(20)",
         "ALTER TABLE assessments ADD COLUMN IF NOT EXISTS updated_at   TIMESTAMPTZ DEFAULT NOW()",
+        # timetable & leave tables created via create_all; extra safety cols below
+        "ALTER TABLE timetable       ADD COLUMN IF NOT EXISTS created_by   VARCHAR(100) NOT NULL DEFAULT 'system'",
+        "ALTER TABLE leave_requests  ADD COLUMN IF NOT EXISTS reviewed_at  TIMESTAMPTZ",
     ]
     try:
         with engine.connect() as conn:
@@ -120,6 +125,8 @@ app.include_router(academics.router)
 app.include_router(attendance.router)
 app.include_router(finance.router)
 app.include_router(dashboard.router)
+app.include_router(timetable.router)
+app.include_router(leave.router)
 
 
 # ── Health check (used by Render's healthCheckPath) ───────────────────────────

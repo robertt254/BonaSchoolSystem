@@ -1,348 +1,369 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in pb-12">
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8 mb-2">
-      <div>
-        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-          Academics & Grading
-        </h1>
-        <p class="text-sm text-slate-500 mt-1 font-medium">{{ appStore.currentTerm }} Assesments</p>
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Grade tabs + mode toggle -->
+    <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-4 flex flex-col gap-4">
+      <div class="flex flex-wrap gap-2">
+        <button
+          v-for="grade in cbcGrades"
+          :key="grade"
+          @click="selectGrade(grade)"
+          :class="[
+            'px-4 py-2.5 rounded-[10px] text-sm font-bold whitespace-nowrap transition-all',
+            selectedGrade === grade
+              ? 'bg-school-navy text-white shadow-sm'
+              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
+          ]"
+        >{{ grade }}</button>
       </div>
-    </div>
 
-    <!-- Flat Class Navigation Tabs -->
-    <div
-      class="bg-white p-8 rounded-[12px] shadow-sm border border-[#E2E8F0] overflow-x-auto flex gap-2"
-    >
-      <button
-        v-for="grade in cbcGrades"
-        :key="grade"
-        @click="selectedGrade = grade"
-        :class="[
-          'px-6 py-3.5 rounded-[12px] text-sm font-bold whitespace-nowrap transition-all',
-          selectedGrade === grade
-            ? 'bg-school-navy text-white shadow-md'
-            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
-        ]"
-      >
-        {{ grade }}
-      </button>
-    </div>
-
-    <!-- Grade Content Area -->
-    <div class="bg-white rounded-[12px] shadow-sm border border-[#E2E8F0] overflow-hidden mt-6">
-      <!-- Content Header -->
-      <div
-        class="p-8 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50"
-      >
+      <!-- Mode + subject -->
+      <div class="flex flex-wrap items-end gap-4">
         <div>
-          <h3 class="text-lg font-bold text-slate-800 tracking-tight">
-            {{ selectedGrade }} Students
-          </h3>
-          <p class="text-xs text-slate-500 mt-0.5">Showing all students enrolled in this level.</p>
+          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
+          <select
+            v-model="selectedArea"
+            @change="loadBulkData"
+            class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple"
+          >
+            <option v-for="a in learningAreas" :key="a" :value="a">{{ a }}</option>
+          </select>
         </div>
-
-        <div class="flex items-center gap-3 w-full sm:w-auto">
-          <div class="relative w-full sm:w-64">
-            <svg
-              class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              ></path>
-            </svg>
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Search student name..."
-              class="w-full pl-9 pr-4 py-2 text-sm border border-[#E2E8F0] rounded-[12px] focus:outline-none focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy bg-white transition-all"
-            />
-          </div>
+        <div class="flex gap-2">
+          <button
+            @click="viewMode = 'bulk'"
+            :class="viewMode === 'bulk' ? 'bg-school-purple text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+            class="px-4 py-2.5 rounded-lg text-sm font-bold transition"
+          >Bulk Entry</button>
+          <button
+            @click="viewMode = 'list'"
+            :class="viewMode === 'list' ? 'bg-school-purple text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+            class="px-4 py-2.5 rounded-lg text-sm font-bold transition"
+          >Student List</button>
+        </div>
+        <div class="flex-1"></div>
+        <div class="relative">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search student…"
+            class="pl-9 pr-4 py-2.5 text-sm border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple w-56"
+          />
         </div>
       </div>
+    </div>
 
-      <!-- Loading State -->
-      <div
-        v-if="loading"
-        class="flex flex-col justify-center items-center py-20 text-slate-400 space-y-4"
-      >
-        <div
-          class="w-8 h-8 border-4 border-[#E2E8F0] border-t-school-navy rounded-full animate-spin mx-auto"
-        ></div>
-        <span class="text-xs font-bold tracking-widest uppercase">Loading students...</span>
+    <!-- BULK ENTRY GRID -->
+    <div v-if="viewMode === 'bulk'" class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+      <div class="border-b border-slate-100 px-6 py-4 bg-slate-50 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-slate-800">{{ selectedGrade }} · {{ appStore.currentTerm }} · {{ selectedArea }}</h3>
+          <p class="text-xs text-slate-400 mt-0.5">{{ filteredBulk.length }} students — click a cell or use the dropdown to enter scores</p>
+        </div>
+        <button
+          @click="saveBulk"
+          :disabled="bulkSaving || !hasPendingChanges"
+          class="bg-school-purple text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-school-purple-l transition disabled:opacity-40 flex items-center gap-2"
+        >
+          <svg v-if="bulkSaving" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-dasharray="50" stroke-dashoffset="50"/></svg>
+          {{ bulkSaving ? 'Saving…' : 'Save All' }}
+        </button>
       </div>
 
-      <!-- Students Table -->
+      <div v-if="loadingBulk" class="py-16 flex justify-center">
+        <div class="w-8 h-8 border-4 border-slate-200 border-t-school-purple rounded-full animate-spin"></div>
+      </div>
+
+      <div v-else-if="filteredBulk.length === 0" class="py-12 text-center text-slate-400 text-sm">
+        No students in {{ selectedGrade }}.
+      </div>
+
       <div v-else class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+        <table class="w-full text-sm">
           <thead>
-            <tr
-              class="bg-school-grey border-b border-[#E2E8F0] text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8]"
-            >
-              <th class="py-5 px-8 font-bold w-12">#</th>
-              <th class="py-5 px-8 font-bold">Student Name</th>
-              <th class="py-5 px-8 font-bold">Admission No.</th>
-              <th class="py-5 px-8 font-bold">Status</th>
-              <th class="py-5 px-8 font-bold text-right">Actions</th>
+            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <th class="text-left px-6 py-3 w-8">#</th>
+              <th class="text-left px-6 py-3">Student</th>
+              <th class="text-left px-6 py-3 w-32">Adm No.</th>
+              <th class="text-center px-4 py-3 w-36">Score</th>
+              <th class="text-left px-4 py-3">Remarks</th>
             </tr>
           </thead>
-
-          <tbody class="text-sm">
+          <tbody class="divide-y divide-slate-50">
             <tr
-              v-for="(student, index) in filteredStudents"
-              :key="student.id"
-              class="border-b border-slate-50 hover:bg-slate-50/80 transition-colors group"
+              v-for="(row, i) in filteredBulk"
+              :key="row.student_id"
+              class="hover:bg-violet-50/20 transition-colors"
+              :class="row._changed ? 'bg-amber-50/30' : ''"
             >
-              <td class="py-5 px-8 text-slate-400 font-medium">{{ index + 1 }}</td>
-              <td class="py-5 px-8 font-bold text-slate-800">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs border border-[#E2E8F0]"
-                  >
-                    {{ student.first_name.charAt(0) }}
-                  </div>
-                  {{ student.first_name }} {{ student.last_name }}
-                </div>
-              </td>
-              <td class="py-5 px-8 text-slate-500 font-medium">{{ student.admission_number }}</td>
-              <td class="py-5 px-8">
-                <span
-                  class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border"
-                  :class="
-                    student.status === 'Active'
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                      : 'bg-slate-50 text-slate-600 border-slate-200'
-                  "
+              <td class="px-6 py-3 text-slate-400 text-xs">{{ i + 1 }}</td>
+              <td class="px-6 py-3 font-semibold text-slate-800">{{ row.student_name }}</td>
+              <td class="px-6 py-3 font-mono text-xs text-slate-500">{{ row.admission_number }}</td>
+              <td class="px-4 py-2">
+                <select
+                  v-model="row.score"
+                  @change="row._changed = true"
+                  class="w-full border rounded-lg px-2 py-2 text-sm font-bold outline-none transition"
+                  :class="scoreClass(row.score)"
                 >
-                  {{ student.status }}
-                </span>
+                  <option value="">—</option>
+                  <option value="EE">EE – Exceeding</option>
+                  <option value="ME">ME – Meeting</option>
+                  <option value="AE">AE – Approaching</option>
+                  <option value="BE">BE – Below</option>
+                </select>
               </td>
-              <td class="py-5 px-8 text-right flex gap-2 justify-end">
-                <router-link
-                  :to="`/students/${student.id}/profile`"
-                  class="text-xs font-bold text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 px-6 py-3.5 rounded-lg transition-colors border border-[#E2E8F0]"
-                >
-                  Profile
-                </router-link>
-                <button
-                  @click="openGradingModal(student)"
-                  class="text-xs font-bold text-school-navy bg-school-navy/5 hover:bg-school-navy hover:text-white px-6 py-3.5 rounded-lg transition-colors border border-school-navy/10 hover:border-school-navy"
-                >
-                  Enter Grades
-                </button>
-              </td>
-            </tr>
-
-            <tr v-if="filteredStudents.length === 0">
-              <td colspan="5" class="py-12 px-8 text-center">
-                <div class="flex flex-col items-center justify-center text-slate-400">
-                  <span class="text-4xl mb-3"></span>
-                  <p class="font-medium text-sm">No students found in {{ selectedGrade }}.</p>
-                </div>
+              <td class="px-4 py-2">
+                <input
+                  v-model="row.remarks"
+                  @input="row._changed = true"
+                  type="text"
+                  placeholder="Optional remark…"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple"
+                />
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+
+      <div v-if="bulkSaveMsg" class="px-6 py-3 text-sm font-medium" :class="bulkSaveError ? 'text-school-red bg-red-50' : 'text-emerald-700 bg-emerald-50'">
+        {{ bulkSaveMsg }}
+      </div>
     </div>
 
-    <!-- Quick Entry Grade Form (Mockup for now) -->
-    <div
-      v-if="showGradeModal"
-      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in"
-    >
-      <div
-        class="bg-white rounded-[12px] shadow-2xl w-full max-w-lg overflow-hidden border border-[#E2E8F0]"
-      >
-        <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-          <div>
-            <h2 class="font-heading text-[22px] font-bold text-[#0F172A] tracking-tight">
-              Record Assessments
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">
-              {{ selectedStudent?.first_name }} {{ selectedStudent?.last_name }} -
-              {{ appStore.currentTerm }}
-            </p>
+    <!-- STUDENT LIST VIEW -->
+    <div v-else class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+      <div class="border-b border-slate-100 px-6 py-4 bg-slate-50">
+        <h3 class="font-bold text-slate-800">{{ selectedGrade }} Students</h3>
+      </div>
+
+      <div v-if="loadingBulk" class="py-16 flex justify-center">
+        <div class="w-8 h-8 border-4 border-slate-200 border-t-school-purple rounded-full animate-spin"></div>
+      </div>
+
+      <div v-else class="divide-y divide-slate-50">
+        <div
+          v-for="(s, i) in filteredBulk"
+          :key="s.student_id"
+          class="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors"
+        >
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-violet-100 text-school-purple flex items-center justify-center font-bold text-xs">
+              {{ s.student_name.charAt(0) }}
+            </div>
+            <div>
+              <p class="font-semibold text-slate-800 text-sm">{{ s.student_name }}</p>
+              <p class="text-xs text-slate-400 font-mono">{{ s.admission_number }}</p>
+            </div>
           </div>
-          <button
-            @click="showGradeModal = false"
-            class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 h-8 w-8 rounded-full flex items-center justify-center transition-colors"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
+          <div class="flex items-center gap-3">
+            <span v-if="s.score" class="text-xs font-bold px-2.5 py-1 rounded-full" :class="scoreBadge(s.score)">{{ s.score }}</span>
+            <router-link :to="`/students/${s.student_id}`" class="text-xs font-bold text-slate-500 hover:text-slate-800 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition">Profile</router-link>
+            <button @click="openModal(s)" class="text-xs font-bold text-school-purple border border-school-purple/30 bg-school-purple/5 hover:bg-school-purple hover:text-white px-3 py-1.5 rounded-lg transition">
+              Grade
+            </button>
+          </div>
+        </div>
+        <div v-if="filteredBulk.length === 0" class="py-12 text-center text-slate-400 text-sm">
+          No students in {{ selectedGrade }}.
+        </div>
+      </div>
+    </div>
+
+    <!-- Single-student grade modal -->
+    <div v-if="showModal" class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-[12px] shadow-2xl w-full max-w-lg overflow-hidden border border-[#E2E8F0]">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <div>
+            <h2 class="text-lg font-bold text-[#0F172A]">Record Assessment</h2>
+            <p class="text-xs text-slate-500 mt-0.5">{{ modalStudent?.student_name }} · {{ appStore.currentTerm }}</p>
+          </div>
+          <button @click="showModal = false" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
 
-        <form @submit.prevent="submitScore" class="p-8 space-y-6">
+        <form @submit.prevent="submitSingle" class="p-6 space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label
-                class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
-                >Learning Area</label
-              >
-              <select
-                v-model="gradeForm.learning_area"
-                required
-                class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
-              >
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
+              <select v-model="modalForm.learning_area" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
                 <option disabled value="">Select Area</option>
-                <option>Mathematics Activities</option>
-                <option>Language Activities</option>
-                <option>Environmental Activities</option>
+                <option v-for="a in learningAreas" :key="a" :value="a">{{ a }}</option>
               </select>
             </div>
             <div>
-              <label
-                class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
-                >Score (CBC)</label
-              >
-              <select
-                v-model="gradeForm.score"
-                required
-                class="w-full border border-[#E2E8F0] rounded-[12px] p-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-bold text-school-navy"
-              >
+              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Score (CBC)</label>
+              <select v-model="modalForm.score" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
                 <option disabled value="">Select Score</option>
-                <option value="EE">Exceeding (EE)</option>
-                <option value="ME">Meeting (ME)</option>
-                <option value="AE">Approaching (AE)</option>
-                <option value="BE">Below (BE)</option>
+                <option value="EE">EE – Exceeding</option>
+                <option value="ME">ME – Meeting</option>
+                <option value="AE">AE – Approaching</option>
+                <option value="BE">BE – Below</option>
               </select>
             </div>
           </div>
-
           <div>
-            <label
-              class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
-              >Teacher's Remarks</label
-            >
-            <textarea
-              v-model="gradeForm.remarks"
-              rows="2"
-              class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm"
-              placeholder="Enter optional comments..."
-            ></textarea>
+            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Remarks (optional)</label>
+            <textarea v-model="modalForm.remarks" rows="2" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple resize-none" placeholder="Teacher's comments…"></textarea>
           </div>
-
-          <div class="flex justify-end pt-4">
-            <button
-              type="submit"
-              class="px-8 py-4 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm w-full"
-            >
-              Submit Score
-            </button>
-          </div>
+          <button type="submit" class="w-full py-3 bg-school-purple text-white rounded-lg font-bold hover:bg-school-purple-l transition text-sm">
+            Save Score
+          </button>
         </form>
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useAppStore } from '@/stores/app'
-import studentService from '@/services/studentService'
+import { apiFetch } from '@/services/api'
 import academicService from '@/services/academicService'
 
 const appStore = useAppStore()
 
-// Strict CBC class structure (No streams/tracks)
-const cbcGrades = [
-  'Play Group',
-  'PP1',
-  'PP2',
-  'Grade 1',
-  'Grade 2',
-  'Grade 3',
-  'Grade 4',
-  'Grade 5',
-  'Grade 6',
-]
+const cbcGrades = ['Play Group', 'PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6']
+
+const AREAS_BY_GRADE = {
+  'Play Group': ['Psychomotor & Creative Activities', 'Language Activities', 'Mathematical Activities', 'Environmental Activities', 'Religious & Moral Education'],
+  'PP1': ['Psychomotor & Creative Activities', 'Language Activities', 'Mathematical Activities', 'Environmental Activities', 'Religious & Moral Education'],
+  'PP2': ['Psychomotor & Creative Activities', 'Language Activities', 'Mathematical Activities', 'Environmental Activities', 'Religious & Moral Education'],
+  default: ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Creative Arts', 'Religious Education', 'Physical & Health Education'],
+}
 
 const selectedGrade = ref('Grade 1')
+const selectedArea = ref('Mathematics')
+const viewMode = ref('bulk')
 const searchQuery = ref('')
-const loading = ref(true)
-const students = ref([])
+const bulkRows = ref([])
+const loadingBulk = ref(false)
+const bulkSaving = ref(false)
+const bulkSaveMsg = ref('')
+const bulkSaveError = ref(false)
 
-// Modal state
-const showGradeModal = ref(false)
-const selectedStudent = ref(null)
+const showModal = ref(false)
+const modalStudent = ref(null)
+const modalForm = reactive({ learning_area: '', score: '', remarks: '' })
 
-const gradeForm = reactive({
-  learning_area: '',
-  score: '',
-  remarks: '',
+const learningAreas = computed(() => AREAS_BY_GRADE[selectedGrade.value] || AREAS_BY_GRADE.default)
+
+const hasPendingChanges = computed(() => bulkRows.value.some(r => r._changed))
+
+const filteredBulk = computed(() => {
+  const q = searchQuery.value.toLowerCase()
+  if (!q) return bulkRows.value
+  return bulkRows.value.filter(r =>
+    r.student_name.toLowerCase().includes(q) ||
+    r.admission_number.toLowerCase().includes(q)
+  )
 })
 
-const loadStudents = async () => {
-  loading.value = true
+const scoreClass = (score) => ({
+  EE: 'border-emerald-300 bg-emerald-50 text-emerald-700',
+  ME: 'border-blue-300 bg-blue-50 text-blue-700',
+  AE: 'border-amber-300 bg-amber-50 text-amber-700',
+  BE: 'border-red-300 bg-red-50 text-red-700',
+  '': 'border-slate-200 text-slate-600',
+}[score] || 'border-slate-200 text-slate-600')
+
+const scoreBadge = (score) => ({
+  EE: 'bg-emerald-50 text-emerald-700',
+  ME: 'bg-blue-50 text-blue-700',
+  AE: 'bg-amber-50 text-amber-700',
+  BE: 'bg-red-50 text-red-700',
+}[score] || 'bg-slate-100 text-slate-500')
+
+const loadBulkData = async () => {
+  loadingBulk.value = true
   try {
-    students.value = await studentService.getAllStudents()
-  } catch (error) {
-    console.error('Failed to load students for academics dash', error)
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(loadStudents)
-
-const filteredStudents = computed(() => {
-  let result = students.value.filter((s) => s.grade_level === selectedGrade.value)
-
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    result = result.filter(
-      (s) =>
-        s.first_name.toLowerCase().includes(query) ||
-        s.last_name.toLowerCase().includes(query) ||
-        s.admission_number.toLowerCase().includes(query),
+    const data = await apiFetch(
+      `/api/academics/grade/${encodeURIComponent(selectedGrade.value)}/${encodeURIComponent(appStore.currentTerm)}`
     )
+    bulkRows.value = data.map(s => ({
+      student_id: s.student_id,
+      student_name: s.student_name,
+      admission_number: s.admission_number,
+      score: s.scores[selectedArea.value]?.score || '',
+      remarks: s.scores[selectedArea.value]?.remarks || '',
+      _changed: false,
+    }))
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loadingBulk.value = false
   }
-
-  return result
-})
-
-const openGradingModal = (student) => {
-  selectedStudent.value = student
-  gradeForm.learning_area = ''
-  gradeForm.score = ''
-  gradeForm.remarks = ''
-  showGradeModal.value = true
 }
 
-const submitScore = async () => {
-  if (!selectedStudent.value) return
+const selectGrade = (grade) => {
+  selectedGrade.value = grade
+  const areas = AREAS_BY_GRADE[grade] || AREAS_BY_GRADE.default
+  selectedArea.value = areas[0]
+  loadBulkData()
+}
 
-  const payload = {
-    student_id: selectedStudent.value.id,
-    term: appStore.currentTerm,
-    learning_area: gradeForm.learning_area,
-    score: gradeForm.score,
-    remarks: gradeForm.remarks,
-  }
+const saveBulk = async () => {
+  bulkSaveMsg.value = ''
+  bulkSaveError.value = false
+  const changed = bulkRows.value.filter(r => r._changed && r.score)
+  if (!changed.length) return
 
+  bulkSaving.value = true
   try {
-    await academicService.saveScores([payload])
-    showGradeModal.value = false
-    gradeForm.learning_area = ''
-    gradeForm.score = ''
-    gradeForm.remarks = ''
-    alert('Scores saved successfully!')
-  } catch (error) {
-    alert('Failed to save scores.')
-    console.error(error)
+    const payload = changed.map(r => ({
+      student_id: r.student_id,
+      term: appStore.currentTerm,
+      learning_area: selectedArea.value,
+      score: r.score,
+      remarks: r.remarks || null,
+    }))
+    await academicService.saveScores(payload)
+    bulkRows.value.forEach(r => { r._changed = false })
+    bulkSaveMsg.value = `${changed.length} score${changed.length !== 1 ? 's' : ''} saved successfully.`
+    setTimeout(() => { bulkSaveMsg.value = '' }, 4000)
+  } catch (e) {
+    bulkSaveMsg.value = 'Save failed: ' + (e?.message || '')
+    bulkSaveError.value = true
+  } finally {
+    bulkSaving.value = false
   }
 }
+
+const openModal = (s) => {
+  modalStudent.value = s
+  modalForm.learning_area = selectedArea.value
+  modalForm.score = s.score || ''
+  modalForm.remarks = s.remarks || ''
+  showModal.value = true
+}
+
+const submitSingle = async () => {
+  if (!modalStudent.value) return
+  try {
+    await academicService.saveScores([{
+      student_id: modalStudent.value.student_id,
+      term: appStore.currentTerm,
+      learning_area: modalForm.learning_area,
+      score: modalForm.score,
+      remarks: modalForm.remarks,
+    }])
+    showModal.value = false
+    await loadBulkData()
+  } catch (e) {
+    alert('Save failed: ' + (e?.message || ''))
+  }
+}
+
+watch(() => appStore.currentTerm, loadBulkData)
+
+onMounted(() => {
+  selectedArea.value = learningAreas.value[0]
+  loadBulkData()
+})
 </script>

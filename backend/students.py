@@ -10,13 +10,33 @@ from audit import log_action
 # Fallback fee amounts (mirrored from fees.py) used for profile balance calc.
 _CBC_FEES = {
     "Play Group": 12000.00, "PP1": 15000.00, "PP2": 15000.00,
-    "Grade 1": 18000.00, "Grade 2": 15000.00, "Grade 3": 18000.00,
+    "Grade 1": 18000.00, "Grade 2": 18000.00, "Grade 3": 18000.00,
     "Grade 4": 20000.00, "Grade 5": 20000.00, "Grade 6": 20000.00,
 }
 
 router = APIRouter(prefix="/api/students", tags=["Students"])
 
 WRITE_ROLES = {"admin", "principal", "secretary"}
+
+
+def _generate_admission_number(db: Session) -> str:
+    year = datetime.now().year
+    prefix = f"BNS/{year}/"
+    last = (
+        db.query(models.Student)
+        .filter(models.Student.admission_number.like(f"{prefix}%"))
+        .with_for_update()
+        .order_by(models.Student.id.desc())
+        .first()
+    )
+    if last and last.admission_number:
+        try:
+            seq = int(last.admission_number.split("/")[-1]) + 1
+        except (ValueError, IndexError):
+            seq = 1
+    else:
+        seq = 1
+    return f"{prefix}{seq:04d}"
 
 
 @router.post("/", response_model=schemas.StudentResponse)
@@ -28,16 +48,20 @@ def create_student(
     if current_user.role not in WRITE_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized to admit students")
 
+    admission_number = student.admission_number or _generate_admission_number(db)
+
     if db.query(models.Student).filter(
-        models.Student.admission_number == student.admission_number
+        models.Student.admission_number == admission_number
     ).first():
         raise HTTPException(status_code=400, detail="Admission number already registered")
 
-    new_student = models.Student(**student.model_dump())
+    data = student.model_dump()
+    data["admission_number"] = admission_number
+    new_student = models.Student(**data)
     db.add(new_student)
-    db.flush()  # populate new_student.id before logging
+    db.flush()
     log_action(db, current_user.id, "CREATE", "student", new_student.id,
-               {"admission_number": student.admission_number})
+               {"admission_number": admission_number})
     db.commit()
     db.refresh(new_student)
     return new_student

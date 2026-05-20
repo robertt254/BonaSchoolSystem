@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime, date
 from enum import Enum
 
@@ -60,8 +60,14 @@ class StudentBase(BaseModel):
     guardian_phone: Optional[str] = Field(None, max_length=20)
 
 
-class StudentCreate(StudentBase):
-    pass
+class StudentCreate(BaseModel):
+    first_name: str = Field(..., min_length=1, max_length=100)
+    last_name: str = Field(..., min_length=1, max_length=100)
+    admission_number: Optional[str] = Field(None, max_length=20)
+    grade_level: GradeLevel
+    status: StudentStatus = StudentStatus.active
+    guardian_name: Optional[str] = Field(None, max_length=100)
+    guardian_phone: Optional[str] = Field(None, max_length=20)
 
 
 class StudentResponse(StudentBase):
@@ -206,6 +212,51 @@ class ExpenseResponse(ExpenseCreate):
     id: int
     recorded_by: str
     expense_date: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TimetableCreate(BaseModel):
+    grade_level: GradeLevel
+    day_of_week: str = Field(..., pattern=r"^(Monday|Tuesday|Wednesday|Thursday|Friday)$")
+    period: int = Field(..., ge=1, le=10)
+    subject: str = Field(..., min_length=1, max_length=100)
+    teacher_name: Optional[str] = Field(None, max_length=100)
+    start_time: Optional[str] = Field(None, pattern=r"^\d{2}:\d{2}$")
+    end_time: Optional[str] = Field(None, pattern=r"^\d{2}:\d{2}$")
+    term: Term
+    academic_year: int = Field(..., ge=2020, le=2100)
+
+
+class TimetableResponse(TimetableCreate):
+    id: int
+    created_by: str
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class LeaveRequestCreate(BaseModel):
+    leave_type: str = Field(..., min_length=1, max_length=50)
+    start_date: date
+    end_date: date
+    reason: str = Field(..., min_length=1, max_length=500)
+
+
+class LeaveRequestResponse(BaseModel):
+    id: int
+    staff_id: int
+    leave_type: str
+    start_date: date
+    end_date: date
+    reason: str
+    status: str
+    reviewed_by: Optional[int] = None
+    reviewed_at: Optional[datetime] = None
+    created_at: datetime
+    staff_name: Optional[str] = None
 
     class Config:
         from_attributes = True
