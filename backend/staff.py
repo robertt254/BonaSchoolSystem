@@ -7,14 +7,20 @@ from audit import log_action
 router = APIRouter(prefix="/api/staff", tags=["Staff Management"])
 
 
-def verify_admin(current_user: models.User = Depends(auth.get_current_user)):
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Only System Administrators can manage staff")
+def verify_hr_manager(current_user: models.User = Depends(auth.get_current_user)):
+    if current_user.role not in {"admin", "principal"}:
+        raise HTTPException(status_code=403, detail="Only admins and the principal can manage staff")
+    return current_user
+
+
+def verify_staff_reader(current_user: models.User = Depends(auth.get_current_user)):
+    if current_user.role not in {"admin", "principal", "accountant"}:
+        raise HTTPException(status_code=403, detail="Not authorized to view staff list")
     return current_user
 
 
 @router.get("/", response_model=list[schemas.UserResponse])
-def get_all_staff(db: Session = Depends(get_db), admin: models.User = Depends(verify_admin)):
+def get_all_staff(db: Session = Depends(get_db), current_user: models.User = Depends(verify_staff_reader)):
     return db.query(models.User).all()
 
 
@@ -22,7 +28,7 @@ def get_all_staff(db: Session = Depends(get_db), admin: models.User = Depends(ve
 def create_staff(
     user: schemas.UserCreate,
     db: Session = Depends(get_db),
-    admin: models.User = Depends(verify_admin),
+    admin: models.User = Depends(verify_hr_manager),
 ):
     if db.query(models.User).filter(models.User.username == user.username).first():
         raise HTTPException(status_code=400, detail="Username already exists")
@@ -47,7 +53,7 @@ def update_staff(
     user_id: int,
     user_update: schemas.UserUpdate,
     db: Session = Depends(get_db),
-    admin: models.User = Depends(verify_admin),
+    admin: models.User = Depends(verify_hr_manager),
 ):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if not db_user:
@@ -71,10 +77,10 @@ def update_staff(
 def terminate_staff(
     user_id: int,
     db: Session = Depends(get_db),
-    admin: models.User = Depends(verify_admin),
+    admin: models.User = Depends(verify_hr_manager),
 ):
     if admin.id == user_id:
-        raise HTTPException(status_code=400, detail="You cannot delete your own admin account")
+        raise HTTPException(status_code=400, detail="You cannot terminate your own account")
 
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if not db_user:

@@ -37,9 +37,8 @@ const router = createRouter({
         {
           path: 'admin/staff',
           name: 'staff-directory',
-          // StaffDirectory.vue was replaced by HRDashboard.vue in upstream
           component: () => import('../views/HRDashboard.vue'),
-          meta: { requiresAuth: true, roles: ['admin'] },
+          meta: { requiresAuth: true, roles: ['admin', 'principal'] },
         },
         {
           path: 'principal',
