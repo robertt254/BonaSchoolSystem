@@ -1,98 +1,256 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from database import get_db
 import models, schemas, auth
+from audit import log_action
 
 router = APIRouter(prefix="/api/fees", tags=["Finance & Fees"])
 
-# --- THE CBC TERMLY FEE STRUCTURE ---
-CBC_TERMLY_FEES = {
+# Legacy hardcoded structure — used only when no FeeStructure rows exist for the year.
+CBC_TERMLY_FEES_FALLBACK = {
     "Play Group": 12000.00,
     "PP1": 15000.00,
     "PP2": 15000.00,
     "Grade 1": 18000.00,
-    "Grade 2": 18000.00,
+    "Grade 2": 15000.00,
     "Grade 3": 18000.00,
     "Grade 4": 20000.00,
     "Grade 5": 20000.00,
-    "Grade 6": 20000.00
+    "Grade 6": 20000.00,
 }
+
+FINANCE_ROLES = {"accountant", "admin", "principal"}
+
+
+# ── Receipt number ────────────────────────────────────────────────────────────
+
+def _generate_receipt_number(db: Session) -> str:
+    year = datetime.now().year
+    prefix = f"BNS-{year}-"
+    last = (
+        db.query(models.FeePayment)
+        .filter(models.FeePayment.receipt_number.isnot(None))
+        .filter(models.FeePayment.receipt_number.like(f"{prefix}%"))
+        .with_for_update()
+        .order_by(models.FeePayment.id.desc())
+        .first()
+    )
+    if last and last.receipt_number:
+        last_seq = int(last.receipt_number.split("-")[2])
+    else:
+        last_seq = 0
+    return f"{prefix}{last_seq + 1:05d}"
+
+
+def _get_expected_fee(db: Session, grade_level: str, term: str) -> float:
+    year = datetime.now().year
+    structure = (
+        db.query(models.FeeStructure)
+        .filter(
+            models.FeeStructure.grade_level == grade_level,
+            models.FeeStructure.term == term,
+            models.FeeStructure.academic_year == year,
+        )
+        .first()
+    )
+    if structure:
+        return float(structure.amount)
+    return CBC_TERMLY_FEES_FALLBACK.get(grade_level, 0.0)
+
+
+# ── Payment endpoints ─────────────────────────────────────────────────────────
 
 @router.post("/", response_model=schemas.FeeResponse)
 def record_payment(
-    fee: schemas.FeeCreate, 
+    fee: schemas.FeeCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(auth.get_current_user)
+    current_user: models.User = Depends(auth.get_current_user),
 ):
-    # Security Check: Ensure only Finance or Admins can log money
-    if current_user.role not in ["finance", "admin", "principal", "secretary"]:
+    if current_user.role not in {"accountant", "admin"}:
         raise HTTPException(status_code=403, detail="Not authorized to record payments")
 
-    # Verify the student actually exists
-    student = db.query(models.Student).filter(models.Student.id == fee.student_id).first()
+    student = db.query(models.Student).filter(
+        models.Student.id == fee.student_id,
+        models.Student.is_deleted == False,
+    ).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
 
-    # Log the payment and stamp it with the user who recorded it
+    receipt = _generate_receipt_number(db)
     new_fee = models.FeePayment(
         **fee.model_dump(),
-        recorded_by=current_user.name
+        recorded_by=current_user.name,
+        receipt_number=receipt,
     )
-    
     db.add(new_fee)
+    db.flush()
+    log_action(db, current_user.id, "CREATE", "fee", new_fee.id,
+               {"receipt": receipt, "amount": str(fee.amount), "student_id": fee.student_id})
     db.commit()
     db.refresh(new_fee)
     return new_fee
 
+
 @router.get("/", response_model=list[schemas.FeeResponse])
 def get_all_payments(
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(auth.get_current_user)
+    current_user: models.User = Depends(auth.get_current_user),
 ):
-    # Only Finance and Admin/Principal should see the full ledger
-    if current_user.role not in ["finance", "admin", "principal", "secretary"]:
-         raise HTTPException(status_code=403, detail="Not authorized to view financials")
-         
-    return db.query(models.FeePayment).all()
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized to view financials")
+    return db.query(models.FeePayment).order_by(models.FeePayment.payment_date.desc()).all()
 
-# --- THE CBC BALANCE CALCULATOR ROUTE ---
-# Notice we added {term} to the URL so we can check balances per term
+
 @router.get("/balance/{student_id}/{term}")
 def get_student_balance(
     student_id: int,
-    term: str, 
+    term: str,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(auth.get_current_user)
+    current_user: models.User = Depends(auth.get_current_user),
 ):
-    if current_user.role not in ["finance", "admin", "principal", "secretary"]:
-         raise HTTPException(status_code=403, detail="Not authorized to view financials")
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized to view financials")
 
-    student = db.query(models.Student).filter(models.Student.id == student_id).first()
+    student = db.query(models.Student).filter(
+        models.Student.id == student_id,
+        models.Student.is_deleted == False,
+    ).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
 
-    # 1. Get the CBC Expected Fee for ONE term
-    expected_term_fee = CBC_TERMLY_FEES.get(student.grade_level, 0.0)
+    expected = _get_expected_fee(db, student.grade_level, term)
 
-    # 2. Sum up payments for THIS specific student AND THIS specific term
     total_paid = db.query(func.sum(models.FeePayment.amount)).filter(
         models.FeePayment.student_id == student_id,
-        models.FeePayment.term == term
-    ).scalar()
-    
-    if total_paid is None:
-        total_paid = 0.0
-
-    # 3. Calculate the balance
-    balance = expected_term_fee - total_paid
+        models.FeePayment.term == term,
+    ).scalar() or 0.0
 
     return {
         "student_id": student.id,
         "student_name": f"{student.first_name} {student.last_name}",
         "grade_level": student.grade_level,
         "term_checked": term,
-        "expected_term_fee": expected_term_fee,
-        "total_paid_this_term": total_paid,
-        "outstanding_balance": balance
+        "expected_term_fee": expected,
+        "total_paid_this_term": float(total_paid),
+        "outstanding_balance": round(expected - float(total_paid), 2),
     }
+
+
+@router.get("/defaulters")
+def get_defaulters(
+    term: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Return all active students who have an outstanding balance for the given term."""
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized to view financials")
+
+    students = db.query(models.Student).filter(models.Student.is_deleted == False).all()
+    defaulters = []
+    for s in students:
+        expected = _get_expected_fee(db, s.grade_level, term)
+        if expected == 0:
+            continue
+        paid = db.query(func.sum(models.FeePayment.amount)).filter(
+            models.FeePayment.student_id == s.id,
+            models.FeePayment.term == term,
+        ).scalar() or 0.0
+        balance = round(expected - float(paid), 2)
+        if balance > 0:
+            defaulters.append({
+                "student_id": s.id,
+                "student_name": f"{s.first_name} {s.last_name}",
+                "admission_number": s.admission_number,
+                "grade_level": s.grade_level,
+                "expected_fee": expected,
+                "total_paid": float(paid),
+                "outstanding_balance": balance,
+            })
+    return defaulters
+
+
+# ── Fee Structure CRUD ────────────────────────────────────────────────────────
+
+@router.get("/structure", response_model=list[schemas.FeeStructureResponse])
+def get_fee_structure(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    return db.query(models.FeeStructure).order_by(
+        models.FeeStructure.academic_year.desc(),
+        models.FeeStructure.grade_level,
+    ).all()
+
+
+@router.post("/structure", response_model=schemas.FeeStructureResponse)
+def create_fee_structure(
+    entry: schemas.FeeStructureCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if current_user.role not in {"admin", "principal"}:
+        raise HTTPException(status_code=403, detail="Only admins and the principal can configure fee structures")
+
+    existing = db.query(models.FeeStructure).filter(
+        models.FeeStructure.grade_level == entry.grade_level,
+        models.FeeStructure.term == entry.term,
+        models.FeeStructure.fee_type == entry.fee_type,
+        models.FeeStructure.academic_year == entry.academic_year,
+    ).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Fee structure entry already exists for this grade/term/type/year")
+
+    new_entry = models.FeeStructure(**entry.model_dump())
+    db.add(new_entry)
+    db.flush()
+    log_action(db, current_user.id, "CREATE", "fee_structure", new_entry.id, entry.model_dump())
+    db.commit()
+    db.refresh(new_entry)
+    return new_entry
+
+
+@router.put("/structure/{entry_id}", response_model=schemas.FeeStructureResponse)
+def update_fee_structure(
+    entry_id: int,
+    entry: schemas.FeeStructureCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if current_user.role not in {"admin", "principal"}:
+        raise HTTPException(status_code=403, detail="Only admins and the principal can configure fee structures")
+
+    row = db.query(models.FeeStructure).filter(models.FeeStructure.id == entry_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Fee structure entry not found")
+
+    for key, value in entry.model_dump().items():
+        setattr(row, key, value)
+
+    log_action(db, current_user.id, "UPDATE", "fee_structure", entry_id, entry.model_dump())
+    db.commit()
+    db.refresh(row)
+    return row
+
+
+@router.delete("/structure/{entry_id}")
+def delete_fee_structure(
+    entry_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if current_user.role not in {"admin"}:
+        raise HTTPException(status_code=403, detail="Only admins can delete fee structure entries")
+
+    row = db.query(models.FeeStructure).filter(models.FeeStructure.id == entry_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Fee structure entry not found")
+
+    log_action(db, current_user.id, "DELETE", "fee_structure", entry_id)
+    db.delete(row)
+    db.commit()
+    return {"message": "Fee structure entry deleted"}

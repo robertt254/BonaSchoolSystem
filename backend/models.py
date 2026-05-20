@@ -1,92 +1,90 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date, Boolean
+from sqlalchemy import Column, Integer, String, Numeric, ForeignKey, DateTime, Date, Boolean
 from sqlalchemy.sql import func
 from database import Base
+
 
 class User(Base):
     __tablename__ = "users"
 
-    # The columns for our database table
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    name = Column(String)
-    role = Column(String)
-
-    # HR & Compliance fields (Kenyan Employment Law)
-    kra_pin = Column(String, nullable=True)
-    nssf_number = Column(String, nullable=True)
-    nhif_number = Column(String, nullable=True)
-    job_title = Column(String, nullable=True)
-    date_of_hire = Column(Date, nullable=True)
-    contract_type = Column(String, nullable=True)
-    accrued_leave_days = Column(Integer, default=0)
-
-
-class Payroll(Base):
-    __tablename__ = "payroll"
-
-    id = Column(Integer, primary_key=True, index=True)
-    staff_id = Column(Integer, ForeignKey("users.id"))
-    basic_salary = Column(Float, default=0.0)
-    allowances = Column(Float, default=0.0)
-    deductions = Column(Float, default=0.0)
-    net_pay = Column(Float, default=0.0)
-    payment_month = Column(String)  # e.g., "October 2023"
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-
-class Expense(Base):
-    __tablename__ = "expenses"
-
-    id = Column(Integer, primary_key=True, index=True)
-    amount = Column(Float)
-    justification = Column(String)
-    category = Column(String, nullable=True)
-    expense_date = Column(DateTime(timezone=True), server_default=func.now())
-    recorded_by = Column(String)
+    username = Column(String(50), unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    name = Column(String(100), nullable=False)
+    role = Column(String(20), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
 class Student(Base):
     __tablename__ = "students"
 
     id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String, index=True)
-    last_name = Column(String, index=True)
-    admission_number = Column(String, unique=True, index=True)
-    grade_level = Column(String)
-    status = Column(String, default="Active")  # Active, Graduated, Transferred
+    first_name = Column(String(100), index=True, nullable=False)
+    last_name = Column(String(100), index=True, nullable=False)
+    admission_number = Column(String(20), unique=True, index=True, nullable=False)
+    grade_level = Column(String(20), nullable=False)
+    status = Column(String(20), nullable=False, default="Active")
+    # Soft delete — never hard-delete student records
+    is_deleted = Column(Boolean, nullable=False, default=False, server_default="false")
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
 class FeePayment(Base):
     __tablename__ = "fees"
 
     id = Column(Integer, primary_key=True, index=True)
-    # The Foreign Key: This links directly to the 'id' column in the 'students' table
-    student_id = Column(Integer, ForeignKey("students.id"))
-    
-    amount = Column(Float)
-    payment_type = Column(String)  # e.g., Tuition, Uniforms, Transport
-    term = Column(String)  # e.g., "Term 1", "Term 2", "Term 3"
-    payment_date = Column(DateTime(timezone=True), server_default=func.now())
-    recorded_by = Column(String)  # To track which finance officer logged it
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    # Numeric(10, 2) avoids floating-point rounding errors for currency
+    amount = Column(Numeric(10, 2), nullable=False)
+    payment_type = Column(String(50), nullable=False)
+    term = Column(String(10), nullable=False)
+    payment_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    recorded_by = Column(String(100), nullable=False)
+    # Sequential receipt number — format BNS-{YEAR}-{seq:05d}
+    receipt_number = Column(String(20), unique=True, nullable=True, index=True)
+
+
+class FeeStructure(Base):
+    """Configurable per-grade/per-term fee schedule. Replaces hardcoded dictionary in fees.py."""
+    __tablename__ = "fee_structure"
+
+    id = Column(Integer, primary_key=True, index=True)
+    grade_level = Column(String(20), nullable=False)
+    term = Column(String(10), nullable=False)
+    fee_type = Column(String(50), nullable=False)
+    amount = Column(Numeric(10, 2), nullable=False)
+    academic_year = Column(Integer, nullable=False)
 
 
 class Assessment(Base):
     __tablename__ = "assessments"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("students.id"))
-    term = Column(String)  # "Term 1", "Term 2", "Term 3"
-    learning_area = Column(String)  # e.g., "Mathematics Activities", "Language Activities"
-    score = Column(String)  # "EE", "ME", "AE", "BE"
-    remarks = Column(String)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    term = Column(String(10), nullable=False)
+    learning_area = Column(String(100), nullable=False)
+    score = Column(String(5), nullable=False)
+    remarks = Column(String(500), nullable=True)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 
 class Attendance(Base):
     __tablename__ = "attendance"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("students.id"))
-    date = Column(Date, server_default=func.current_date())
-    is_present = Column(Boolean, default=True)
-    remarks = Column(String, nullable=True)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    date = Column(Date, server_default=func.current_date(), nullable=False)
+    is_present = Column(Boolean, default=True, nullable=False)
+    remarks = Column(String(500), nullable=True)
+
+
+class AuditLog(Base):
+    """Immutable record of every create/update/delete action in the system."""
+    __tablename__ = "audit_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    action = Column(String(10), nullable=False)       # CREATE | UPDATE | DELETE
+    resource = Column(String(50), nullable=False)     # student | fee | assessment | attendance | staff
+    resource_id = Column(Integer, nullable=True)
+    detail = Column(String(2000), nullable=True)      # JSON string for extra context
+    timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)

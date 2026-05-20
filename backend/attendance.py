@@ -1,72 +1,92 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 from database import get_db
 import models, schemas, auth
+from audit import log_action
 from typing import List
 from datetime import date
 
 router = APIRouter(prefix="/api/attendance", tags=["Attendance"])
 
+MARK_ROLES = {"teacher", "principal", "admin"}
+
+
 @router.post("/bulk")
 def log_bulk_attendance(
-    records: List[schemas.AttendanceCreate], 
+    records: List[schemas.AttendanceCreate],
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(auth.get_current_user)
+    current_user: models.User = Depends(auth.get_current_user),
 ):
-    if current_user.role not in ["teacher", "principal", "admin"]:
+    if current_user.role not in MARK_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized to mark attendance")
 
-    student_ids = [record.student_id for record in records]
+    student_ids = [r.student_id for r in records]
+    existing_students = {
+        s.id
+        for s in db.query(models.Student.id).filter(
+            models.Student.id.in_(student_ids),
+            models.Student.is_deleted == False,
+        ).all()
+    }
+    missing = set(student_ids) - existing_students
+    if missing:
+        raise HTTPException(status_code=404, detail=f"Student IDs not found: {sorted(missing)}")
+
     today = date.today()
-
-    existing_records = db.query(models.Attendance).filter(
-        models.Attendance.student_id.in_(student_ids),
-        models.Attendance.date == today
-    ).all()
-
-    existing_map = {r.student_id: r for r in existing_records}
+    existing_records = {
+        att.student_id: att
+        for att in db.query(models.Attendance).filter(
+            and_(
+                models.Attendance.student_id.in_(student_ids),
+                models.Attendance.date == today,
+            )
+        ).all()
+    }
 
     for record in records:
-        existing = existing_map.get(record.student_id)
-
-        if existing:
-            existing.is_present = record.is_present
-            existing.remarks = record.remarks
+        if record.student_id in existing_records:
+            existing_records[record.student_id].is_present = record.is_present
+            existing_records[record.student_id].remarks = record.remarks
         else:
-            new_entry = models.Attendance(**record.model_dump())
-            db.add(new_entry)
-            
+            db.add(models.Attendance(**record.model_dump()))
+
+    log_action(db, current_user.id, "CREATE", "attendance", None,
+               {"date": str(today), "count": len(records)})
     db.commit()
     return {"message": "Attendance updated successfully"}
 
+
 @router.get("/today/{grade}")
 def get_today_attendance(
-    grade: str, 
+    grade: str,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(auth.get_current_user)
+    current_user: models.User = Depends(auth.get_current_user),
 ):
-    # Find students strictly by Grade Level (No streams)
-    students = db.query(models.Student).filter(
-        models.Student.grade_level == grade
-    ).all()
-    
-    student_ids = [s.id for s in students]
+    today = date.today()
 
-    attendances = db.query(models.Attendance).filter(
-        models.Attendance.student_id.in_(student_ids),
-        models.Attendance.date == date.today()
-    ).all()
+    rows = (
+        db.query(models.Student, models.Attendance)
+        .outerjoin(
+            models.Attendance,
+            and_(
+                models.Attendance.student_id == models.Student.id,
+                models.Attendance.date == today,
+            ),
+        )
+        .filter(
+            models.Student.grade_level == grade,
+            models.Student.is_deleted == False,
+        )
+        .all()
+    )
 
-    att_map = {att.student_id: att for att in attendances}
-
-    results = []
-    for s in students:
-        att = att_map.get(s.id)
-        
-        results.append({
-            "student_id": s.id,
-            "name": f"{s.first_name} {s.last_name}",
+    return [
+        {
+            "student_id": student.id,
+            "name": f"{student.first_name} {student.last_name}",
             "is_present": att.is_present if att else True,
-            "remarks": att.remarks if att else ""
-        })
-    return results
+            "remarks": att.remarks if att else "",
+        }
+        for student, att in rows
+    ]

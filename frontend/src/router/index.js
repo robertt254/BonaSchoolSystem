@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import AppLayout from '../components/AppLayout.vue'
 import LoginView from '../views/LoginView.vue'
 import DashboardHome from '../views/DashboardHome.vue'
+import ForbiddenView from '../views/ForbiddenView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,83 +13,103 @@ const router = createRouter({
       component: LoginView,
     },
     {
+      path: '/403',
+      name: 'Forbidden',
+      component: ForbiddenView,
+    },
+    {
       path: '/',
       component: AppLayout,
       meta: { requiresAuth: true },
       children: [
-        { path: '', name: 'dashboard', component: DashboardHome },
+        {
+          path: '',
+          name: 'dashboard',
+          component: DashboardHome,
+          // All authenticated roles can see the dashboard
+          meta: { requiresAuth: true },
+        },
         {
           path: 'admin',
           name: 'admin-dash',
           component: () => import('../views/Admin/AdminDashboard.vue'),
+          meta: { requiresAuth: true, roles: ['admin'] },
+        },
+        {
+          path: 'admin/staff',
+          name: 'staff-directory',
+          component: () => import('../views/StaffDirectory.vue'),
+          meta: { requiresAuth: true, roles: ['admin'] },
         },
         {
           path: 'principal',
           name: 'principal-dash',
           component: () => import('../views/Principal/PrincipalDashboard.vue'),
+          meta: { requiresAuth: true, roles: ['principal', 'admin'] },
         },
         {
           path: 'office',
           name: 'secretary-dash',
           component: () => import('../views/Office/SecretaryDash.vue'),
+          meta: { requiresAuth: true, roles: ['secretary', 'principal', 'admin'] },
         },
         {
           path: 'finance',
-          name: 'finance-dash',
-          component: () => import('../views/Finance/FinanceDashboard.vue'),
+          name: 'accountant-dash',
+          component: () => import('../views/Finance/AccountantDashboard.vue'),
+          meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin'] },
         },
         {
           path: 'finance/statements',
           name: 'fee-statement',
           component: () => import('../views/FeeStatement.vue'),
-        },
-        {
-          path: 'students/:id/profile',
-          name: 'student-profile',
-          component: () => import('../views/StudentProfile.vue'),
-        },
-        {
-          path: 'hr',
-          name: 'hr-dash',
-          component: () => import('../views/HRDashboard.vue'),
+          meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin'] },
         },
         {
           path: 'academics',
           name: 'teacher-dash',
           component: () => import('../views/Academics/SeniorTeacherDash.vue'),
+          meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin'] },
         },
         {
           path: 'academics/report-card',
           name: 'report-card',
           component: () => import('../views/ReportCard.vue'),
+          meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin'] },
         },
         {
           path: 'academics/attendance',
           name: 'attendance-page',
           component: () => import('../views/AttendancePage.vue'),
+          meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin'] },
         },
       ],
     },
   ],
 })
 
-// THE SECURITY GUARD
-router.beforeEach((to, from, next) => {
-  // Check if there is a token in the browser storage
-  const isAuthenticated = !!localStorage.getItem('access_token')
+router.beforeEach((to, _from, next) => {
+  const token = localStorage.getItem('access_token')
+  const isAuthenticated = !!token
+  const userRole = localStorage.getItem('user_role')
 
-  // If the route requires auth, and they don't have a token, kick them to login
+  // Redirect unauthenticated users to login
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'Login' })
+    return next({ name: 'Login', query: { redirect: to.fullPath } })
   }
-  // If they DO have a token, but they try to go to the login page, send them to the dashboard
-  else if (to.name === 'Login' && isAuthenticated) {
-    next({ name: 'dashboard' })
+
+  // Redirect already-authenticated users away from login
+  if (to.name === 'Login' && isAuthenticated) {
+    return next({ name: 'dashboard' })
   }
-  // Otherwise, let them proceed normally
-  else {
-    next()
+
+  // RBAC: check role against the route's allowed roles list
+  const allowedRoles = to.meta.roles
+  if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
+    return next({ name: 'Forbidden' })
   }
+
+  next()
 })
 
 export default router
