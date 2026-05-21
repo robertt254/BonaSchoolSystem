@@ -31,12 +31,29 @@ def execute_payroll(
     )
     db.add(new_payroll)
     db.flush()
-    log_action(db, current_user.id, "CREATE", "payroll", new_payroll.id,
+    payroll_id = new_payroll.id   # capture before commit clears the identity map
+    log_action(db, current_user.id, "CREATE", "payroll", payroll_id,
                {"staff_id": payroll.staff_id, "month": payroll.payment_month,
                 "net_pay": str(payroll.net_pay)})
     db.commit()
-    db.refresh(new_payroll)
-    return new_payroll
+
+    try:
+        db.refresh(new_payroll)
+        return new_payroll
+    except Exception:
+        # Fallback for older Render deploys where created_at may not exist yet.
+        # The startup ALTER TABLE migration adds it on next redeploy.
+        return schemas.PayrollResponse(
+            id=payroll_id,
+            staff_id=payroll.staff_id,
+            payment_month=payroll.payment_month,
+            basic_salary=float(payroll.basic_salary),
+            allowances=float(payroll.allowances),
+            deductions=float(payroll.deductions),
+            net_pay=float(payroll.net_pay),
+            recorded_by=current_user.name,
+            created_at=None,
+        )
 
 
 @router.get("/payroll", response_model=list[schemas.PayrollResponse])
