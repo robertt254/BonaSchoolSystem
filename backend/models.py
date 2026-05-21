@@ -150,6 +150,18 @@ class Timetable(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 
+class Subject(Base):
+    """CBC subject per grade level with optional teacher assignment."""
+    __tablename__ = "subjects"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), nullable=False)
+    grade_level = Column(String(20), nullable=False, index=True)
+    teacher_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    color = Column(String(7), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
 class LeaveRequest(Base):
     """Staff leave application and approval record."""
     __tablename__ = "leave_requests"

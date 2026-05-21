@@ -280,6 +280,32 @@ class TimetableResponse(TimetableCreate):
         from_attributes = True
 
 
+class SubjectCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    grade_level: GradeLevel
+    teacher_id: Optional[int] = None
+    color: Optional[str] = Field(None, max_length=7)
+
+
+class SubjectUpdate(BaseModel):
+    teacher_id: Optional[int] = None
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    color: Optional[str] = Field(None, max_length=7)
+
+
+class SubjectResponse(BaseModel):
+    id: int
+    name: str
+    grade_level: str
+    teacher_id: Optional[int] = None
+    teacher_name: Optional[str] = None
+    color: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
 class LeaveRequestCreate(BaseModel):
     leave_type: str = Field(..., min_length=1, max_length=50)
     start_date: date

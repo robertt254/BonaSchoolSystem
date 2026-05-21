@@ -20,6 +20,7 @@ import dashboard
 import timetable
 import leave
 import sms_routes
+import subjects
 from database import engine, SessionLocal
 from limiter import limiter
 
@@ -144,6 +145,7 @@ app.include_router(dashboard.router)
 app.include_router(timetable.router)
 app.include_router(leave.router)
 app.include_router(sms_routes.router)
+app.include_router(subjects.router)
 
 
 # ── Health check (used by Render's healthCheckPath) ───────────────────────────
