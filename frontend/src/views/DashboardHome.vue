@@ -83,6 +83,28 @@
       </div>
     </div>
 
+    <!-- Error Banner -->
+    <div
+      v-else-if="loadError"
+      class="bg-red-50 border border-red-200 rounded-xl p-5 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-3">
+        <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <div>
+          <p class="text-[13.5px] font-semibold text-red-700">Failed to load dashboard data</p>
+          <p class="text-[12px] text-red-500 mt-0.5">{{ loadError }}</p>
+        </div>
+      </div>
+      <button
+        @click="retryLoad"
+        class="text-[12.5px] font-semibold text-red-600 border border-red-300 px-4 py-2 rounded-lg hover:bg-red-100 transition-colors"
+      >
+        Retry
+      </button>
+    </div>
+
     <div v-else class="space-y-4">
       <!-- Stats Grid -->
       <div
@@ -451,6 +473,7 @@ const ROLE_RESOURCES = {
 }
 
 const loading = ref(true)
+const loadError = ref(null)
 const totalStudents = ref(0)
 const totalRevenue = ref(0)
 const totalStaff = ref(0)
@@ -501,6 +524,7 @@ async function loadStats() {
   try {
     const term = encodeURIComponent(appStore.currentTerm)
     const stats = await apiFetch(`/api/dashboard/stats?term=${term}`)
+    loadError.value          = null
     totalStudents.value      = stats.total_students
     totalStaff.value         = stats.total_staff
     totalRevenue.value       = stats.total_revenue
@@ -524,9 +548,16 @@ async function loadStats() {
     })
   } catch (error) {
     console.error('Failed to load dashboard analytics', error)
+    loadError.value = error?.message || 'Unable to reach the server. Please check your connection.'
   } finally {
     loading.value = false
   }
+}
+
+function retryLoad() {
+  loading.value = true
+  loadError.value = null
+  loadStats()
 }
 
 onMounted(() => {

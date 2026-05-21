@@ -235,8 +235,16 @@ class PayrollCreate(BaseModel):
     net_pay: float = Field(..., ge=0)
 
 
-class PayrollResponse(PayrollCreate):
+class PayrollResponse(BaseModel):
+    """Standalone response model — no validators inherited so ORM Decimal fields
+    don't trigger Pydantic v2 re-validation on serialization."""
     id: int
+    staff_id: Optional[int] = None   # nullable: SET NULL on staff delete
+    payment_month: str
+    basic_salary: float
+    allowances: float
+    deductions: float
+    net_pay: float
     recorded_by: str
     created_at: datetime
 
