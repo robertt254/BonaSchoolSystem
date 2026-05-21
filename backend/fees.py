@@ -78,6 +78,30 @@ def _get_rollover_credit(db: Session, student_id: int, grade_level: str, up_to_t
     return max(0.0, round(cumulative_paid - cumulative_expected, 2))
 
 
+def compute_effective_term_collection(db: Session, students: list, term: str) -> float:
+    """
+    Compute the portion of payments that count toward `term`.
+
+    Each student's contribution is capped at their expected fee for the term.
+    Overpayments from prior terms are brought in as rollover credit before capping.
+    This prevents overpayments in Term 1 from inflating Term 1's completion %.
+    """
+    term_num = TERM_ORDER.get(term, 1)
+    total = 0.0
+    for s in students:
+        expected = _get_expected_fee(db, s.grade_level, term)
+        if expected <= 0:
+            continue
+        direct_paid = float(
+            db.query(func.sum(models.FeePayment.amount))
+            .filter(models.FeePayment.student_id == s.id, models.FeePayment.term == term)
+            .scalar() or 0.0
+        )
+        rollover = _get_rollover_credit(db, s.id, s.grade_level, term_num)
+        total += min(direct_paid + rollover, expected)
+    return round(total, 2)
+
+
 # ── Payment endpoints ─────────────────────────────────────────────────────────
 
 @router.post("/", response_model=schemas.FeeResponse)
@@ -216,20 +240,17 @@ def get_term_summary(
         models.Student.status == "Active",
     ).all()
 
-    total_expected = sum(_get_expected_fee(db, s.grade_level, term) for s in students)
+    total_expected = round(sum(_get_expected_fee(db, s.grade_level, term) for s in students), 2)
 
-    total_collected = float(
-        db.query(func.sum(models.FeePayment.amount))
-        .filter(models.FeePayment.term == term)
-        .scalar() or 0.0
-    )
+    # Effective collection: capped per-student so overpayments don't inflate %
+    total_collected = compute_effective_term_collection(db, students, term)
 
     pct = round(total_collected / total_expected * 100, 1) if total_expected > 0 else 0.0
 
     return {
         "term": term,
-        "total_expected": round(total_expected, 2),
-        "total_collected": round(total_collected, 2),
+        "total_expected": total_expected,
+        "total_collected": total_collected,
         "percentage": pct,
     }
 

@@ -1,9 +1,11 @@
+import json
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, cast, Date
 from datetime import date
 from database import get_db
 import models, auth
+from fees import compute_effective_term_collection, _get_expected_fee, _get_rollover_credit, TERM_ORDER
 
 router = APIRouter(prefix="/api/dashboard", tags=["Dashboard"])
 
@@ -12,22 +14,6 @@ GRADE_ORDER = [
     "Grade 1", "Grade 2", "Grade 3",
     "Grade 4", "Grade 5", "Grade 6",
 ]
-
-CBC_TERMLY_FEES_FALLBACK = {
-    "Play Group": 12000.0, "PP1": 15000.0, "PP2": 15000.0,
-    "Grade 1": 18000.0, "Grade 2": 18000.0, "Grade 3": 18000.0,
-    "Grade 4": 20000.0, "Grade 5": 20000.0, "Grade 6": 20000.0,
-}
-
-
-def _expected_fee(db: Session, grade: str, term: str) -> float:
-    year = date.today().year
-    fs = db.query(models.FeeStructure).filter(
-        models.FeeStructure.grade_level == grade,
-        models.FeeStructure.term == term,
-        models.FeeStructure.academic_year == year,
-    ).first()
-    return float(fs.amount) if fs else CBC_TERMLY_FEES_FALLBACK.get(grade, 0.0)
 
 
 @router.get("/stats")
@@ -57,28 +43,27 @@ def get_dashboard_stats(
         round(today_present / today_records * 100) if today_records > 0 else None
     )
 
-    # Term fee collection
+    # Term fee collection (effective: overpayments capped per student, not inflating %)
     active_students = db.query(models.Student).filter(
         models.Student.is_deleted == False,
         models.Student.status == "Active",
     ).all()
-    term_expected = sum(_expected_fee(db, s.grade_level, term) for s in active_students)
-    term_collected = float(
-        db.query(func.sum(models.FeePayment.amount))
-        .filter(models.FeePayment.term == term)
-        .scalar() or 0
-    )
+    term_expected = round(sum(_get_expected_fee(db, s.grade_level, term) for s in active_students), 2)
+    term_collected = compute_effective_term_collection(db, active_students, term)
     term_pct = round(term_collected / term_expected * 100) if term_expected > 0 else 0
 
-    # Defaulters count for term
+    # Defaulters count — students whose effective paid < expected (reuses rollover logic)
+    term_num = TERM_ORDER.get(term, 1)
     defaulters_count = 0
     for s in active_students:
-        paid = float(
+        expected_s = _get_expected_fee(db, s.grade_level, term)
+        direct_paid = float(
             db.query(func.sum(models.FeePayment.amount))
             .filter(models.FeePayment.student_id == s.id, models.FeePayment.term == term)
             .scalar() or 0
         )
-        if paid < _expected_fee(db, s.grade_level, term):
+        rollover = _get_rollover_credit(db, s.id, s.grade_level, term_num)
+        if (direct_paid + rollover) < expected_s:
             defaulters_count += 1
 
     # Recent activity feed with richer detail
@@ -90,7 +75,6 @@ def get_dashboard_stats(
         .all()
     )
 
-    import json
     activity = []
     for log, user in recent_logs:
         detail = {}

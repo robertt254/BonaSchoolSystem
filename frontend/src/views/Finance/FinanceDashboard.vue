@@ -132,169 +132,134 @@
         </div>
       </div>
 
-      <!-- Recent Fee Payments -->
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
-        <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between bg-slate-50">
-          <div>
-            <h3 class="font-bold text-slate-800 text-sm">Recent Fee Payments</h3>
-            <p class="text-xs text-slate-400 mt-0.5">Latest {{ recentFees.length }} transactions</p>
-          </div>
-          <router-link to="/finance/statements" class="text-xs font-semibold text-school-purple hover:text-school-purple-l transition-colors">
-            View All Statements →
-          </router-link>
-        </div>
-        <div class="divide-y divide-slate-50">
-          <div
-            v-for="fee in recentFees"
-            :key="fee.id"
-            class="flex items-center justify-between px-6 py-3 hover:bg-slate-50 transition-colors"
-          >
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-slate-800">{{ getStudentName(fee.student_id) }}</p>
-                <p class="text-xs text-slate-400">{{ fee.term }} · {{ fee.payment_type }}{{ fee.receipt_number ? ' · ' + fee.receipt_number : '' }}</p>
-              </div>
+      <!-- Three-column ledger row -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        <!-- Recent Fee Payments -->
+        <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden flex flex-col">
+          <div class="border-b border-slate-100 px-4 py-4 flex items-center justify-between bg-slate-50 shrink-0">
+            <div>
+              <h3 class="font-bold text-slate-800 text-sm">Fee Payments</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Latest {{ recentFees.length }} transactions</p>
             </div>
-            <span class="text-sm font-bold text-emerald-700">{{ formatCurrency(fee.amount) }}</span>
+            <router-link to="/finance/statements" class="text-[11px] font-semibold text-school-purple hover:underline">
+              All →
+            </router-link>
           </div>
-          <div v-if="!recentFees.length" class="px-6 py-8 text-center text-slate-400 text-sm">No payments recorded yet.</div>
+          <div class="overflow-y-auto" style="max-height: 420px">
+            <div
+              v-for="fee in recentFees"
+              :key="fee.id"
+              class="flex items-center justify-between px-4 py-3 border-b border-slate-50 last:border-b-0 hover:bg-slate-50 transition-colors"
+            >
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-7 h-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+                  </svg>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-[13px] font-semibold text-slate-800 truncate">{{ getStudentName(fee.student_id) }}</p>
+                  <p class="text-[11px] text-slate-400 truncate">{{ fee.term }} · {{ fee.payment_type }}</p>
+                </div>
+              </div>
+              <span class="text-[13px] font-bold text-emerald-700 shrink-0 ml-2">{{ formatCurrency(fee.amount) }}</span>
+            </div>
+            <div v-if="!recentFees.length" class="px-4 py-8 text-center text-slate-400 text-sm">No payments yet.</div>
+          </div>
         </div>
-      </div>
 
-      <!-- Payroll Module -->
-      <div
-        class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
-      >
-        <div
-          class="border-b border-slate-100 px-8 py-6 flex items-center justify-between bg-slate-50"
-        >
-          <div>
-            <h3 class="text-lg font-bold text-slate-800 tracking-tight">Payroll Ledger</h3>
-            <p class="text-xs text-slate-500 mt-0.5">Staff salaries and disbursements.</p>
+        <!-- Payroll Ledger -->
+        <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden flex flex-col">
+          <div class="border-b border-slate-100 px-4 py-4 flex items-center justify-between bg-slate-50 shrink-0">
+            <div>
+              <h3 class="font-bold text-slate-800 text-sm">Payroll Ledger</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Staff disbursements</p>
+            </div>
+            <button
+              @click="openPayrollModal"
+              class="text-[11px] font-bold bg-school-navy text-white px-3 py-1.5 rounded-[8px] hover:bg-school-navy/90 transition-all flex items-center gap-1"
+            >
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              Run
+            </button>
           </div>
-          <button
-            @click="openPayrollModal"
-            class="bg-school-navy hover:bg-school-navy/90 text-white px-4 py-2 rounded-[12px] font-bold transition-all shadow-sm text-sm flex items-center gap-2"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4"
-              ></path>
-            </svg>
-            Execute Payroll
-          </button>
+          <div class="overflow-y-auto" style="max-height: 420px">
+            <div
+              v-for="pay in payrollLedger"
+              :key="pay.id"
+              class="flex items-center justify-between px-4 py-3 border-b border-slate-50 last:border-b-0 hover:bg-slate-50 transition-colors"
+            >
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-7 h-7 rounded-full bg-school-navy/10 flex items-center justify-center text-school-navy shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                  </svg>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-[13px] font-semibold text-slate-800 truncate">{{ getStaffName(pay.staff_id) }}</p>
+                  <p class="text-[11px] text-slate-400">
+                    {{ pay.payment_month }}
+                    <span class="text-emerald-600">+{{ formatCurrencyShort(pay.allowances) }}</span>
+                    <span class="text-school-red"> -{{ formatCurrencyShort(pay.deductions) }}</span>
+                  </p>
+                </div>
+              </div>
+              <span class="text-[13px] font-bold text-slate-800 shrink-0 ml-2">{{ formatCurrency(pay.net_pay) }}</span>
+            </div>
+            <div v-if="!payrollLedger.length" class="px-4 py-8 text-center text-slate-400 text-sm">No payroll records yet.</div>
+          </div>
+          <!-- Payroll total footer -->
+          <div v-if="payrollLedger.length" class="shrink-0 border-t border-slate-100 px-4 py-2.5 bg-slate-50 flex justify-between items-center">
+            <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Total Disbursed</span>
+            <span class="text-[13px] font-extrabold text-slate-800">{{ formatCurrency(totalPayroll) }}</span>
+          </div>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr
-                class="bg-white text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-100"
-              >
-                <th class="py-5 px-8 font-bold">Month</th>
-                <th class="py-5 px-8 font-bold">Staff Member</th>
-                <th class="py-5 px-8 font-bold text-right">Basic</th>
-                <th class="py-5 px-8 font-bold text-right text-emerald-600">Allowances</th>
-                <th class="py-5 px-8 font-bold text-right text-school-red">Deductions</th>
-                <th class="py-5 px-8 pr-6 font-bold text-right text-slate-800">Net Pay</th>
-              </tr>
-            </thead>
-            <tbody class="text-sm">
-              <tr
-                v-for="pay in payrollLedger"
-                :key="pay.id"
-                class="border-b border-slate-50 hover:bg-slate-50/50 transition duration-150"
-              >
-                <td class="py-5 px-8 font-medium text-slate-500">{{ pay.payment_month }}</td>
-                <td class="py-5 px-8 font-bold text-slate-800">{{ getStaffName(pay.staff_id) }}</td>
-                <td class="py-5 px-8 text-right text-slate-600">
-                  {{ formatCurrency(pay.basic_salary) }}
-                </td>
-                <td class="py-5 px-8 text-right text-emerald-600">
-                  {{ formatCurrency(pay.allowances) }}
-                </td>
-                <td class="py-5 px-8 text-right text-school-red">{{ formatCurrency(pay.deductions) }}</td>
-                <td class="py-5 px-8 pr-6 text-right font-bold text-slate-800">
-                  {{ formatCurrency(pay.net_pay) }}
-                </td>
-              </tr>
-              <tr v-if="payrollLedger.length === 0">
-                <td colspan="6" class="py-6 px-8 text-center text-slate-400 text-sm font-medium">
-                  No payroll records found.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
 
-      <!-- Expenses Module -->
-      <div
-        class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
-      >
-        <div
-          class="border-b border-slate-100 px-6 py-5 flex items-center justify-between bg-slate-50"
-        >
-          <div>
-            <h3 class="text-lg font-bold text-slate-800 tracking-tight">Expenses Ledger</h3>
-            <p class="text-xs text-slate-500 mt-0.5">School operational expenses.</p>
+        <!-- Expenses Ledger -->
+        <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden flex flex-col">
+          <div class="border-b border-slate-100 px-4 py-4 flex items-center justify-between bg-slate-50 shrink-0">
+            <div>
+              <h3 class="font-bold text-slate-800 text-sm">Expenses Ledger</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Operational costs</p>
+            </div>
+            <button
+              v-if="['principal', 'admin'].includes(authStore.user?.role)"
+              @click="openExpenseModal"
+              class="text-[11px] font-bold bg-school-red text-white px-3 py-1.5 rounded-[8px] hover:bg-school-red/90 transition-all flex items-center gap-1"
+            >
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              Add
+            </button>
           </div>
-          <button
-            v-if="['principal', 'admin'].includes(authStore.user?.role)"
-            @click="openExpenseModal"
-            class="bg-school-navy hover:bg-school-navy/90 text-white px-4 py-2 rounded-[12px] font-bold transition-all shadow-sm text-sm flex items-center gap-2"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Add Expense
-          </button>
+          <div class="overflow-y-auto" style="max-height: 420px">
+            <div
+              v-for="expense in expenses"
+              :key="expense.id"
+              class="flex items-center justify-between px-4 py-3 border-b border-slate-50 last:border-b-0 hover:bg-slate-50 transition-colors"
+            >
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-7 h-7 rounded-full bg-red-50 flex items-center justify-center text-school-red shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 14l-4-4 4-4m6 8l4-4-4-4"/>
+                  </svg>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-[13px] font-semibold text-slate-800 truncate">{{ expense.category || 'General' }}</p>
+                  <p class="text-[11px] text-slate-400 truncate">{{ new Date(expense.expense_date).toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' }) }} · {{ expense.recorded_by }}</p>
+                </div>
+              </div>
+              <span class="text-[13px] font-bold text-school-red shrink-0 ml-2">{{ formatCurrency(expense.amount) }}</span>
+            </div>
+            <div v-if="!expenses.length" class="px-4 py-8 text-center text-slate-400 text-sm">No expenses recorded yet.</div>
+          </div>
+          <!-- Expenses total footer -->
+          <div v-if="expenses.length" class="shrink-0 border-t border-slate-100 px-4 py-2.5 bg-slate-50 flex justify-between items-center">
+            <span class="text-[11px] font-bold uppercase tracking-wide text-slate-400">Total Expenses</span>
+            <span class="text-[13px] font-extrabold text-school-red">{{ formatCurrency(totalExpenses) }}</span>
+          </div>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-white text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-100">
-                <th class="p-4 pl-6 font-bold">Date</th>
-                <th class="p-4 font-bold">Category</th>
-                <th class="p-4 font-bold">Justification</th>
-                <th class="p-4 font-bold">Recorded By</th>
-                <th class="p-4 pr-6 font-bold text-right text-school-red">Amount</th>
-              </tr>
-            </thead>
-            <tbody class="text-sm">
-              <tr
-                v-for="expense in expenses"
-                :key="expense.id"
-                class="border-b border-slate-50 hover:bg-slate-50/50 transition duration-150"
-              >
-                <td class="p-4 pl-6 font-medium text-slate-500">{{ new Date(expense.expense_date).toLocaleDateString() }}</td>
-                <td class="p-4 font-bold text-slate-800">{{ expense.category || 'N/A' }}</td>
-                <td class="p-4 text-slate-600">{{ expense.justification }}</td>
-                <td class="p-4 font-medium text-slate-500">{{ expense.recorded_by }}</td>
-                <td class="p-4 pr-6 text-right font-bold text-school-red">
-                  {{ formatCurrency(expense.amount) }}
-                </td>
-              </tr>
-              <tr v-if="expenses.length === 0">
-                <td colspan="5" class="p-8 text-center text-slate-400 text-sm font-medium">
-                  No expenses recorded.
-                </td>
-              </tr>
-              <tr v-if="expenses.length > 0" class="bg-slate-50 border-t-2 border-slate-200">
-                <td class="p-4 pl-6 font-bold text-slate-700" colspan="3">Total ({{ expenses.length }} entries)</td>
-                <td class="p-4 font-bold text-slate-500 text-right"></td>
-                <td class="p-4 pr-6 text-right font-extrabold text-school-red">{{ formatCurrency(totalExpenses) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+
       </div>
     </div>
 
@@ -614,7 +579,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import feeService from '@/services/feeService'
 import studentService from '@/services/studentService'
 import staffService from '@/services/staffService'
@@ -686,7 +651,12 @@ const loadData = async () => {
   }
 }
 
-onMounted(loadData)
+let refreshTimer = null
+onMounted(() => {
+  loadData()
+  refreshTimer = setInterval(loadData, 60_000)
+})
+onUnmounted(() => clearInterval(refreshTimer))
 
 // --- COMPUTED FINANCE METRICS ---
 const totalRevenue = computed(() =>
@@ -703,6 +673,10 @@ const maxMonthly = computed(() =>
 
 const totalExpenses = computed(() =>
   expenses.value.reduce((sum, e) => sum + (e.amount || 0), 0)
+)
+
+const totalPayroll = computed(() =>
+  payrollLedger.value.reduce((sum, p) => sum + (p.net_pay || 0), 0)
 )
 
 const recentFees = computed(() =>

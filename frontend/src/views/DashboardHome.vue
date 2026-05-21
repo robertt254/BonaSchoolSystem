@@ -422,7 +422,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 import { apiFetch } from '@/services/api'
@@ -460,6 +460,7 @@ const termExpected = ref(0)
 const termPct = ref(0)
 const defaultersCount = ref(0)
 const recentActivity = ref([])
+let refreshTimer = null
 
 const RESOURCE_STYLE = {
   student:    { avatar: 'bg-[rgba(217,119,6,0.1)] text-[#D97706]',      dot: 'bg-[#D97706]' },
@@ -496,7 +497,7 @@ const filteredActivity = computed(() => {
   return recentActivity.value.filter(a => allowed.includes(a.type))
 })
 
-onMounted(async () => {
+async function loadStats() {
   try {
     const term = encodeURIComponent(appStore.currentTerm)
     const stats = await apiFetch(`/api/dashboard/stats?term=${term}`)
@@ -526,5 +527,14 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+}
+
+onMounted(() => {
+  loadStats()
+  refreshTimer = setInterval(loadStats, 30_000)
+})
+
+onUnmounted(() => {
+  clearInterval(refreshTimer)
 })
 </script>

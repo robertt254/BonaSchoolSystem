@@ -1,9 +1,10 @@
 import { useAuthStore } from '@/stores/auth'
 
-// ?? (not ||) so that VITE_API_URL="" (same-origin) is preserved and not
-// replaced by the localhost fallback. Empty string means requests are relative
-// to the current host — correct for the Docker/Render single-container deploy.
-export const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8000'
+// Empty string = relative URLs, which the Vite dev proxy forwards to localhost:8000.
+// The Dockerfile sets VITE_API_URL="" explicitly for the production build (same origin).
+// Override with VITE_API_URL in .env.local only if you run frontend/backend on
+// separate hosts (e.g. VITE_API_URL=http://localhost:8000).
+export const BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 export const getHeaders = () => {
   const token = useAuthStore().token || localStorage.getItem('access_token')
