@@ -19,6 +19,7 @@ import finance
 import dashboard
 import timetable
 import leave
+import sms_routes
 from database import engine, SessionLocal
 from limiter import limiter
 
@@ -142,6 +143,7 @@ app.include_router(finance.router)
 app.include_router(dashboard.router)
 app.include_router(timetable.router)
 app.include_router(leave.router)
+app.include_router(sms_routes.router)
 
 
 # ── Health check (used by Render's healthCheckPath) ───────────────────────────

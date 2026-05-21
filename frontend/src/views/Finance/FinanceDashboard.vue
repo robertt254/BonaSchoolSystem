@@ -407,6 +407,13 @@
             }}</span>
           </div>
 
+          <div
+            v-if="payrollError"
+            class="rounded-[10px] bg-red-50 border border-red-200 px-4 py-3 text-[13px] font-medium text-red-700"
+          >
+            {{ payrollError }}
+          </div>
+
           <div class="flex justify-end gap-6 pt-4 mt-2">
             <button
               type="button"
@@ -417,7 +424,8 @@
             </button>
             <button
               type="submit"
-              class="px-8 py-4 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm"
+              :disabled="calculatedNetPay < 0"
+              class="px-8 py-4 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Disburse Funds
             </button>
@@ -629,6 +637,7 @@ const monthlyCollection = ref([])
 const showPayrollModal = ref(false)
 const showExpenseModal = ref(false)
 const showFeeModal = ref(false)
+const payrollError = ref('')
 
 const feeForm = reactive({
   student_id: '',
@@ -741,7 +750,6 @@ const calculatedNetPay = computed(() => {
 })
 
 const openPayrollModal = () => {
-  // Set default month to current YYYY-MM
   const date = new Date()
   const yyyy = date.getFullYear()
   const mm = String(date.getMonth() + 1).padStart(2, '0')
@@ -750,14 +758,21 @@ const openPayrollModal = () => {
   payrollForm.basic_salary = 0
   payrollForm.allowances = 0
   payrollForm.deductions = 0
+  payrollError.value = ''
   showPayrollModal.value = true
 }
 
 const closePayrollModal = () => {
+  payrollError.value = ''
   showPayrollModal.value = false
 }
 
 const submitPayroll = async () => {
+  payrollError.value = ''
+  if (calculatedNetPay.value < 0) {
+    payrollError.value = `Net pay cannot be negative. Deductions (${formatCurrency(payrollForm.deductions)}) exceed basic salary + allowances (${formatCurrency(payrollForm.basic_salary + payrollForm.allowances)}).`
+    return
+  }
   try {
     const payload = {
       ...payrollForm,
@@ -767,7 +782,7 @@ const submitPayroll = async () => {
     closePayrollModal()
     await loadData()
   } catch (error) {
-    alert(error.message || 'Failed to execute payroll.')
+    payrollError.value = error.message || 'Failed to execute payroll. Please try again.'
     console.error(error)
   }
 }

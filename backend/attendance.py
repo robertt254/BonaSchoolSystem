@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
 from database import get_db
 import models, schemas, auth
 from audit import log_action
+from notifications import notify_absence
 from typing import List
 from datetime import date
 
@@ -21,6 +22,7 @@ GRADE_ORDER = [
 @router.post("/bulk")
 def log_bulk_attendance(
     records: List[schemas.AttendanceCreate],
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
@@ -60,6 +62,23 @@ def log_bulk_attendance(
     log_action(db, current_user.id, "CREATE", "attendance", None,
                {"date": str(today), "count": len(records)})
     db.commit()
+
+    # Send absence SMS for students marked absent (fire-and-forget)
+    absent_ids = [r.student_id for r in records if not r.is_present]
+    if absent_ids:
+        absent_students = db.query(models.Student).filter(
+            models.Student.id.in_(absent_ids),
+            models.Student.guardian_phone.isnot(None),
+        ).all()
+        date_str = today.strftime("%d %b %Y")
+        for student in absent_students:
+            background_tasks.add_task(
+                notify_absence,
+                f"{student.first_name} {student.last_name}",
+                student.guardian_phone,
+                date_str,
+            )
+
     return {"message": "Attendance updated successfully"}
 
 

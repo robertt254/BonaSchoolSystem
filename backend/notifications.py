@@ -82,3 +82,26 @@ def notify_report_card(student_name: str, guardian_phone: str, term: str) -> Non
         f"— The Bona School."
     )
     send_sms(guardian_phone, msg)
+
+
+def notify_absence(student_name: str, guardian_phone: str, absence_date: str) -> None:
+    """Notify parent that their child was marked absent."""
+    if not guardian_phone:
+        return
+    msg = (
+        f"Dear Parent/Guardian, {student_name} was marked ABSENT on {absence_date}. "
+        f"Please contact the school if you have not already notified us. "
+        f"— The Bona School."
+    )
+    send_sms(guardian_phone, msg)
+
+
+def send_bulk_sms(phones: list, message: str) -> dict:
+    """Send the same message to multiple phone numbers. Returns summary."""
+    sent, failed = 0, 0
+    for phone in phones:
+        if send_sms(phone, message):
+            sent += 1
+        else:
+            failed += 1
+    return {"sent": sent, "failed": failed, "total": len(phones)}

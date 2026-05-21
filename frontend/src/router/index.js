@@ -53,6 +53,12 @@ const router = createRouter({
           meta: { requiresAuth: true, roles: ['secretary', 'principal', 'admin'] },
         },
         {
+          path: 'office/communications',
+          name: 'communications',
+          component: () => import('../views/Office/CommunicationsPage.vue'),
+          meta: { requiresAuth: true, roles: ['secretary', 'principal', 'admin'] },
+        },
+        {
           path: 'finance',
           name: 'accountant-dash',
           // AccountantDashboard.vue was replaced by FinanceDashboard.vue in upstream
