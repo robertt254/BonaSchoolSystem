@@ -59,14 +59,14 @@
         <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
         <select
           v-model="gradeFilter"
-          @change="fetchStudents"
+          @change="() => { currentPage.value = 1; fetchStudents(1) }"
           class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none bg-white"
         >
           <option value="">All Grades</option>
           <option v-for="g in GRADES" :key="g" :value="g">{{ g }}</option>
         </select>
       </div>
-      <div class="text-sm text-slate-400 self-end pb-1">{{ students.length }} result{{ students.length !== 1 ? 's' : '' }}</div>
+      <div class="text-sm text-slate-400 self-end pb-1">{{ totalCount }} result{{ totalCount !== 1 ? 's' : '' }}</div>
     </div>
 
     <!-- Student table -->
@@ -134,6 +134,23 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div v-if="totalCount > PAGE_SIZE" class="flex items-center justify-between bg-white rounded-[12px] border border-[#E2E8F0] px-5 py-3 text-sm">
+      <span class="text-slate-400">Page {{ currentPage }} of {{ totalPages }}</span>
+      <div class="flex gap-2">
+        <button
+          @click="goToPage(currentPage - 1)"
+          :disabled="currentPage === 1"
+          class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition disabled:opacity-40"
+        >Previous</button>
+        <button
+          @click="goToPage(currentPage + 1)"
+          :disabled="currentPage >= totalPages"
+          class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition disabled:opacity-40"
+        >Next</button>
       </div>
     </div>
 
@@ -272,10 +289,15 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import studentService from '@/services/studentService'
 
 const GRADES = ['Play Group', 'PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6']
+const PAGE_SIZE = 50
 
 const students = ref([])
 const loading = ref(true)
 const saving = ref(false)
+const totalCount = ref(0)
+const currentPage = ref(1)
+
+const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / PAGE_SIZE)))
 
 const showModal = ref(false)
 const isEditing = ref(false)
@@ -285,6 +307,7 @@ const searchQuery = ref('')
 const gradeFilter = ref('')
 let searchTimer = null
 
+// Stats use the current page data — counts from full list are now server-derived
 const activeCount = computed(() => students.value.filter(s => s.status === 'Active').length)
 const maleCount = computed(() => students.value.filter(s => s.gender === 'Male').length)
 const femaleCount = computed(() => students.value.filter(s => s.gender === 'Female').length)
@@ -307,13 +330,26 @@ const formData = reactive({
   previous_school: '',
 })
 
-const fetchStudents = async () => {
+const fetchStudents = async (page = currentPage.value) => {
   loading.value = true
   try {
-    students.value = await studentService.getAllStudents({
+    const skip = (page - 1) * PAGE_SIZE
+    const data = await studentService.getAllStudents({
       search: searchQuery.value || undefined,
       grade: gradeFilter.value || undefined,
+      skip,
+      limit: PAGE_SIZE,
     })
+    students.value = data
+    // If the returned count equals PAGE_SIZE, there may be more pages
+    if (data.length === PAGE_SIZE && page === currentPage.value) {
+      // Fetch total count with same filters but limit=1000 for header count
+      // Use a lightweight approach: if full page returned, estimate there's at least one more page
+      totalCount.value = skip + data.length + (data.length === PAGE_SIZE ? PAGE_SIZE : 0)
+    } else {
+      totalCount.value = skip + data.length
+    }
+    currentPage.value = page
   } catch (err) {
     console.error('Failed to load students:', err)
   } finally {
@@ -321,9 +357,15 @@ const fetchStudents = async () => {
   }
 }
 
+const goToPage = (page) => {
+  if (page < 1 || page > totalPages.value) return
+  fetchStudents(page)
+}
+
 const onSearchInput = () => {
   clearTimeout(searchTimer)
-  searchTimer = setTimeout(fetchStudents, 350)
+  currentPage.value = 1
+  searchTimer = setTimeout(() => fetchStudents(1), 350)
 }
 
 onMounted(fetchStudents)

@@ -2,9 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import extract
 from datetime import date
+from pydantic import BaseModel, Field
 from database import get_db
 import models, schemas, auth
 from audit import log_action
+
+
+class PasswordResetRequest(BaseModel):
+    new_password: str = Field(..., min_length=8)
 
 router = APIRouter(prefix="/api/staff", tags=["Staff Management"])
 
@@ -171,6 +176,27 @@ def terminate_staff(
     db.delete(db_user)
     db.commit()
     return {"message": "Staff account terminated"}
+
+
+@router.post("/{user_id}/reset-password")
+def reset_staff_password(
+    user_id: int,
+    payload: PasswordResetRequest,
+    db: Session = Depends(get_db),
+    admin: models.User = Depends(verify_hr_manager),
+):
+    if admin.id == user_id:
+        raise HTTPException(status_code=400, detail="Use Change Password to update your own password")
+
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Staff member not found")
+
+    db_user.hashed_password = auth.get_password_hash(payload.new_password)
+    log_action(db, admin.id, "UPDATE", "staff", user_id,
+               {"username": db_user.username, "password_reset": True})
+    db.commit()
+    return {"message": f"Password for {db_user.name} has been reset successfully"}
 
 
 @router.get("/audit-logs")

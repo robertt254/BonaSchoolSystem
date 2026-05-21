@@ -121,7 +121,7 @@
             <div class="flex-1 min-w-0">
               <p class="text-[13px] font-medium text-[#0F172A] leading-snug">
                 <span class="font-semibold">{{ activity.user }}</span>
-                <span class="text-[#475569]"> {{ activity.action }}</span>
+                <span class="text-[#475569]"> {{ activity.description }}</span>
               </p>
               <p class="text-[11px] text-[#94A3B8] mt-0.5 flex items-center gap-1.5">
                 <span class="w-1.5 h-1.5 rounded-full shrink-0" :class="activity.dotClass"></span>
@@ -191,6 +191,7 @@ onMounted(async () => {
         id:          log.id,
         type:        log.resource,
         user:        log.user_name || 'System',
+        description: log.description || `${am.label?.toLowerCase()} a ${log.resource} record`,
         action:      log.action,
         actionLabel: am.label,
         avatarClass: style.avatar,

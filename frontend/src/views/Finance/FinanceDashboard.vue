@@ -91,7 +91,7 @@
               </div>
             </div>
             <div class="mt-4 flex items-center text-xs text-slate-500 font-medium">
-              <span class="text-amber-500 mr-1">💰</span> Cumulative across all terms.
+              Cumulative across all terms.
             </div>
           </div>
         </div>
@@ -247,7 +247,7 @@
             <p class="text-xs text-slate-500 mt-0.5">School operational expenses.</p>
           </div>
           <button
-            v-if="authStore.user?.role === 'principal'"
+            v-if="['principal', 'admin'].includes(authStore.user?.role)"
             @click="openExpenseModal"
             class="bg-school-navy hover:bg-school-navy/90 text-white px-4 py-2 rounded-[12px] font-bold transition-all shadow-sm text-sm flex items-center gap-2"
           >

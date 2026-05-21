@@ -2,8 +2,19 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { BASE_URL } from '@/services/api'
 
+function parseTokenExpiry(token) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload.exp ? payload.exp * 1000 : null
+  } catch {
+    return null
+  }
+}
+
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref(localStorage.getItem('access_token') || null)
+  const storedToken = localStorage.getItem('access_token')
+  const token = ref(storedToken || null)
+  const tokenExpiresAt = ref(storedToken ? parseTokenExpiry(storedToken) : null)
   const user = ref({
     name: localStorage.getItem('user_name') || null,
     role: localStorage.getItem('user_role') || null,
@@ -31,15 +42,14 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = data.access_token
     localStorage.setItem('access_token', data.access_token)
 
-    // JWT payload contains sub, role, and name (all set by the backend)
-    const payloadBase64 = data.access_token.split('.')[1]
-    const payload = JSON.parse(atob(payloadBase64))
+    const payload = JSON.parse(atob(data.access_token.split('.')[1]))
 
     if (!payload.role) {
       throw new Error('Malformed token: missing role claim')
     }
 
     user.value = { username: payload.sub, role: payload.role, name: payload.name || username }
+    tokenExpiresAt.value = payload.exp ? payload.exp * 1000 : null
 
     localStorage.setItem('user_role', user.value.role)
     localStorage.setItem('user_name', user.value.name)
@@ -48,6 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = () => {
     token.value = null
+    tokenExpiresAt.value = null
     user.value = { name: null, role: null, username: null }
     localStorage.removeItem('access_token')
     localStorage.removeItem('user_role')
@@ -55,5 +66,5 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('username')
   }
 
-  return { token, user, login, logout }
+  return { token, tokenExpiresAt, user, login, logout }
 })

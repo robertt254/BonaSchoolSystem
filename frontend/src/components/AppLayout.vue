@@ -268,6 +268,18 @@
         </div>
       </header>
 
+      <!-- Session expiry warning banner -->
+      <div
+        v-if="showSessionWarning"
+        class="shrink-0 bg-amber-50 border-b border-amber-200 px-6 py-2.5 flex items-center gap-3 text-amber-800 text-xs"
+      >
+        <svg class="w-4 h-4 shrink-0 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>Your session expires in <strong>{{ sessionMinutesLeft }} minute{{ sessionMinutesLeft !== 1 ? 's' : '' }}</strong>. Save your work before it expires.</span>
+        <router-link to="/login" class="ml-auto font-bold underline hover:no-underline whitespace-nowrap">Sign in again</router-link>
+      </div>
+
       <!-- Page content -->
       <main class="flex-1 overflow-y-auto bg-school-grey">
         <div class="p-6 lg:p-8">
@@ -283,7 +295,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, defineComponent, h, resolveComponent } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted, defineComponent, h, resolveComponent } from 'vue'
 import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
@@ -333,8 +345,25 @@ const route  = useRoute()
 const authStore = useAuthStore()
 const appStore  = useAppStore()
 
-const isSidebarOpen    = ref(false)
+const isSidebarOpen      = ref(false)
 const showChangePassword = ref(false)
+const now                = ref(Date.now())
+let nowTimer             = null
+
+onMounted(() => { nowTimer = setInterval(() => { now.value = Date.now() }, 30_000) })
+onUnmounted(() => { clearInterval(nowTimer) })
+
+const sessionMinutesLeft = computed(() => {
+  const exp = authStore.tokenExpiresAt
+  if (!exp) return null
+  return Math.floor((exp - now.value) / 60_000)
+})
+
+const showSessionWarning = computed(() =>
+  sessionMinutesLeft.value !== null &&
+  sessionMinutesLeft.value <= 10 &&
+  sessionMinutesLeft.value > 0
+)
 
 watch(() => route.path, () => { isSidebarOpen.value = false })
 

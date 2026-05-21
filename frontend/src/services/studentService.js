@@ -5,6 +5,8 @@ export default {
     const qs = new URLSearchParams()
     if (params.search) qs.set('search', params.search)
     if (params.grade)  qs.set('grade', params.grade)
+    if (params.skip  != null) qs.set('skip',  String(params.skip))
+    if (params.limit != null) qs.set('limit', String(params.limit))
     const q = qs.toString()
     return apiFetch(`/api/students/${q ? '?' + q : ''}`)
   },

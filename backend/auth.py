@@ -93,10 +93,9 @@ async def login(
 
 @router.post("/setup-users")
 def setup_initial_users(db: Session = Depends(get_db)):
-    """
-    One-time bootstrap. Only works on an empty database.
-    Remove or disable this route before deploying to production.
-    """
+    """One-time bootstrap — disabled in production (APP_ENV=production)."""
+    if os.getenv("APP_ENV", "development") == "production":
+        raise HTTPException(status_code=404, detail="Not found")
     if db.query(models.User).first():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

@@ -37,6 +37,39 @@
       <button @click="loadStaff" class="ml-auto text-xs font-bold underline hover:no-underline">Retry</button>
     </div>
 
+    <!-- Search bar -->
+    <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-4 flex flex-wrap gap-3 items-end">
+      <div class="flex-1 min-w-56">
+        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search Staff</label>
+        <div class="relative">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+          </svg>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Name, username, role, or job title…"
+            class="w-full border border-slate-300 rounded-lg pl-9 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none"
+          />
+        </div>
+      </div>
+      <div>
+        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Filter by Role</label>
+        <select
+          v-model="roleFilter"
+          class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-white"
+        >
+          <option value="">All Roles</option>
+          <option value="admin">Admin</option>
+          <option value="principal">Principal</option>
+          <option value="teacher">Teacher</option>
+          <option value="accountant">Accountant</option>
+          <option value="secretary">Secretary</option>
+        </select>
+      </div>
+      <div class="text-sm text-slate-400 self-end pb-1">{{ filteredStaff.length }} member{{ filteredStaff.length !== 1 ? 's' : '' }}</div>
+    </div>
+
     <!-- Loading State -->
     <div
       v-if="loading"
@@ -68,13 +101,13 @@
             </tr>
           </thead>
           <tbody class="text-sm">
-            <tr v-if="staffList.length === 0">
+            <tr v-if="filteredStaff.length === 0">
               <td colspan="6" class="py-16 text-center text-slate-400 text-sm font-medium">
-                No staff records found.
+                {{ searchQuery || roleFilter ? 'No staff match your search.' : 'No staff records found.' }}
               </td>
             </tr>
             <tr
-              v-for="staff in staffList"
+              v-for="staff in filteredStaff"
               :key="staff.id"
               class="border-b border-slate-50 hover:bg-slate-50/50 transition duration-150"
             >
@@ -120,12 +153,19 @@
                   · <span class="text-emerald-600 font-semibold">{{ staff.leave_days_left }} left</span>
                 </div>
               </td>
-              <td class="py-5 px-8 pr-6 text-right">
+              <td class="py-5 px-8 pr-6 text-right space-x-3">
                 <button
                   @click="openModal(staff)"
-                  class="text-xs font-bold text-slate-500 hover:text-school-navy mr-3 transition-colors"
+                  class="text-xs font-bold text-slate-500 hover:text-school-navy transition-colors"
                 >
                   Edit
+                </button>
+                <button
+                  v-if="authStore.user?.username !== staff.username"
+                  @click="openResetModal(staff)"
+                  class="text-xs font-bold text-school-purple/70 hover:text-school-purple transition-colors"
+                >
+                  Reset PW
                 </button>
                 <button
                   v-if="authStore.user?.username !== staff.username"
@@ -349,11 +389,56 @@
         </form>
       </div>
     </div>
+    <!-- Password Reset Modal -->
+    <div
+      v-if="showResetModal"
+      class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in"
+    >
+      <div class="bg-white rounded-[12px] shadow-2xl w-full max-w-sm overflow-hidden border border-[#E2E8F0]">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <div>
+            <h2 class="text-lg font-black text-slate-800">Reset Password</h2>
+            <p class="text-xs text-slate-400 mt-0.5">{{ resetTarget?.name }}</p>
+          </div>
+          <button
+            @click="showResetModal = false"
+            class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 h-8 w-8 rounded-full flex items-center justify-center transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">New Password (min 8 characters)</label>
+            <input
+              v-model="newPassword"
+              type="password"
+              placeholder="Enter new password…"
+              class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm"
+            />
+          </div>
+          <p v-if="resetError" class="text-xs font-medium text-school-red">{{ resetError }}</p>
+          <div class="flex gap-3 justify-end pt-2">
+            <button
+              @click="showResetModal = false"
+              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-[12px] font-bold transition text-sm"
+            >Cancel</button>
+            <button
+              @click="submitReset"
+              :disabled="resetting"
+              class="px-5 py-2.5 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 transition text-sm disabled:opacity-50"
+            >{{ resetting ? 'Resetting…' : 'Reset Password' }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import staffService from '@/services/staffService'
 import { useAuthStore } from '@/stores/auth'
 
@@ -364,6 +449,30 @@ const loadError = ref('')
 const showModal = ref(false)
 const isEditing = ref(false)
 const editId = ref(null)
+
+const searchQuery = ref('')
+const roleFilter = ref('')
+
+const filteredStaff = computed(() => {
+  let list = staffList.value
+  if (roleFilter.value) {
+    list = list.filter(s => s.role === roleFilter.value)
+  }
+  const q = searchQuery.value.toLowerCase().trim()
+  if (!q) return list
+  return list.filter(s =>
+    s.name.toLowerCase().includes(q) ||
+    s.username.toLowerCase().includes(q) ||
+    s.role.toLowerCase().includes(q) ||
+    (s.job_title || '').toLowerCase().includes(q)
+  )
+})
+
+const showResetModal = ref(false)
+const resetTarget = ref(null)
+const newPassword = ref('')
+const resetError = ref('')
+const resetting = ref(false)
 
 const BLANK_FORM = {
   name: '',
@@ -444,6 +553,31 @@ const terminateStaff = async (id) => {
     } catch (error) {
       alert(error.message || 'Failed to terminate staff')
     }
+  }
+}
+
+const openResetModal = (staff) => {
+  resetTarget.value = staff
+  newPassword.value = ''
+  resetError.value = ''
+  showResetModal.value = true
+}
+
+const submitReset = async () => {
+  resetError.value = ''
+  if (newPassword.value.length < 8) {
+    resetError.value = 'Password must be at least 8 characters.'
+    return
+  }
+  resetting.value = true
+  try {
+    await staffService.resetPassword(resetTarget.value.id, newPassword.value)
+    showResetModal.value = false
+    alert(`Password for ${resetTarget.value.name} has been reset successfully.`)
+  } catch (e) {
+    resetError.value = e.message || 'Password reset failed. Please try again.'
+  } finally {
+    resetting.value = false
   }
 }
 </script>
