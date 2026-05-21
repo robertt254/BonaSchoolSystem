@@ -25,6 +25,18 @@
       </button>
     </div>
 
+    <!-- Error Banner -->
+    <div
+      v-if="loadError"
+      class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 rounded-xl px-5 py-4 text-sm font-medium"
+    >
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+      </svg>
+      {{ loadError }}
+      <button @click="loadStaff" class="ml-auto text-xs font-bold underline hover:no-underline">Retry</button>
+    </div>
+
     <!-- Loading State -->
     <div
       v-if="loading"
@@ -348,6 +360,7 @@ import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 const staffList = ref([])
 const loading = ref(true)
+const loadError = ref('')
 const showModal = ref(false)
 const isEditing = ref(false)
 const editId = ref(null)
@@ -370,10 +383,11 @@ const formData = reactive({ ...BLANK_FORM })
 
 const loadStaff = async () => {
   loading.value = true
+  loadError.value = ''
   try {
     staffList.value = await staffService.getAllStaff()
   } catch (error) {
-    console.error(error)
+    loadError.value = error.message || 'Failed to load staff records. Please try again.'
   } finally {
     loading.value = false
   }
@@ -402,10 +416,16 @@ const closeModal = () => {
 
 const saveStaff = async () => {
   try {
+    const payload = { ...formData }
+    // Pydantic Optional[date] rejects empty strings — convert to null
+    const nullableFields = ['date_of_hire', 'job_title', 'contract_type', 'kra_pin', 'nssf_number', 'nhif_number']
+    for (const f of nullableFields) {
+      if (payload[f] === '') payload[f] = null
+    }
     if (isEditing.value) {
-      await staffService.updateStaff(editId.value, formData)
+      await staffService.updateStaff(editId.value, payload)
     } else {
-      await staffService.createStaff(formData)
+      await staffService.createStaff(payload)
     }
     closeModal()
     await loadStaff()

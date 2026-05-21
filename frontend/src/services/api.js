@@ -18,9 +18,24 @@ export async function apiFetch(path, options = {}) {
     ...options,
     headers: { ...getHeaders(), ...(options.headers || {}) },
   })
+
+  // Session expired — clear local auth state and redirect to login
+  if (res.status === 401) {
+    const authStore = useAuthStore()
+    authStore.logout()
+    window.location.href = '/login'
+    throw new Error('Session expired. Please log in again.')
+  }
+
   if (!res.ok) {
     const body = await res.json().catch(() => ({}))
-    throw new Error(body.detail || `Request failed: ${res.status}`)
+    // body.detail may be a string or a Pydantic error array
+    const detail = typeof body.detail === 'string'
+      ? body.detail
+      : Array.isArray(body.detail)
+        ? body.detail.map(e => e.msg || e.message || JSON.stringify(e)).join('; ')
+        : `Request failed: ${res.status}`
+    throw new Error(detail)
   }
   return res.json()
 }

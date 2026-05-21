@@ -163,6 +163,7 @@ class UserUpdate(BaseModel):
 
 class UserResponse(UserBase):
     id: int
+    role: str  # override UserBase enum — accept any role string stored in DB
     job_title: Optional[str] = None
     contract_type: Optional[str] = None
     date_of_hire: Optional[date] = None

@@ -84,7 +84,22 @@ def create_staff(
                {"username": user.username, "role": user.role})
     db.commit()
     db.refresh(new_user)
-    return new_user
+    entitlement = new_user.accrued_leave_days if new_user.accrued_leave_days is not None else 21
+    return schemas.UserResponse(
+        id=new_user.id,
+        username=new_user.username,
+        name=new_user.name,
+        role=new_user.role,
+        job_title=new_user.job_title,
+        contract_type=new_user.contract_type,
+        date_of_hire=new_user.date_of_hire,
+        kra_pin=new_user.kra_pin,
+        nssf_number=new_user.nssf_number,
+        nhif_number=new_user.nhif_number,
+        accrued_leave_days=entitlement,
+        leave_days_used=0,
+        leave_days_left=entitlement,
+    )
 
 
 @router.put("/{user_id}", response_model=schemas.UserResponse)
@@ -109,7 +124,33 @@ def update_staff(
                {k: v for k, v in update_data.items() if k != "hashed_password"})
     db.commit()
     db.refresh(db_user)
-    return db_user
+    current_year = date.today().year
+    approved_leaves = (
+        db.query(models.LeaveRequest)
+        .filter(
+            models.LeaveRequest.staff_id == db_user.id,
+            models.LeaveRequest.status == "approved",
+            extract("year", models.LeaveRequest.start_date) == current_year,
+        )
+        .all()
+    )
+    days_used = sum((l.end_date - l.start_date).days + 1 for l in approved_leaves)
+    entitlement = db_user.accrued_leave_days if db_user.accrued_leave_days is not None else 21
+    return schemas.UserResponse(
+        id=db_user.id,
+        username=db_user.username,
+        name=db_user.name,
+        role=db_user.role,
+        job_title=db_user.job_title,
+        contract_type=db_user.contract_type,
+        date_of_hire=db_user.date_of_hire,
+        kra_pin=db_user.kra_pin,
+        nssf_number=db_user.nssf_number,
+        nhif_number=db_user.nhif_number,
+        accrued_leave_days=entitlement,
+        leave_days_used=days_used,
+        leave_days_left=max(0, entitlement - days_used),
+    )
 
 
 @router.delete("/{user_id}")
