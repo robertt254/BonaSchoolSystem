@@ -749,7 +749,11 @@ const submitPayroll = async () => {
   }
   try {
     const payload = {
-      ...payrollForm,
+      staff_id: Number(payrollForm.staff_id),
+      payment_month: payrollForm.payment_month,
+      basic_salary: Number(payrollForm.basic_salary) || 0,
+      allowances: Number(payrollForm.allowances) || 0,
+      deductions: Number(payrollForm.deductions) || 0,
       net_pay: calculatedNetPay.value,
     }
     await financeService.executePayroll(payload)
