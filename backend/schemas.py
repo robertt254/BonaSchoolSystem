@@ -246,7 +246,7 @@ class PayrollResponse(BaseModel):
     deductions: float
     net_pay: float
     recorded_by: str
-    created_at: datetime
+    created_at: Optional[datetime] = None  # optional: col added via migration, may be absent on old deploys
 
     class Config:
         from_attributes = True

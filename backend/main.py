@@ -117,6 +117,11 @@ async def startup():
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS nssf_number       VARCHAR(30)",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS nhif_number       VARCHAR(30)",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS accrued_leave_days INTEGER NOT NULL DEFAULT 21",
+        # payroll & expenses created via create_all — backfill timestamp col for older deploys
+        "ALTER TABLE payroll  ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        "ALTER TABLE expenses ADD COLUMN IF NOT EXISTS expense_date TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        # subjects table — created via create_all on newer deploys
+        "ALTER TABLE subjects ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()",
     ]
     try:
         with engine.connect() as conn:
