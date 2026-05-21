@@ -102,7 +102,7 @@ def get_dashboard_stats(
                    f"removed a student record"
         elif log.resource == "fee":
             amount = detail.get("amount")
-            desc = f"recorded KES {int(amount):,} payment" if amount else "recorded a fee payment"
+            desc = f"recorded KES {int(float(amount)):,} payment" if amount else "recorded a fee payment"
         elif log.resource == "staff":
             name = detail.get("username", "")
             desc = f"hired staff @{name}" if log.action == "CREATE" and name else \
