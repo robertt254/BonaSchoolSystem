@@ -56,7 +56,7 @@
               <td
                 v-for="day in days"
                 :key="day"
-                class="border border-slate-200 px-3 py-2 align-top min-h-[60px] hover:bg-violet-50/30 transition-colors cursor-pointer"
+                class="border border-slate-200 px-4 py-3 align-top min-h-[72px] hover:bg-violet-50/30 transition-colors cursor-pointer"
                 @click="canEdit && openEdit(day, period)"
               >
                 <template v-if="grid[day]?.[period]">

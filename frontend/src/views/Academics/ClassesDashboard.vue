@@ -46,14 +46,14 @@
     <div v-if="selectedGrade" class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
 
       <!-- Tab header -->
-      <div class="border-b border-slate-100 bg-slate-50 px-6 py-0 flex items-center justify-between">
+      <div class="border-b border-slate-100 bg-slate-50 px-6 flex items-center justify-between min-h-[56px]">
         <div class="flex">
           <button
             v-for="tab in TABS"
             :key="tab.id"
             @click="activeTab = tab.id"
             :class="[
-              'px-5 py-4 text-sm font-bold border-b-2 transition-colors',
+              'px-5 py-[18px] text-sm font-bold border-b-2 transition-colors whitespace-nowrap',
               activeTab === tab.id
                 ? 'border-school-purple text-school-purple'
                 : 'border-transparent text-slate-400 hover:text-slate-600',
@@ -75,7 +75,7 @@
         </div>
 
         <!-- Subjects actions -->
-        <div v-if="activeTab === 'subjects'" class="flex items-center gap-2 py-3">
+        <div v-if="activeTab === 'subjects'" class="flex items-center gap-3 py-3">
           <button
             v-if="canManage && !subjects.length"
             @click="seedSubjects"

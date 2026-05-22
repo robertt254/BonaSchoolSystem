@@ -123,7 +123,7 @@
                 <div>{{ staff.contract_type || 'N/A' }}</div>
                 <div class="text-slate-400 mt-0.5">Hired: {{ staff.date_of_hire || 'N/A' }}</div>
               </td>
-              <td class="py-5 px-8 text-[10px] text-slate-500 font-mono space-y-1">
+              <td class="py-5 px-8 text-xs text-slate-500 space-y-1.5">
                 <div>
                   KRA:
                   <span class="font-bold text-slate-700">{{ staff.kra_pin || 'Pending' }}</span>

@@ -180,21 +180,21 @@
       </nav>
 
       <!-- Footer -->
-      <div class="shrink-0 border-t border-white/8 p-3 space-y-1">
+      <div class="shrink-0 border-t border-white/10 p-4 space-y-2">
         <!-- User card -->
-        <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A855F7] font-bold text-xs text-white flex items-center justify-center shrink-0">
+        <div class="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/[0.06] border border-white/[0.06]">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A855F7] font-bold text-sm text-white flex items-center justify-center shrink-0 shadow-sm">
             {{ userNameInitial }}
           </div>
           <div class="flex-1 min-w-0">
             <p class="text-sm font-semibold text-white truncate">{{ userName }}</p>
-            <p class="text-[10px] text-white/30 capitalize truncate">{{ userRole }}</p>
+            <p class="text-[11px] text-white/40 capitalize truncate">{{ userRole }}</p>
           </div>
         </div>
         <!-- Actions -->
         <button
           @click="showChangePassword = true"
-          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-white/40 hover:bg-white/8 hover:text-white/70 transition-colors"
+          class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-medium text-white/55 hover:bg-white/[0.07] hover:text-white/80 transition-colors"
         >
           <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -203,7 +203,7 @@
         </button>
         <button
           @click="logout"
-          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-white/40 hover:bg-[rgba(225,29,72,0.12)] hover:text-[#FDA4AF] transition-colors"
+          class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-white/70 hover:bg-[rgba(225,29,72,0.15)] hover:text-[#FCA5A5] transition-colors border border-transparent hover:border-red-500/20"
         >
           <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>

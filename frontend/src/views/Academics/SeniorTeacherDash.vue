@@ -102,11 +102,11 @@
               <td class="px-6 py-3 text-slate-400 text-xs">{{ i + 1 }}</td>
               <td class="px-6 py-3 font-semibold text-slate-800">{{ row.student_name }}</td>
               <td class="px-6 py-3 font-mono text-xs text-slate-500">{{ row.admission_number }}</td>
-              <td class="px-4 py-2">
+              <td class="px-4 py-3">
                 <select
                   v-model="row.score"
                   @change="row._changed = true"
-                  class="w-full border rounded-lg px-2 py-2 text-sm font-bold outline-none transition"
+                  class="w-full border rounded-lg px-2 py-2.5 text-sm font-bold outline-none transition"
                   :class="scoreClass(row.score)"
                 >
                   <option value="">—</option>
@@ -116,7 +116,7 @@
                   <option value="BE">BE – Below</option>
                 </select>
               </td>
-              <td class="px-4 py-2">
+              <td class="px-4 py-3">
                 <input
                   v-model="row.remarks"
                   @input="row._changed = true"

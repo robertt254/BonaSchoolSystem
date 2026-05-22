@@ -51,9 +51,9 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-              <th class="px-5 py-3 text-left">Student</th>
-              <th class="px-5 py-3">Status</th>
-              <th class="px-5 py-3 text-left">Remarks</th>
+              <th class="px-5 py-4 text-left">Student</th>
+              <th class="px-5 py-4">Status</th>
+              <th class="px-5 py-4 text-left">Remarks</th>
             </tr>
           </thead>
           <tbody>
@@ -62,8 +62,8 @@
               :key="s.student_id"
               class="border-b border-slate-50 hover:bg-slate-50 transition-colors"
             >
-              <td class="px-5 py-3 font-medium text-slate-800">{{ s.name }}</td>
-              <td class="px-5 py-3 text-center">
+              <td class="px-5 py-4 font-medium text-slate-800">{{ s.name }}</td>
+              <td class="px-5 py-4 text-center">
                 <button
                   @click="s.is_present = !s.is_present"
                   class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-colors"
@@ -75,7 +75,7 @@
                   {{ s.is_present ? 'Present' : 'Absent' }}
                 </button>
               </td>
-              <td class="px-5 py-3">
+              <td class="px-5 py-4">
                 <input
                   v-model="s.remarks"
                   placeholder="Optional note…"
