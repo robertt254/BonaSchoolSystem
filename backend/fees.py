@@ -390,17 +390,6 @@ def update_fee_structure(
     return row
 
 
-# ── Bulk payment ──────────────────────────────────────────────────────────────
-
-class BulkPaymentEntry(BaseModel):
-    student_id: int
-    amount: float
-    payment_type: str
-    term: str
-
-from pydantic import BaseModel as _BaseModel
-from typing import List as _List
-
 @router.post("/bulk", status_code=201)
 def record_bulk_payments(
     payments: list,
