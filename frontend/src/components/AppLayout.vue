@@ -1,10 +1,10 @@
 <template>
-  <div class="flex h-screen min-w-0 bg-school-grey font-sans">
+  <div class="flex h-screen min-w-0 bg-school-grey font-sans print:block print:h-auto">
     <!-- Mobile overlay -->
     <div
       v-if="isSidebarOpen"
       @click="isSidebarOpen = false"
-      class="fixed inset-0 bg-black/40 z-40 md:hidden"
+      class="fixed inset-0 bg-black/40 z-40 md:hidden print:hidden"
     ></div>
 
     <!-- ─── SIDEBAR ─────────────────────────────────────────────────────── -->
@@ -13,6 +13,7 @@
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
         'fixed inset-y-0 left-0 z-50 md:relative md:translate-x-0',
         'flex flex-col w-64 shrink-0 bg-school-navy transition-transform duration-300 ease-out',
+        'print:hidden',
       ]"
     >
       <!-- Logo -->
@@ -216,10 +217,10 @@
     <ChangePasswordModal v-if="showChangePassword" @close="showChangePassword = false" />
 
     <!-- ─── MAIN ──────────────────────────────────────────────────────────── -->
-    <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
+    <div class="flex-1 min-w-0 flex flex-col overflow-hidden print:overflow-visible">
 
       <!-- Top bar -->
-      <header class="shrink-0 h-16 bg-white border-b border-slate-200 flex items-center px-6 gap-4">
+      <header class="shrink-0 h-16 bg-white border-b border-slate-200 flex items-center px-6 gap-4 print:hidden">
         <!-- Mobile toggle -->
         <button
           @click="isSidebarOpen = true"
@@ -279,7 +280,7 @@
       <!-- Session expiry warning banner -->
       <div
         v-if="showSessionWarning"
-        class="shrink-0 bg-amber-50 border-b border-amber-200 px-6 py-2.5 flex items-center gap-3 text-amber-800 text-xs"
+        class="shrink-0 bg-amber-50 border-b border-amber-200 px-6 py-2.5 flex items-center gap-3 text-amber-800 text-xs print:hidden"
       >
         <svg class="w-4 h-4 shrink-0 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -289,7 +290,7 @@
       </div>
 
       <!-- Page content -->
-      <main class="flex-1 overflow-y-auto bg-school-grey">
+      <main class="flex-1 overflow-y-auto bg-school-grey print:overflow-visible print:h-auto">
         <div class="p-6 lg:p-8">
           <router-view v-slot="{ Component }">
             <transition name="page-fade" mode="out-in">

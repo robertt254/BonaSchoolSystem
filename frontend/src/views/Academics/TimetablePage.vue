@@ -23,7 +23,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add Period
           </button>
-          <button @click="window.print()" class="border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition">Print</button>
+          <button @click="printPage()" class="border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition">Print</button>
         </div>
       </div>
     </div>
@@ -142,6 +142,7 @@ import { useAppStore } from '@/stores/app'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
+const printPage = () => window.print()
 
 const GRADES = ['Play Group', 'PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6']
 const grades = ref(GRADES)

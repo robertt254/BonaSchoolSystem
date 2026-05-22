@@ -74,7 +74,7 @@
         >{{ generating ? 'Loading…' : 'Load All' }}</button>
         <button
           v-if="bulkReports.length"
-          @click="window.print()"
+          @click="printPage()"
           class="inline-flex items-center gap-2 bg-slate-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-black transition"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -95,7 +95,7 @@
       <ReportCardDoc :data="reportData" />
       <div class="border-t border-slate-100 px-8 py-4 flex justify-end print:hidden">
         <button
-          @click="window.print()"
+          @click="printPage()"
           class="inline-flex items-center gap-2 bg-slate-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-black transition"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -238,6 +238,8 @@ const ReportCardDoc = defineComponent({
   },
 })
 
+const printPage = () => window.print()
+
 const grades = ['Play Group', 'PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6']
 
 const mode = ref('single')
@@ -285,11 +287,12 @@ const loadBulk = async () => {
 
 <style>
 @media print {
-  body * { visibility: hidden; }
-  #report-card, #report-card *,
-  #bulk-report, #bulk-report * { visibility: visible; }
-  #report-card { position: fixed; top: 0; left: 0; width: 100%; }
-  #bulk-report { position: fixed; top: 0; left: 0; width: 100%; }
-  .print\:page-break-after-always { page-break-after: always; }
+  .print\:page-break-after-always {
+    page-break-after: always;
+    break-after: page;
+  }
+  .print\:rounded-none { border-radius: 0 !important; }
+  .print\:border-none { border: none !important; }
+  .print\:mb-0 { margin-bottom: 0 !important; }
 }
 </style>

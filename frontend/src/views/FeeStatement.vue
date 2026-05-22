@@ -137,7 +137,7 @@
       <!-- Print button -->
       <div class="border-t border-slate-100 px-8 py-4 flex justify-end print:hidden">
         <button
-          @click="window.print()"
+          @click="printPage()"
           class="inline-flex items-center gap-2 bg-slate-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-black transition"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -157,6 +157,8 @@ import { ref, computed, onMounted } from 'vue'
 import studentService from '@/services/studentService'
 import feeService from '@/services/feeService'
 import { apiFetch } from '@/services/api'
+
+const printPage = () => window.print()
 
 const students        = ref([])
 const selectedStudent = ref('')
@@ -204,8 +206,7 @@ const generateStatement = async () => {
 
 <style>
 @media print {
-  body * { visibility: hidden; }
-  #fee-statement, #fee-statement * { visibility: visible; }
-  #fee-statement { position: fixed; top: 0; left: 0; width: 100%; }
+  .print\:rounded-none { border-radius: 0 !important; }
+  .print\:border-none { border: none !important; }
 }
 </style>

@@ -152,8 +152,6 @@ onMounted(loadDefaulters)
 
 <style>
 @media print {
-  body * { visibility: hidden; }
-  .max-w-6xl, .max-w-6xl * { visibility: visible; }
   .print\:hidden { display: none !important; }
 }
 </style>
