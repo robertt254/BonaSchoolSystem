@@ -22,13 +22,14 @@ class StudentStatus(str, Enum):
     transferred = "Transferred"
 
 
-PORTAL_ROLES = {"principal", "secretary", "accountant", "admin"}
+PORTAL_ROLES = {"principal", "secretary", "accountant", "admin", "senior_teacher"}
 
 class UserRole(str, Enum):
     admin = "admin"
     principal = "principal"
     accountant = "accountant"
     secretary = "secretary"
+    senior_teacher = "senior_teacher"
     teacher = "teacher"
     support_staff = "support_staff"
 

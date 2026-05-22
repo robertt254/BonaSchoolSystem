@@ -8,7 +8,7 @@ from typing import List, Optional
 
 router = APIRouter(prefix="/api/exams", tags=["Exams"])
 
-WRITE_ROLES = {"admin", "principal", "teacher"}
+WRITE_ROLES = {"admin", "principal", "teacher", "senior_teacher"}
 
 
 @router.post("/bulk", status_code=201)

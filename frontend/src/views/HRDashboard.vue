@@ -238,6 +238,7 @@
                   <optgroup label="Portal Access (Login Required)">
                     <option value="accountant">Accountant / Finance Officer</option>
                     <option value="secretary">Secretary</option>
+                    <option value="senior_teacher">Senior Teacher</option>
                     <option value="principal">Principal</option>
                     <option value="admin">System Admin</option>
                   </optgroup>
@@ -490,7 +491,7 @@ import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 
-const PORTAL_ROLES = new Set(['principal', 'secretary', 'accountant', 'admin'])
+const PORTAL_ROLES = new Set(['principal', 'secretary', 'accountant', 'admin', 'senior_teacher'])
 const staffList = ref([])
 const loading = ref(true)
 const loadError = ref('')

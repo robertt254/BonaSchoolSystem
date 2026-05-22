@@ -10,7 +10,7 @@ from datetime import date
 
 router = APIRouter(prefix="/api/attendance", tags=["Attendance"])
 
-MARK_ROLES = {"teacher", "principal", "admin"}
+MARK_ROLES = {"teacher", "senior_teacher", "principal", "admin"}
 
 GRADE_ORDER = [
     "Play Group", "PP1", "PP2",

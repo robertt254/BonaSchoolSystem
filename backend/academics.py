@@ -14,7 +14,7 @@ def record_scores(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
-    if current_user.role not in {"teacher", "admin", "principal"}:
+    if current_user.role not in {"teacher", "senior_teacher", "admin", "principal"}:
         raise HTTPException(status_code=403, detail="Not authorized to alter academic records")
 
     student_ids = {s.student_id for s in scores}
@@ -65,7 +65,7 @@ def get_grade_assessments(
     current_user: models.User = Depends(auth.get_current_user),
 ):
     """Return all students in a grade with their existing strand scores for the given term."""
-    if current_user.role not in {"teacher", "admin", "principal"}:
+    if current_user.role not in {"teacher", "senior_teacher", "admin", "principal"}:
         raise HTTPException(status_code=403, detail="Not authorized")
 
     students = (

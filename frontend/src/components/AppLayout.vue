@@ -39,7 +39,7 @@
           Dashboard
         </NavItem>
 
-        <template v-if="['teacher','principal','admin','secretary'].includes(userRole)">
+        <template v-if="['teacher','senior_teacher','principal','admin','secretary'].includes(userRole)">
           <SectionLabel>Academics</SectionLabel>
           <NavItem to="/academics/students">
             <template #icon>
@@ -59,7 +59,7 @@
           </NavItem>
         </template>
 
-        <template v-if="['teacher','principal','admin'].includes(userRole)">
+        <template v-if="['teacher','senior_teacher','principal','admin'].includes(userRole)">
           <NavItem to="/academics/attendance">
             <template #icon>
               <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -110,7 +110,7 @@
           </NavItem>
         </template>
 
-        <template v-if="['teacher','principal','admin','accountant','secretary'].includes(userRole)">
+        <template v-if="['teacher','senior_teacher','principal','admin','accountant','secretary'].includes(userRole)">
           <NavItem to="/library">
             <template #icon>
               <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">

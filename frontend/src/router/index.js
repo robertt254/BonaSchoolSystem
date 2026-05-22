@@ -75,19 +75,19 @@ const router = createRouter({
           path: 'academics',
           name: 'teacher-dash',
           component: () => import('../views/Academics/SeniorTeacherDash.vue'),
-          meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin'] },
         },
         {
           path: 'academics/report-card',
           name: 'report-card',
           component: () => import('../views/ReportCard.vue'),
-          meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin'] },
         },
         {
           path: 'academics/attendance',
           name: 'attendance-page',
           component: () => import('../views/AttendancePage.vue'),
-          meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin'] },
         },
         {
           path: 'students/:id',
@@ -111,7 +111,7 @@ const router = createRouter({
           path: 'academics/timetable',
           name: 'timetable',
           component: () => import('../views/Academics/TimetablePage.vue'),
-          meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin'] },
         },
         {
           path: 'academics/students',
@@ -136,13 +136,13 @@ const router = createRouter({
           path: 'academics/exams',
           name: 'exams',
           component: () => import('../views/Academics/ExamsPage.vue'),
-          meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin'] },
         },
         {
           path: 'academics/discipline',
           name: 'discipline',
           component: () => import('../views/Academics/DisciplinePage.vue'),
-          meta: { requiresAuth: true, roles: ['teacher', 'principal', 'admin', 'secretary'] },
+          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin', 'secretary'] },
         },
         {
           path: 'library',

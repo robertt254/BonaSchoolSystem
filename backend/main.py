@@ -151,7 +151,7 @@ async def startup():
             # One-time: revoke portal access for any existing non-portal role accounts
             conn.execute(text(
                 "UPDATE users SET can_login = FALSE "
-                "WHERE role NOT IN ('principal','secretary','accountant','admin') "
+                "WHERE role NOT IN ('principal','secretary','accountant','admin','senior_teacher') "
                 "AND can_login = TRUE"
             ))
             conn.commit()

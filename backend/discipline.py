@@ -7,7 +7,7 @@ from typing import Optional
 
 router = APIRouter(prefix="/api/discipline", tags=["Discipline"])
 
-WRITE_ROLES = {"admin", "principal", "teacher", "secretary"}
+WRITE_ROLES = {"admin", "principal", "teacher", "senior_teacher", "secretary"}
 
 
 def _serialize(r: models.DisciplinaryRecord, db: Session) -> dict:
