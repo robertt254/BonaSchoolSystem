@@ -75,6 +75,12 @@ async def login(
             detail="Incorrect username or password",
         )
 
+    if not user.can_login:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This account does not have portal access",
+        )
+
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode = {
         "sub": user.username,

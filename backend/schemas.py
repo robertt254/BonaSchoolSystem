@@ -22,12 +22,15 @@ class StudentStatus(str, Enum):
     transferred = "Transferred"
 
 
+PORTAL_ROLES = {"principal", "secretary", "accountant", "admin"}
+
 class UserRole(str, Enum):
     admin = "admin"
     principal = "principal"
     accountant = "accountant"
-    teacher = "teacher"
     secretary = "secretary"
+    teacher = "teacher"
+    support_staff = "support_staff"
 
 
 class AssessmentScore(str, Enum):
@@ -137,7 +140,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str = Field(..., min_length=8)
+    password: Optional[str] = Field(None, min_length=8)  # not required for non-portal roles
     job_title: Optional[str] = Field(None, max_length=100)
     contract_type: Optional[str] = Field(None, max_length=50)
     date_of_hire: Optional[date] = None
@@ -189,6 +192,7 @@ class UserResponse(UserBase):
     basic_salary: float = 0.0
     allowances: float = 0.0
     deductions: float = 0.0
+    can_login: bool = True
 
     class Config:
         from_attributes = True

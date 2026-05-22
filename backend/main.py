@@ -141,11 +141,19 @@ async def startup():
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS basic_salary NUMERIC(10,2) NOT NULL DEFAULT 0",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS allowances   NUMERIC(10,2) NOT NULL DEFAULT 0",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS deductions   NUMERIC(10,2) NOT NULL DEFAULT 0",
+        # Portal access flag — teachers and non-portal roles cannot log in
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS can_login BOOLEAN NOT NULL DEFAULT TRUE",
     ]
     try:
         with engine.connect() as conn:
             for stmt in _safe_add_columns:
                 conn.execute(text(stmt))
+            # One-time: revoke portal access for any existing non-portal role accounts
+            conn.execute(text(
+                "UPDATE users SET can_login = FALSE "
+                "WHERE role NOT IN ('principal','secretary','accountant','admin') "
+                "AND can_login = TRUE"
+            ))
             conn.commit()
         logger.info("Schema migration checks complete.")
     except Exception as exc:

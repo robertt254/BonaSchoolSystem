@@ -3,9 +3,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy import extract
 from datetime import date
 from pydantic import BaseModel, Field
+import secrets, re
 from database import get_db
 import models, schemas, auth
 from audit import log_action
+from schemas import PORTAL_ROLES
 
 
 class PasswordResetRequest(BaseModel):
@@ -61,6 +63,7 @@ def get_all_staff(db: Session = Depends(get_db), current_user: models.User = Dep
             basic_salary=float(user.basic_salary or 0) if include_salary else 0.0,
             allowances=float(user.allowances or 0) if include_salary else 0.0,
             deductions=float(user.deductions or 0) if include_salary else 0.0,
+            can_login=user.can_login,
         ))
     return result
 
@@ -71,14 +74,32 @@ def create_staff(
     db: Session = Depends(get_db),
     admin: models.User = Depends(verify_hr_manager),
 ):
-    if db.query(models.User).filter(models.User.username == user.username).first():
-        raise HTTPException(status_code=400, detail="Username already exists")
+    is_portal = user.role in PORTAL_ROLES
+
+    if is_portal:
+        if not user.password:
+            raise HTTPException(status_code=400, detail="Password is required for portal accounts")
+        if not user.username:
+            raise HTTPException(status_code=400, detail="Username is required for portal accounts")
+        if db.query(models.User).filter(models.User.username == user.username).first():
+            raise HTTPException(status_code=400, detail="Username already exists")
+        username = user.username
+        hashed_pw = auth.get_password_hash(user.password)
+    else:
+        # Non-portal staff: auto-generate a unique username, set a random unusable password
+        slug = re.sub(r'[^a-z0-9]', '', user.name.lower().replace(' ', '_'))[:12] or 'staff'
+        base = slug
+        suffix = secrets.token_hex(3)
+        username = f"{base}_{suffix}"
+        while db.query(models.User).filter(models.User.username == username).first():
+            username = f"{base}_{secrets.token_hex(3)}"
+        hashed_pw = auth.get_password_hash(secrets.token_hex(16))
 
     new_user = models.User(
-        username=user.username,
+        username=username,
         name=user.name,
         role=user.role,
-        hashed_password=auth.get_password_hash(user.password),
+        hashed_password=hashed_pw,
         job_title=user.job_title,
         contract_type=user.contract_type,
         date_of_hire=user.date_of_hire,
@@ -89,6 +110,7 @@ def create_staff(
         basic_salary=user.basic_salary or 0,
         allowances=user.allowances or 0,
         deductions=user.deductions or 0,
+        can_login=is_portal,
     )
     db.add(new_user)
     db.flush()
@@ -115,6 +137,7 @@ def create_staff(
         basic_salary=float(new_user.basic_salary or 0) if include_salary else 0.0,
         allowances=float(new_user.allowances or 0) if include_salary else 0.0,
         deductions=float(new_user.deductions or 0) if include_salary else 0.0,
+        can_login=new_user.can_login,
     )
 
 
@@ -135,6 +158,9 @@ def update_staff(
 
     for key, value in update_data.items():
         setattr(db_user, key, value)
+
+    # Keep can_login in sync with role
+    db_user.can_login = db_user.role in PORTAL_ROLES
 
     log_action(db, admin.id, "UPDATE", "staff", user_id,
                {k: v for k, v in update_data.items() if k != "hashed_password"})
@@ -170,6 +196,7 @@ def update_staff(
         basic_salary=float(db_user.basic_salary or 0) if include_salary else 0.0,
         allowances=float(db_user.allowances or 0) if include_salary else 0.0,
         deductions=float(db_user.deductions or 0) if include_salary else 0.0,
+        can_login=db_user.can_login,
     )
 
 

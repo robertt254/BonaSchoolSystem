@@ -113,10 +113,14 @@
             >
               <td class="py-5 px-8">
                 <div class="font-bold text-slate-800">{{ staff.name }}</div>
-                <div class="text-xs text-slate-500 font-medium">Username: {{ staff.username }}</div>
+                <div class="text-xs text-slate-500 font-medium">{{ staff.can_login ? `@${staff.username}` : 'No portal account' }}</div>
               </td>
               <td class="py-5 px-8">
-                <div class="font-bold text-school-navy capitalize">{{ staff.role }}</div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-school-navy capitalize">{{ staff.role.replace('_', ' ') }}</span>
+                  <span v-if="staff.can_login" class="text-[9px] font-bold uppercase tracking-widest bg-school-navy/10 text-school-navy px-1.5 py-0.5 rounded">Portal</span>
+                  <span v-else class="text-[9px] font-bold uppercase tracking-widest bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded">HR Only</span>
+                </div>
                 <div class="text-xs text-slate-500">{{ staff.job_title || 'N/A' }}</div>
               </td>
               <td class="py-5 px-8 text-slate-600 font-medium text-xs">
@@ -161,7 +165,7 @@
                   Edit
                 </button>
                 <button
-                  v-if="authStore.user?.username !== staff.username"
+                  v-if="authStore.user?.username !== staff.username && staff.can_login"
                   @click="openResetModal(staff)"
                   class="text-xs font-bold text-school-purple/70 hover:text-school-purple transition-colors"
                 >
@@ -216,10 +220,7 @@
             </h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div>
-                <label
-                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
-                  >Full Name</label
-                >
+                <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">Full Name</label>
                 <input
                   v-model="formData.name"
                   required
@@ -228,47 +229,51 @@
                 />
               </div>
               <div>
-                <label
-                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
-                  >Username</label
+                <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">Staff Role</label>
+                <select
+                  v-model="formData.role"
+                  required
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 >
+                  <optgroup label="Portal Access (Login Required)">
+                    <option value="accountant">Accountant / Finance Officer</option>
+                    <option value="secretary">Secretary</option>
+                    <option value="principal">Principal</option>
+                    <option value="admin">System Admin</option>
+                  </optgroup>
+                  <optgroup label="HR Only (No Login)">
+                    <option value="teacher">Teacher</option>
+                    <option value="support_staff">Support Staff</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <!-- Portal credentials — only shown for portal roles -->
+            <div v-if="isPortalRole" class="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-1">
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">Username</label>
                 <input
                   v-model="formData.username"
-                  required
+                  :required="isPortalRole"
                   type="text"
                   :disabled="isEditing"
                   class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium disabled:opacity-50"
                 />
               </div>
               <div v-if="!isEditing">
-                <label
-                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
-                  >Password</label
-                >
+                <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">Password</label>
                 <input
                   v-model="formData.password"
-                  required
+                  :required="isPortalRole && !isEditing"
                   type="password"
                   class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
                 />
               </div>
-              <div>
-                <label
-                  class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5"
-                  >System Role</label
-                >
-                <select
-                  v-model="formData.role"
-                  required
-                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 text-sm font-medium"
-                >
-                  <option value="teacher">Teacher</option>
-                  <option value="accountant">Accountant / Finance Officer</option>
-                  <option value="secretary">Secretary</option>
-                  <option value="principal">Principal</option>
-                  <option value="admin">System Admin</option>
-                </select>
-              </div>
+            </div>
+            <div v-else class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 rounded-lg px-4 py-2.5">
+              <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              This staff member will be added to HR records only and will not have a system login account.
             </div>
           </div>
 
@@ -484,6 +489,8 @@ import staffService from '@/services/staffService'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
+
+const PORTAL_ROLES = new Set(['principal', 'secretary', 'accountant', 'admin'])
 const staffList = ref([])
 const loading = ref(true)
 const loadError = ref('')
@@ -493,6 +500,8 @@ const editId = ref(null)
 
 const searchQuery = ref('')
 const roleFilter = ref('')
+
+const isPortalRole = computed(() => PORTAL_ROLES.has(formData.role))
 
 const filteredStaff = computed(() => {
   let list = staffList.value
@@ -570,12 +579,17 @@ const closeModal = () => {
 const saveStaff = async () => {
   try {
     const payload = { ...formData }
-    // Pydantic Optional[date] rejects empty strings — convert to null
     payload.basic_salary = Number(payload.basic_salary) || 0
     payload.allowances = Number(payload.allowances) || 0
     payload.deductions = Number(payload.deductions) || 0
-    // When editing, omit password entirely if not changed
-    if (isEditing.value && !payload.password) delete payload.password
+    // Non-portal roles: strip username/password — backend auto-generates them
+    if (!PORTAL_ROLES.has(payload.role)) {
+      delete payload.username
+      delete payload.password
+    } else if (isEditing.value && !payload.password) {
+      // Portal role edit: omit password if not being changed
+      delete payload.password
+    }
     const nullableFields = ['date_of_hire', 'job_title', 'contract_type', 'kra_pin', 'nssf_number', 'nhif_number']
     for (const f of nullableFields) {
       if (payload[f] === '') payload[f] = null

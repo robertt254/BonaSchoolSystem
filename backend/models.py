@@ -21,6 +21,7 @@ class User(Base):
     basic_salary = Column(Numeric(10, 2), nullable=False, server_default="0")
     allowances = Column(Numeric(10, 2), nullable=False, server_default="0")
     deductions = Column(Numeric(10, 2), nullable=False, server_default="0")
+    can_login = Column(Boolean, nullable=False, server_default="true")
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
