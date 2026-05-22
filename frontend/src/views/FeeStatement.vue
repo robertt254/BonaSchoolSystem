@@ -4,11 +4,12 @@
     <!-- Controls (hidden when printing) -->
     <div class="bg-white rounded-xl border border-slate-200 p-5 print:hidden">
       <h2 class="text-base font-bold text-slate-800 mb-4">Generate Fee Statement</h2>
-      <div class="flex flex-col sm:flex-row gap-4 items-end">
-        <div class="flex-1">
+      <div class="flex flex-col sm:flex-row gap-4 items-end flex-wrap">
+        <div class="flex-1 min-w-[200px]">
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Student</label>
           <select
             v-model="selectedStudent"
+            @change="onStudentChange"
             class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none"
           >
             <option disabled value="">— Choose a student —</option>
@@ -17,7 +18,16 @@
             </option>
           </select>
         </div>
-        <div class="w-40">
+        <div class="w-28">
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Year</label>
+          <select
+            v-model="selectedYear"
+            class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none"
+          >
+            <option v-for="y in appStore.years" :key="y" :value="y">{{ y }}</option>
+          </select>
+        </div>
+        <div class="w-36">
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Term</label>
           <select
             v-model="selectedTerm"
@@ -35,6 +45,83 @@
         >
           {{ loading ? 'Loading…' : 'Generate Statement' }}
         </button>
+      </div>
+    </div>
+
+    <!-- Carry-Forward Adjustments panel (visible when student is selected) -->
+    <div v-if="selectedStudent" class="bg-white rounded-xl border border-slate-200 overflow-hidden print:hidden">
+      <div class="px-5 py-3.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-slate-800 text-sm">Balance Adjustments (Carry-Forward)</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Cross-year / cross-term balances carried into a specific period</p>
+        </div>
+        <button
+          @click="showCfForm = !showCfForm"
+          class="flex items-center gap-1.5 bg-amber-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-amber-700 transition"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          Add Adjustment
+        </button>
+      </div>
+
+      <!-- Add form -->
+      <div v-if="showCfForm" class="px-5 py-4 border-b border-slate-100 bg-amber-50/50">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Year</label>
+            <select v-model="cfForm.academic_year"
+              class="w-full border border-slate-300 px-2.5 py-2 rounded-lg text-sm outline-none">
+              <option v-for="y in appStore.years" :key="y" :value="y">{{ y }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Term</label>
+            <select v-model="cfForm.term"
+              class="w-full border border-slate-300 px-2.5 py-2 rounded-lg text-sm outline-none">
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Amount (KES)</label>
+            <input v-model.number="cfForm.amount" type="number" step="0.01"
+              placeholder="+ = owed   − = credit"
+              class="w-full border border-slate-300 px-2.5 py-2 rounded-lg text-sm outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Note</label>
+            <input v-model="cfForm.note" type="text" placeholder="Optional reason"
+              class="w-full border border-slate-300 px-2.5 py-2 rounded-lg text-sm outline-none" />
+          </div>
+        </div>
+        <div class="flex justify-end gap-2">
+          <button @click="showCfForm = false" class="px-4 py-1.5 text-sm text-slate-600 hover:text-slate-800">Cancel</button>
+          <button @click="saveCarryForward" :disabled="cfSaving"
+            class="bg-amber-600 text-white px-5 py-1.5 rounded-lg text-sm font-semibold hover:bg-amber-700 disabled:opacity-50 transition">
+            {{ cfSaving ? 'Saving…' : 'Save' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Adjustments list -->
+      <div v-if="carryForwards.length" class="divide-y divide-slate-50">
+        <div v-for="cf in carryForwards" :key="cf.id" class="px-5 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="text-sm font-bold" :class="cf.amount > 0 ? 'text-red-600' : 'text-emerald-600'">
+              {{ cf.amount > 0 ? '+' : '' }}{{ formatCurrency(cf.amount) }}
+            </span>
+            <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{{ cf.academic_year }} · {{ cf.term }}</span>
+            <span v-if="cf.note" class="text-xs text-slate-500">— {{ cf.note }}</span>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <span class="text-xs text-slate-400">{{ cf.recorded_by }}</span>
+            <button @click="deleteCarryForward(cf.id)" class="text-xs text-red-400 hover:text-red-600 font-semibold">Del</button>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="!showCfForm" class="px-5 py-5 text-sm text-slate-400 text-center">
+        No balance adjustments recorded for this student.
       </div>
     </div>
 
@@ -59,7 +146,7 @@
       </div>
 
       <!-- Student info strip -->
-      <div class="grid grid-cols-3 gap-0 border-b border-slate-200 bg-slate-50 divide-x divide-slate-200">
+      <div class="grid grid-cols-4 gap-0 border-b border-slate-200 bg-slate-50 divide-x divide-slate-200">
         <div class="px-6 py-4">
           <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Student</p>
           <p class="font-bold text-slate-800 mt-0.5">{{ statementData.student_name }}</p>
@@ -72,6 +159,10 @@
           <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Billing Period</p>
           <p class="font-bold text-slate-800 mt-0.5">{{ statementData.term_checked }}</p>
         </div>
+        <div class="px-6 py-4">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Academic Year</p>
+          <p class="font-bold text-slate-800 mt-0.5">{{ selectedYear }}</p>
+        </div>
       </div>
 
       <!-- Summary table -->
@@ -83,12 +174,20 @@
               <td class="py-3 text-slate-600 font-medium">Expected Term Fee ({{ statementData.term_checked }})</td>
               <td class="py-3 text-right font-bold text-slate-800">{{ formatCurrency(statementData.expected_term_fee) }}</td>
             </tr>
+            <tr v-if="statementData.carry_forward && statementData.carry_forward !== 0" class="border-b border-slate-200 bg-amber-50/40">
+              <td class="py-3 px-2 text-amber-800 font-medium">
+                {{ statementData.carry_forward > 0 ? 'Balance Carried Forward (Arrears)' : 'Balance Carried Forward (Credit)' }}
+              </td>
+              <td class="py-3 px-2 text-right font-bold" :class="statementData.carry_forward > 0 ? 'text-amber-700' : 'text-emerald-700'">
+                {{ statementData.carry_forward > 0 ? '+' : '− ' }}{{ formatCurrency(Math.abs(statementData.carry_forward)) }}
+              </td>
+            </tr>
             <tr class="border-b border-slate-200 bg-emerald-50/40">
               <td class="py-3 px-2 text-emerald-800 font-medium">Total Paid This Term</td>
               <td class="py-3 px-2 text-right font-bold text-emerald-700">− {{ formatCurrency(statementData.total_paid_this_term) }}</td>
             </tr>
             <tr v-if="statementData.rollover_credit > 0" class="border-b border-slate-200 bg-blue-50/40">
-              <td class="py-3 px-2 text-blue-700 font-medium">Credit from Previous Terms</td>
+              <td class="py-3 px-2 text-blue-700 font-medium">Credit from Previous Terms (This Year)</td>
               <td class="py-3 px-2 text-right font-bold text-blue-700">− {{ formatCurrency(statementData.rollover_credit) }}</td>
             </tr>
             <tr>
@@ -157,15 +256,26 @@ import { ref, computed, onMounted } from 'vue'
 import studentService from '@/services/studentService'
 import feeService from '@/services/feeService'
 import { apiFetch } from '@/services/api'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 
 const printPage = () => window.print()
 
+const appStore    = useAppStore()
+const authStore   = useAuthStore()
+
 const students        = ref([])
 const selectedStudent = ref('')
-const selectedTerm    = ref('Term 1')
+const selectedYear    = ref(appStore.currentYear)
+const selectedTerm    = ref(appStore.currentTerm || 'Term 1')
 const statementData   = ref(null)
 const allPayments     = ref([])
 const loading         = ref(false)
+
+const carryForwards = ref([])
+const showCfForm    = ref(false)
+const cfSaving      = ref(false)
+const cfForm        = ref({ academic_year: appStore.currentYear, term: 'Term 1', amount: '', note: '' })
 
 const currentDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
@@ -185,13 +295,54 @@ onMounted(async () => {
   catch (e) { console.error(e) }
 })
 
+const onStudentChange = () => {
+  statementData.value = null
+  loadCarryForwards()
+}
+
+const loadCarryForwards = async () => {
+  if (!selectedStudent.value) return
+  try {
+    carryForwards.value = await feeService.getCarryForwards(selectedStudent.value)
+  } catch { carryForwards.value = [] }
+}
+
+const saveCarryForward = async () => {
+  if (!cfForm.value.amount) return
+  cfSaving.value = true
+  try {
+    await feeService.addCarryForward({
+      student_id: selectedStudent.value,
+      academic_year: cfForm.value.academic_year,
+      term: cfForm.value.term,
+      amount: cfForm.value.amount,
+      note: cfForm.value.note,
+      recorded_by: authStore.user?.name || authStore.user?.username || 'Admin',
+    })
+    showCfForm.value = false
+    cfForm.value = { academic_year: appStore.currentYear, term: 'Term 1', amount: '', note: '' }
+    await loadCarryForwards()
+    if (statementData.value) await generateStatement()
+  } catch (e) { alert(e?.message || 'Failed to save.') }
+  finally { cfSaving.value = false }
+}
+
+const deleteCarryForward = async (id) => {
+  if (!confirm('Delete this adjustment?')) return
+  try {
+    await feeService.deleteCarryForward(id)
+    await loadCarryForwards()
+    if (statementData.value) await generateStatement()
+  } catch { alert('Delete failed.') }
+}
+
 const generateStatement = async () => {
   loading.value = true
   statementData.value = null
   allPayments.value   = []
   try {
     const [stmt, payments] = await Promise.all([
-      feeService.getStudentBalance(selectedStudent.value, selectedTerm.value),
+      feeService.getStudentBalance(selectedStudent.value, selectedTerm.value, selectedYear.value),
       apiFetch(`/api/fees/student/${selectedStudent.value}`),
     ])
     statementData.value = stmt
