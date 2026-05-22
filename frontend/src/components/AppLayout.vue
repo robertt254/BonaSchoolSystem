@@ -183,13 +183,13 @@
             </template>
             Fee Structure
           </NavItem>
-          <NavItem to="/finance/payslips">
+          <NavItem v-if="['accountant','admin'].includes(userRole)" to="/finance/payslips">
             <template #icon>
               <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
             </template>
-            Payslips
+            Payroll
           </NavItem>
           <NavItem to="/finance/petty-cash">
             <template #icon>
@@ -496,7 +496,7 @@ const pageTitle = computed(() => {
     'calendar':           'School Calendar',
     'petty-cash':         'Petty Cash',
     'budget':             'Budget vs Actual',
-    'payslips':           'Payslips',
+    'payslips':           'Payroll',
     'promotion':          'Student Promotion',
     'year-transition':    'Year Transition',
     'reports':            'Report Builder',

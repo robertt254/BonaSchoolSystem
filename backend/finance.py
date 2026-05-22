@@ -10,11 +10,18 @@ from typing import Optional
 router = APIRouter(prefix="/api/finance", tags=["Finance"])
 
 FINANCE_ROLES = {"accountant", "admin", "principal"}
+PAYROLL_ROLES = {"accountant", "admin"}
 
 
 def require_finance(current_user: models.User = Depends(auth.get_current_user)):
     if current_user.role not in FINANCE_ROLES:
-        raise HTTPException(status_code=403, detail="Not authorized to manage payroll")
+        raise HTTPException(status_code=403, detail="Not authorized")
+    return current_user
+
+
+def require_payroll_manager(current_user: models.User = Depends(auth.get_current_user)):
+    if current_user.role not in PAYROLL_ROLES:
+        raise HTTPException(status_code=403, detail="Payroll is restricted to accountant and admin only")
     return current_user
 
 
@@ -22,7 +29,7 @@ def require_finance(current_user: models.User = Depends(auth.get_current_user)):
 def execute_payroll(
     payroll: schemas.PayrollCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(require_finance),
+    current_user: models.User = Depends(require_payroll_manager),
 ):
     staff = db.query(models.User).filter(models.User.id == payroll.staff_id).first()
     if not staff:
@@ -61,18 +68,91 @@ def execute_payroll(
 
 @router.get("/payroll", response_model=list[schemas.PayrollResponse])
 def get_payroll_ledger(
+    month: Optional[str] = Query(None),
     skip: int = 0,
-    limit: int = 100,
+    limit: int = 200,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(require_finance),
+    current_user: models.User = Depends(require_payroll_manager),
 ):
-    return (
-        db.query(models.Payroll)
-        .order_by(models.Payroll.id.desc())
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    q = db.query(models.Payroll)
+    if month:
+        q = q.filter(models.Payroll.payment_month == month)
+    return q.order_by(models.Payroll.payment_month.desc(), models.Payroll.id.desc()).offset(skip).limit(limit).all()
+
+
+@router.get("/payroll/preview")
+def preview_payroll(
+    month: str = Query(..., pattern=r"^\d{4}-(0[1-9]|1[0-2])$"),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(require_payroll_manager),
+):
+    """Return all staff with their configured salary and whether payroll already ran for this month."""
+    staff_list = db.query(models.User).order_by(models.User.name).all()
+    result = []
+    for s in staff_list:
+        basic = float(s.basic_salary or 0)
+        allow = float(s.allowances or 0)
+        deduct = float(s.deductions or 0)
+        net = max(0.0, basic + allow - deduct)
+        already_paid = db.query(models.Payroll).filter(
+            models.Payroll.staff_id == s.id,
+            models.Payroll.payment_month == month,
+        ).first() is not None
+        result.append({
+            "staff_id": s.id,
+            "staff_name": s.name,
+            "job_title": s.job_title or "",
+            "basic_salary": basic,
+            "allowances": allow,
+            "deductions": deduct,
+            "net_pay": net,
+            "already_paid": already_paid,
+        })
+    return result
+
+
+@router.post("/payroll/run-month", status_code=201)
+def run_month_payroll(
+    payload: schemas.RunPayrollRequest,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(require_payroll_manager),
+):
+    """Execute payroll for all staff for the given month. Skips staff with no salary or already paid."""
+    staff_list = db.query(models.User).order_by(models.User.name).all()
+    created_names = []
+    skipped_names = []
+    for s in staff_list:
+        basic = float(s.basic_salary or 0)
+        if basic == 0:
+            skipped_names.append(s.name)
+            continue
+        existing = db.query(models.Payroll).filter(
+            models.Payroll.staff_id == s.id,
+            models.Payroll.payment_month == payload.month,
+        ).first()
+        if existing:
+            skipped_names.append(s.name)
+            continue
+        allow = float(s.allowances or 0)
+        deduct = float(s.deductions or 0)
+        net = max(0.0, basic + allow - deduct)
+        p = models.Payroll(
+            staff_id=s.id,
+            payment_month=payload.month,
+            basic_salary=basic,
+            allowances=allow,
+            deductions=deduct,
+            net_pay=net,
+            recorded_by=current_user.name,
+        )
+        db.add(p)
+        created_names.append(s.name)
+    db.flush()
+    log_action(db, current_user.id, "CREATE", "payroll_batch", None,
+               {"month": payload.month, "count": len(created_names), "names": ", ".join(created_names)})
+    db.commit()
+    return {"created": len(created_names), "skipped": len(skipped_names),
+            "created_names": created_names, "skipped_names": skipped_names}
 
 
 @router.post("/expenses", response_model=schemas.ExpenseResponse)
@@ -121,7 +201,7 @@ def get_expenses(
 def get_payslip(
     payroll_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(require_finance),
+    current_user: models.User = Depends(require_payroll_manager),
 ):
     p = db.query(models.Payroll).filter(models.Payroll.id == payroll_id).first()
     if not p:

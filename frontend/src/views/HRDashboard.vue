@@ -329,6 +329,47 @@
             </div>
           </div>
 
+          <!-- Compensation — accountant + admin only -->
+          <div v-if="['accountant','admin'].includes(authStore.user?.role)" class="space-y-4">
+            <h3 class="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2 flex items-center gap-2">
+              Compensation
+              <span class="text-[10px] font-bold uppercase tracking-widest bg-amber-100 text-amber-700 px-2 py-0.5 rounded">Confidential</span>
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">Basic Salary (KES/month)</label>
+                <input
+                  v-model.number="formData.basic_salary"
+                  type="number"
+                  min="0"
+                  step="500"
+                  class="w-full border border-[#E2E8F0] rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-bold text-slate-800"
+                />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-emerald-600 mb-1.5">Allowances (KES/month)</label>
+                <input
+                  v-model.number="formData.allowances"
+                  type="number"
+                  min="0"
+                  step="100"
+                  class="w-full border border-emerald-200 rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-emerald-400/20 focus:border-emerald-400 outline-none bg-emerald-50/50 font-bold text-emerald-700"
+                />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-red-500 mb-1.5">Deductions (KES/month)</label>
+                <input
+                  v-model.number="formData.deductions"
+                  type="number"
+                  min="0"
+                  step="100"
+                  class="w-full border border-red-200 rounded-[12px] px-4 py-3.5 focus:ring-2 focus:ring-red-400/20 focus:border-red-400 outline-none bg-red-50/50 font-bold text-red-600"
+                />
+              </div>
+            </div>
+            <p class="text-xs text-slate-400">Net pay = Basic + Allowances − Deductions. Deductions should include PAYE, NSSF, and NHIF.</p>
+          </div>
+
           <!-- Compliance Details -->
           <div class="space-y-4">
             <h3 class="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2">
@@ -486,6 +527,9 @@ const BLANK_FORM = {
   nssf_number: '',
   nhif_number: '',
   accrued_leave_days: 21,
+  basic_salary: 0,
+  allowances: 0,
+  deductions: 0,
 }
 
 const formData = reactive({ ...BLANK_FORM })
@@ -527,6 +571,9 @@ const saveStaff = async () => {
   try {
     const payload = { ...formData }
     // Pydantic Optional[date] rejects empty strings — convert to null
+    payload.basic_salary = Number(payload.basic_salary) || 0
+    payload.allowances = Number(payload.allowances) || 0
+    payload.deductions = Number(payload.deductions) || 0
     const nullableFields = ['date_of_hire', 'job_title', 'contract_type', 'kra_pin', 'nssf_number', 'nhif_number']
     for (const f of nullableFields) {
       if (payload[f] === '') payload[f] = null

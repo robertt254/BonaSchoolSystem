@@ -137,6 +137,10 @@ async def startup():
         # CBC assessment model — add academic_year and strand
         "ALTER TABLE assessments ADD COLUMN IF NOT EXISTS academic_year VARCHAR(9) NOT NULL DEFAULT '2024'",
         "ALTER TABLE assessments ADD COLUMN IF NOT EXISTS strand VARCHAR(100) NOT NULL DEFAULT ''",
+        # Staff salary fields for automatic payroll
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS basic_salary NUMERIC(10,2) NOT NULL DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS allowances   NUMERIC(10,2) NOT NULL DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS deductions   NUMERIC(10,2) NOT NULL DEFAULT 0",
     ]
     try:
         with engine.connect() as conn:

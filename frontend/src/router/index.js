@@ -172,7 +172,7 @@ const router = createRouter({
           path: 'finance/payslips',
           name: 'payslips',
           component: () => import('../views/Finance/PayslipsPage.vue'),
-          meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['accountant', 'admin'] },
         },
         {
           path: 'admin/promotion',

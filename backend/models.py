@@ -18,6 +18,9 @@ class User(Base):
     nssf_number = Column(String(30), nullable=True)
     nhif_number = Column(String(30), nullable=True)
     accrued_leave_days = Column(Integer, nullable=False, default=21, server_default="21")
+    basic_salary = Column(Numeric(10, 2), nullable=False, server_default="0")
+    allowances = Column(Numeric(10, 2), nullable=False, server_default="0")
+    deductions = Column(Numeric(10, 2), nullable=False, server_default="0")
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 

@@ -145,6 +145,9 @@ class UserCreate(UserBase):
     nssf_number: Optional[str] = Field(None, max_length=30)
     nhif_number: Optional[str] = Field(None, max_length=30)
     accrued_leave_days: Optional[int] = Field(21, ge=0)
+    basic_salary: Optional[float] = Field(0.0, ge=0)
+    allowances: Optional[float] = Field(0.0, ge=0)
+    deductions: Optional[float] = Field(0.0, ge=0)
 
 
 class UserUpdate(BaseModel):
@@ -159,6 +162,9 @@ class UserUpdate(BaseModel):
     nssf_number: Optional[str] = Field(None, max_length=30)
     nhif_number: Optional[str] = Field(None, max_length=30)
     accrued_leave_days: Optional[int] = Field(None, ge=0)
+    basic_salary: Optional[float] = Field(None, ge=0)
+    allowances: Optional[float] = Field(None, ge=0)
+    deductions: Optional[float] = Field(None, ge=0)
 
 
 class UserResponse(UserBase):
@@ -173,9 +179,16 @@ class UserResponse(UserBase):
     accrued_leave_days: int = 21
     leave_days_used: int = 0
     leave_days_left: int = 21
+    basic_salary: float = 0.0
+    allowances: float = 0.0
+    deductions: float = 0.0
 
     class Config:
         from_attributes = True
+
+
+class RunPayrollRequest(BaseModel):
+    month: str = Field(..., pattern=r"^\d{4}-(0[1-9]|1[0-2])$")
 
 
 class AssessmentBase(BaseModel):

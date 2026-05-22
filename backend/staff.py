@@ -43,6 +43,7 @@ def get_all_staff(db: Session = Depends(get_db), current_user: models.User = Dep
         )
         days_used = sum((l.end_date - l.start_date).days + 1 for l in approved_leaves)
         entitlement = user.accrued_leave_days if user.accrued_leave_days is not None else 21
+        include_salary = current_user.role in {"admin", "accountant"}
         result.append(schemas.UserResponse(
             id=user.id,
             username=user.username,
@@ -57,6 +58,9 @@ def get_all_staff(db: Session = Depends(get_db), current_user: models.User = Dep
             accrued_leave_days=entitlement,
             leave_days_used=days_used,
             leave_days_left=max(0, entitlement - days_used),
+            basic_salary=float(user.basic_salary or 0) if include_salary else 0.0,
+            allowances=float(user.allowances or 0) if include_salary else 0.0,
+            deductions=float(user.deductions or 0) if include_salary else 0.0,
         ))
     return result
 
@@ -82,6 +86,9 @@ def create_staff(
         nssf_number=user.nssf_number,
         nhif_number=user.nhif_number,
         accrued_leave_days=user.accrued_leave_days if user.accrued_leave_days is not None else 21,
+        basic_salary=user.basic_salary or 0,
+        allowances=user.allowances or 0,
+        deductions=user.deductions or 0,
     )
     db.add(new_user)
     db.flush()
@@ -90,6 +97,7 @@ def create_staff(
     db.commit()
     db.refresh(new_user)
     entitlement = new_user.accrued_leave_days if new_user.accrued_leave_days is not None else 21
+    include_salary = admin.role in {"admin", "accountant"}
     return schemas.UserResponse(
         id=new_user.id,
         username=new_user.username,
@@ -104,6 +112,9 @@ def create_staff(
         accrued_leave_days=entitlement,
         leave_days_used=0,
         leave_days_left=entitlement,
+        basic_salary=float(new_user.basic_salary or 0) if include_salary else 0.0,
+        allowances=float(new_user.allowances or 0) if include_salary else 0.0,
+        deductions=float(new_user.deductions or 0) if include_salary else 0.0,
     )
 
 
@@ -141,6 +152,7 @@ def update_staff(
     )
     days_used = sum((l.end_date - l.start_date).days + 1 for l in approved_leaves)
     entitlement = db_user.accrued_leave_days if db_user.accrued_leave_days is not None else 21
+    include_salary = admin.role in {"admin", "accountant"}
     return schemas.UserResponse(
         id=db_user.id,
         username=db_user.username,
@@ -155,6 +167,9 @@ def update_staff(
         accrued_leave_days=entitlement,
         leave_days_used=days_used,
         leave_days_left=max(0, entitlement - days_used),
+        basic_salary=float(db_user.basic_salary or 0) if include_salary else 0.0,
+        allowances=float(db_user.allowances or 0) if include_salary else 0.0,
+        deductions=float(db_user.deductions or 0) if include_salary else 0.0,
     )
 
 
