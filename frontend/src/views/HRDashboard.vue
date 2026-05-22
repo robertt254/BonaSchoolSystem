@@ -574,6 +574,8 @@ const saveStaff = async () => {
     payload.basic_salary = Number(payload.basic_salary) || 0
     payload.allowances = Number(payload.allowances) || 0
     payload.deductions = Number(payload.deductions) || 0
+    // When editing, omit password entirely if not changed
+    if (isEditing.value && !payload.password) delete payload.password
     const nullableFields = ['date_of_hire', 'job_title', 'contract_type', 'kra_pin', 'nssf_number', 'nhif_number']
     for (const f of nullableFields) {
       if (payload[f] === '') payload[f] = null

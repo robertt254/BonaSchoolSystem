@@ -154,7 +154,7 @@ class UserUpdate(BaseModel):
     username: Optional[str] = Field(None, min_length=3, max_length=50)
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     role: Optional[UserRole] = None
-    password: Optional[str] = Field(None, min_length=8)
+    password: Optional[str] = None   # validated below only when a value is actually provided
     job_title: Optional[str] = Field(None, max_length=100)
     contract_type: Optional[str] = Field(None, max_length=50)
     date_of_hire: Optional[date] = None
@@ -165,6 +165,13 @@ class UserUpdate(BaseModel):
     basic_salary: Optional[float] = Field(None, ge=0)
     allowances: Optional[float] = Field(None, ge=0)
     deductions: Optional[float] = Field(None, ge=0)
+
+    @field_validator('password')
+    @classmethod
+    def password_length(cls, v):
+        if v is not None and len(v) > 0 and len(v) < 8:
+            raise ValueError('Password must be at least 8 characters')
+        return v or None  # treat empty string as None
 
 
 class UserResponse(UserBase):
