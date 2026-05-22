@@ -65,7 +65,7 @@ def get_payroll_ledger(
 ):
     return (
         db.query(models.Payroll)
-        .order_by(models.Payroll.created_at.desc())
+        .order_by(models.Payroll.id.desc())
         .offset(skip)
         .limit(limit)
         .all()
