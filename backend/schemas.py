@@ -180,8 +180,10 @@ class UserResponse(UserBase):
 
 class AssessmentBase(BaseModel):
     student_id: int
+    academic_year: str = Field(..., min_length=4, max_length=9)
     term: Term
     learning_area: str = Field(..., min_length=1, max_length=100)
+    strand: str = Field("", max_length=100)
     score: AssessmentScore
     remarks: Optional[str] = Field(None, max_length=500)
 
@@ -192,6 +194,28 @@ class AssessmentCreate(AssessmentBase):
 
 class AssessmentResponse(AssessmentBase):
     id: int
+
+    class Config:
+        from_attributes = True
+
+
+class FeeCarryForwardCreate(BaseModel):
+    student_id: int
+    amount: float = Field(..., description="Positive = student owes; negative = school credit")
+    academic_year: str
+    term: Term
+    note: Optional[str] = Field(None, max_length=200)
+
+
+class FeeCarryForwardResponse(BaseModel):
+    id: int
+    student_id: int
+    amount: float
+    academic_year: str
+    term: str
+    note: Optional[str]
+    recorded_by: str
+    created_at: datetime
 
     class Config:
         from_attributes = True

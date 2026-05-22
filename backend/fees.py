@@ -65,7 +65,7 @@ def _get_expected_fee(db: Session, grade_level: str, term: str) -> float:
 
 
 def _get_rollover_credit(db: Session, student_id: int, grade_level: str, up_to_term_num: int) -> float:
-    """Return the cumulative overpayment from all terms before up_to_term_num."""
+    """Return the cumulative overpayment from all terms before up_to_term_num (within same year)."""
     cumulative_expected = 0.0
     cumulative_paid = 0.0
     for num in range(1, up_to_term_num):
@@ -77,6 +77,16 @@ def _get_rollover_credit(db: Session, student_id: int, grade_level: str, up_to_t
         ).scalar() or 0.0
         cumulative_paid += float(paid)
     return max(0.0, round(cumulative_paid - cumulative_expected, 2))
+
+
+def _get_carry_forward(db: Session, student_id: int, academic_year: str, term: str) -> float:
+    """Sum of all explicit carry-forward adjustments for this student/year/term."""
+    total = db.query(func.sum(models.FeeCarryForward.amount)).filter(
+        models.FeeCarryForward.student_id == student_id,
+        models.FeeCarryForward.academic_year == academic_year,
+        models.FeeCarryForward.term == term,
+    ).scalar()
+    return float(total or 0.0)
 
 
 def compute_effective_term_collection(db: Session, students: list, term: str) -> float:
@@ -184,6 +194,7 @@ def get_all_payments(
 def get_student_balance(
     student_id: int,
     term: str,
+    academic_year: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
@@ -207,12 +218,10 @@ def get_student_balance(
         ).scalar() or 0.0
     )
 
-    # Credit carried forward from any overpayments in earlier terms
     rollover_credit = _get_rollover_credit(db, student_id, student.grade_level, current_term_num)
+    carry_forward = _get_carry_forward(db, student_id, academic_year or "", term) if academic_year else 0.0
 
-    # Outstanding cannot be negative (overpayment of current term is not rolled here,
-    # it will become credit when the next term is queried)
-    outstanding = round(max(0.0, expected - total_paid - rollover_credit), 2)
+    outstanding = round(max(0.0, expected + carry_forward - total_paid - rollover_credit), 2)
 
     return {
         "student_id": student.id,
@@ -220,6 +229,7 @@ def get_student_balance(
         "grade_level": student.grade_level,
         "term_checked": term,
         "expected_term_fee": expected,
+        "carry_forward": carry_forward,
         "total_paid_this_term": total_paid,
         "rollover_credit": rollover_credit,
         "outstanding_balance": outstanding,
@@ -289,6 +299,7 @@ def get_monthly_collection(
 @router.get("/defaulters")
 def get_defaulters(
     term: str,
+    academic_year: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
@@ -310,7 +321,8 @@ def get_defaulters(
             ).scalar() or 0.0
         )
         credit = _get_rollover_credit(db, s.id, s.grade_level, current_term_num)
-        balance = round(max(0.0, expected - paid - credit), 2)
+        carry_fwd = _get_carry_forward(db, s.id, academic_year or "", term) if academic_year else 0.0
+        balance = round(max(0.0, expected + carry_fwd - paid - credit), 2)
         if balance > 0:
             defaulters.append({
                 "student_id": s.id,
@@ -318,11 +330,71 @@ def get_defaulters(
                 "admission_number": s.admission_number,
                 "grade_level": s.grade_level,
                 "expected_fee": expected,
+                "carry_forward": carry_fwd,
                 "total_paid": paid,
                 "rollover_credit": credit,
                 "outstanding_balance": balance,
             })
     return defaulters
+
+
+# ── Fee carry-forward CRUD ────────────────────────────────────────────────────
+
+@router.get("/carry-forward/{student_id}", response_model=list[schemas.FeeCarryForwardResponse])
+def get_carry_forwards(
+    student_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    return db.query(models.FeeCarryForward).filter(
+        models.FeeCarryForward.student_id == student_id,
+    ).order_by(models.FeeCarryForward.academic_year, models.FeeCarryForward.term).all()
+
+
+@router.post("/carry-forward", status_code=201, response_model=schemas.FeeCarryForwardResponse)
+def create_carry_forward(
+    payload: schemas.FeeCarryForwardCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    student = db.query(models.Student).filter(
+        models.Student.id == payload.student_id,
+        models.Student.is_deleted == False,
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    cf = models.FeeCarryForward(
+        **payload.model_dump(),
+        recorded_by=current_user.name,
+    )
+    db.add(cf)
+    db.flush()
+    log_action(db, current_user.id, "CREATE", "fee_carry_forward", cf.id,
+               {"student_id": payload.student_id, "amount": str(payload.amount),
+                "year": payload.academic_year, "term": payload.term})
+    db.commit()
+    db.refresh(cf)
+    return cf
+
+
+@router.delete("/carry-forward/{cf_id}", status_code=204)
+def delete_carry_forward(
+    cf_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    cf = db.query(models.FeeCarryForward).filter(models.FeeCarryForward.id == cf_id).first()
+    if not cf:
+        raise HTTPException(status_code=404, detail="Not found")
+    log_action(db, current_user.id, "DELETE", "fee_carry_forward", cf_id)
+    db.delete(cf)
+    db.commit()
 
 
 # ── Fee Structure CRUD ────────────────────────────────────────────────────────

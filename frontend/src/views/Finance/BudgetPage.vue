@@ -6,11 +6,18 @@
         <h1 class="text-2xl font-extrabold text-slate-800">Budget vs Actual</h1>
         <p class="text-sm text-slate-400 mt-0.5">Plan and track spending against budget per category.</p>
       </div>
-      <button @click="showModal = true; resetForm()"
-        class="bg-school-purple text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-school-purple-l transition flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Add Budget
-      </button>
+      <div class="flex gap-2">
+        <button v-if="budgets.length > 0" @click="exportBudget"
+          class="flex items-center gap-1.5 bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+        <button @click="showModal = true; resetForm()"
+          class="bg-school-purple text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-school-purple-l transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Budget
+        </button>
+      </div>
     </div>
 
     <!-- Filters -->
@@ -146,6 +153,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
+import { downloadCsv } from '@/utils/csvExport'
 
 const appStore = useAppStore()
 
@@ -165,6 +173,16 @@ const totalRemaining = computed(() => totalBudgeted.value - totalSpent.value)
 
 const fmt = (n) => Number(n || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })
 const pctClass = (pct) => pct > 100 ? 'bg-red-50 text-red-600' : pct > 80 ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'
+
+const exportBudget = () => {
+  downloadCsv(`budget-${filterYear.value}${filterTerm.value ? '-' + filterTerm.value : ''}`, [
+    { key: 'category', label: 'Category' },
+    { key: 'term', label: 'Term' },
+    { key: 'budgeted_amount', label: 'Budgeted (KES)' },
+    { key: 'actual_spent', label: 'Actual Spent (KES)' },
+    { key: 'variance', label: 'Variance (KES)' },
+  ], budgets.value)
+}
 
 const load = async () => {
   loading.value = true

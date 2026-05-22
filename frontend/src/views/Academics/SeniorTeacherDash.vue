@@ -1,58 +1,47 @@
 <template>
   <div class="max-w-7xl mx-auto space-y-6">
 
-    <!-- Grade tabs + mode toggle -->
+    <!-- Controls bar -->
     <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-4 flex flex-col gap-4">
       <div class="flex flex-wrap gap-2">
-        <button
-          v-for="grade in cbcGrades"
-          :key="grade"
-          @click="selectGrade(grade)"
-          :class="[
-            'px-4 py-2.5 rounded-[10px] text-sm font-bold whitespace-nowrap transition-all',
-            selectedGrade === grade
-              ? 'bg-school-navy text-white shadow-sm'
-              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
-          ]"
-        >{{ grade }}</button>
+        <button v-for="grade in cbcGrades" :key="grade" @click="selectGrade(grade)"
+          :class="['px-4 py-2.5 rounded-[10px] text-sm font-bold whitespace-nowrap transition-all',
+            selectedGrade === grade ? 'bg-school-navy text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900']">
+          {{ grade }}
+        </button>
       </div>
 
-      <!-- Mode + subject -->
       <div class="flex flex-wrap items-end gap-4">
         <div>
           <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
-          <select
-            v-model="selectedArea"
-            @change="loadBulkData"
-            class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple"
-          >
+          <select v-model="selectedArea" @change="onAreaChange"
+            class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
             <option v-for="a in learningAreas" :key="a" :value="a">{{ a }}</option>
           </select>
         </div>
         <div class="flex gap-2">
-          <button
-            @click="viewMode = 'bulk'"
+          <button @click="viewMode = 'bulk'"
             :class="viewMode === 'bulk' ? 'bg-school-purple text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-            class="px-4 py-2.5 rounded-lg text-sm font-bold transition"
-          >Bulk Entry</button>
-          <button
-            @click="viewMode = 'list'"
+            class="px-4 py-2.5 rounded-lg text-sm font-bold transition">Bulk Entry</button>
+          <button @click="viewMode = 'list'"
             :class="viewMode === 'list' ? 'bg-school-purple text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-            class="px-4 py-2.5 rounded-lg text-sm font-bold transition"
-          >Student List</button>
+            class="px-4 py-2.5 rounded-lg text-sm font-bold transition">Student List</button>
         </div>
         <div class="flex-1"></div>
         <div class="relative">
           <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search student…"
-            class="pl-9 pr-4 py-2.5 text-sm border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple w-56"
-          />
+          <input v-model="searchQuery" type="text" placeholder="Search student…"
+            class="pl-9 pr-4 py-2.5 text-sm border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple w-56" />
         </div>
+      </div>
+
+      <!-- Strand indicator -->
+      <div v-if="activeStrands.length > 0" class="flex flex-wrap gap-2">
+        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 self-center">Strands:</span>
+        <span v-for="s in activeStrands" :key="s"
+          class="bg-school-purple/10 text-school-purple text-xs font-semibold px-2.5 py-1 rounded-full">{{ s }}</span>
       </div>
     </div>
 
@@ -61,13 +50,10 @@
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50 flex items-center justify-between">
         <div>
           <h3 class="font-bold text-slate-800">{{ selectedGrade }} · {{ appStore.currentTerm }} · {{ selectedArea }}</h3>
-          <p class="text-xs text-slate-400 mt-0.5">{{ filteredBulk.length }} students — click a cell or use the dropdown to enter scores</p>
+          <p class="text-xs text-slate-400 mt-0.5">{{ filteredBulk.length }} students · Year {{ appStore.currentYear }}</p>
         </div>
-        <button
-          @click="saveBulk"
-          :disabled="bulkSaving || !hasPendingChanges"
-          class="bg-school-purple text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-school-purple-l transition disabled:opacity-40 flex items-center gap-2"
-        >
+        <button @click="saveBulk" :disabled="bulkSaving || !hasPendingChanges"
+          class="bg-school-purple text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-school-purple-l transition disabled:opacity-40 flex items-center gap-2">
           <svg v-if="bulkSaving" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-dasharray="50" stroke-dashoffset="50"/></svg>
           {{ bulkSaving ? 'Saving…' : 'Save All' }}
         </button>
@@ -87,50 +73,65 @@
             <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-400">
               <th class="text-left px-6 py-3 w-8">#</th>
               <th class="text-left px-6 py-3">Student</th>
-              <th class="text-left px-6 py-3 w-32">Adm No.</th>
-              <th class="text-center px-4 py-3 w-36">Score</th>
+              <!-- Single score (no strands) -->
+              <template v-if="activeStrands.length === 0">
+                <th class="text-center px-4 py-3 w-40">Score</th>
+              </template>
+              <!-- One column per strand -->
+              <template v-else>
+                <th v-for="strand in activeStrands" :key="strand" class="text-center px-3 py-3 min-w-[130px]">
+                  <span class="block truncate max-w-[120px]">{{ strand }}</span>
+                </th>
+              </template>
               <th class="text-left px-4 py-3">Remarks</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
-            <tr
-              v-for="(row, i) in filteredBulk"
-              :key="row.student_id"
+            <tr v-for="(row, i) in filteredBulk" :key="row.student_id"
               class="hover:bg-violet-50/20 transition-colors"
-              :class="row._changed ? 'bg-amber-50/30' : ''"
-            >
+              :class="row._changed ? 'bg-amber-50/30' : ''">
               <td class="px-6 py-3 text-slate-400 text-xs">{{ i + 1 }}</td>
-              <td class="px-6 py-3 font-semibold text-slate-800">{{ row.student_name }}</td>
-              <td class="px-6 py-3 font-mono text-xs text-slate-500">{{ row.admission_number }}</td>
+              <td class="px-6 py-3 font-semibold text-slate-800 whitespace-nowrap">{{ row.student_name }}</td>
+              <!-- Single score -->
+              <template v-if="activeStrands.length === 0">
+                <td class="px-4 py-3">
+                  <select v-model="row.strandScores['']" @change="row._changed = true"
+                    class="w-full border rounded-lg px-2 py-2.5 text-sm font-bold outline-none transition"
+                    :class="scoreClass(row.strandScores[''])">
+                    <option value="">—</option>
+                    <option value="EE">EE – Exceeding</option>
+                    <option value="ME">ME – Meeting</option>
+                    <option value="AE">AE – Approaching</option>
+                    <option value="BE">BE – Below</option>
+                  </select>
+                </td>
+              </template>
+              <!-- Per-strand scores -->
+              <template v-else>
+                <td v-for="strand in activeStrands" :key="strand" class="px-3 py-3">
+                  <select v-model="row.strandScores[strand]" @change="row._changed = true"
+                    class="w-full border rounded-lg px-2 py-2 text-sm font-bold outline-none transition"
+                    :class="scoreClass(row.strandScores[strand])">
+                    <option value="">—</option>
+                    <option value="EE">EE</option>
+                    <option value="ME">ME</option>
+                    <option value="AE">AE</option>
+                    <option value="BE">BE</option>
+                  </select>
+                </td>
+              </template>
               <td class="px-4 py-3">
-                <select
-                  v-model="row.score"
-                  @change="row._changed = true"
-                  class="w-full border rounded-lg px-2 py-2.5 text-sm font-bold outline-none transition"
-                  :class="scoreClass(row.score)"
-                >
-                  <option value="">—</option>
-                  <option value="EE">EE – Exceeding</option>
-                  <option value="ME">ME – Meeting</option>
-                  <option value="AE">AE – Approaching</option>
-                  <option value="BE">BE – Below</option>
-                </select>
-              </td>
-              <td class="px-4 py-3">
-                <input
-                  v-model="row.remarks"
-                  @input="row._changed = true"
-                  type="text"
+                <input v-model="row.remarks" @input="row._changed = true" type="text"
                   placeholder="Optional remark…"
-                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple"
-                />
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple" />
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div v-if="bulkSaveMsg" class="px-6 py-3 text-sm font-medium" :class="bulkSaveError ? 'text-school-red bg-red-50' : 'text-emerald-700 bg-emerald-50'">
+      <div v-if="bulkSaveMsg" class="px-6 py-3 text-sm font-medium"
+        :class="bulkSaveError ? 'text-red-700 bg-red-50' : 'text-emerald-700 bg-emerald-50'">
         {{ bulkSaveMsg }}
       </div>
     </div>
@@ -140,37 +141,36 @@
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50">
         <h3 class="font-bold text-slate-800">{{ selectedGrade }} Students</h3>
       </div>
-
       <div v-if="loadingBulk" class="py-16 flex justify-center">
         <div class="w-8 h-8 border-4 border-slate-200 border-t-school-purple rounded-full animate-spin"></div>
       </div>
-
       <div v-else class="divide-y divide-slate-50">
-        <div
-          v-for="(s, i) in filteredBulk"
-          :key="s.student_id"
-          class="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors"
-        >
+        <div v-for="(s, i) in filteredBulk" :key="s.student_id"
+          class="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
           <div class="flex items-center gap-4">
             <div class="w-8 h-8 rounded-full bg-violet-100 text-school-purple flex items-center justify-center font-bold text-xs">
               {{ s.student_name.charAt(0) }}
             </div>
             <div>
               <p class="font-semibold text-slate-800 text-sm">{{ s.student_name }}</p>
-              <p class="text-xs text-slate-400 font-mono">{{ s.admission_number }}</p>
+              <div class="flex gap-1 mt-0.5">
+                <template v-if="activeStrands.length === 0">
+                  <span v-if="s.strandScores['']" class="text-xs font-bold px-2 py-0.5 rounded-full" :class="scoreBadge(s.strandScores[''])">{{ s.strandScores[''] }}</span>
+                </template>
+                <template v-else>
+                  <span v-for="strand in activeStrands" :key="strand">
+                    <span v-if="s.strandScores[strand]" class="text-xs font-bold px-1.5 py-0.5 rounded-full mr-1" :class="scoreBadge(s.strandScores[strand])" :title="strand">{{ s.strandScores[strand] }}</span>
+                  </span>
+                </template>
+              </div>
             </div>
           </div>
-          <div class="flex items-center gap-3">
-            <span v-if="s.score" class="text-xs font-bold px-2.5 py-1 rounded-full" :class="scoreBadge(s.score)">{{ s.score }}</span>
-            <router-link :to="`/students/${s.student_id}`" class="text-xs font-bold text-slate-500 hover:text-slate-800 border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition">Profile</router-link>
-            <button @click="openModal(s)" class="text-xs font-bold text-school-purple border border-school-purple/30 bg-school-purple/5 hover:bg-school-purple hover:text-white px-3 py-1.5 rounded-lg transition">
-              Grade
-            </button>
-          </div>
+          <button @click="openModal(s)"
+            class="text-xs font-bold text-school-purple border border-school-purple/30 bg-school-purple/5 hover:bg-school-purple hover:text-white px-3 py-1.5 rounded-lg transition">
+            Grade
+          </button>
         </div>
-        <div v-if="filteredBulk.length === 0" class="py-12 text-center text-slate-400 text-sm">
-          No students in {{ selectedGrade }}.
-        </div>
+        <div v-if="filteredBulk.length === 0" class="py-12 text-center text-slate-400 text-sm">No students in {{ selectedGrade }}.</div>
       </div>
     </div>
 
@@ -180,7 +180,7 @@
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <div>
             <h2 class="text-lg font-bold text-[#0F172A]">Record Assessment</h2>
-            <p class="text-xs text-slate-500 mt-0.5">{{ modalStudent?.student_name }} · {{ appStore.currentTerm }}</p>
+            <p class="text-xs text-slate-500 mt-0.5">{{ modalStudent?.student_name }} · {{ appStore.currentTerm }} · {{ appStore.currentYear }}</p>
           </div>
           <button @click="showModal = false" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -188,28 +188,38 @@
         </div>
 
         <form @submit.prevent="submitSingle" class="p-6 space-y-4">
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
-              <select v-model="modalForm.learning_area" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
-                <option disabled value="">Select Area</option>
-                <option v-for="a in learningAreas" :key="a" :value="a">{{ a }}</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Score (CBC)</label>
-              <select v-model="modalForm.score" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
-                <option disabled value="">Select Score</option>
-                <option value="EE">EE – Exceeding</option>
-                <option value="ME">ME – Meeting</option>
-                <option value="AE">AE – Approaching</option>
-                <option value="BE">BE – Below</option>
-              </select>
-            </div>
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
+            <select v-model="modalForm.learning_area" @change="modalForm.strand = ''" required
+              class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none">
+              <option disabled value="">Select Area</option>
+              <option v-for="a in learningAreas" :key="a" :value="a">{{ a }}</option>
+            </select>
+          </div>
+          <div v-if="modalStrands.length > 0">
+            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Strand</label>
+            <select v-model="modalForm.strand" required
+              class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none">
+              <option disabled value="">Select Strand</option>
+              <option v-for="s in modalStrands" :key="s" :value="s">{{ s }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Score (CBC)</label>
+            <select v-model="modalForm.score" required
+              class="w-full border border-slate-300 rounded-lg p-2.5 text-sm font-bold outline-none">
+              <option disabled value="">Select Score</option>
+              <option value="EE">EE – Exceeding Expectations</option>
+              <option value="ME">ME – Meeting Expectations</option>
+              <option value="AE">AE – Approaching Expectations</option>
+              <option value="BE">BE – Below Expectations</option>
+            </select>
           </div>
           <div>
             <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Remarks (optional)</label>
-            <textarea v-model="modalForm.remarks" rows="2" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple resize-none" placeholder="Teacher's comments…"></textarea>
+            <textarea v-model="modalForm.remarks" rows="2"
+              class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none resize-none"
+              placeholder="Teacher's comments…"></textarea>
           </div>
           <button type="submit" class="w-full py-3 bg-school-purple text-white rounded-lg font-bold hover:bg-school-purple-l transition text-sm">
             Save Score
@@ -235,11 +245,35 @@ const AREAS_BY_GRADE = {
   'Play Group': ['Psychomotor & Creative Activities', 'Language Activities', 'Mathematical Activities', 'Environmental Activities', 'Religious & Moral Education'],
   'PP1': ['Psychomotor & Creative Activities', 'Language Activities', 'Mathematical Activities', 'Environmental Activities', 'Religious & Moral Education'],
   'PP2': ['Psychomotor & Creative Activities', 'Language Activities', 'Mathematical Activities', 'Environmental Activities', 'Religious & Moral Education'],
-  default: ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Creative Arts', 'Religious Education', 'Physical & Health Education'],
+  'Grade 1': ['English', 'Kiswahili', 'Mathematics', 'Environmental Activities', 'Creative Arts', 'Physical & Health Education', 'Religious Education'],
+  'Grade 2': ['English', 'Kiswahili', 'Mathematics', 'Environmental Activities', 'Creative Arts', 'Physical & Health Education', 'Religious Education'],
+  'Grade 3': ['English', 'Kiswahili', 'Mathematics', 'Environmental Activities', 'Creative Arts', 'Physical & Health Education', 'Religious Education'],
+  'Grade 4': ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Creative Arts & Sports', 'Physical & Health Education', 'Pre-Technical Studies', 'Religious Education'],
+  'Grade 5': ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Creative Arts & Sports', 'Physical & Health Education', 'Pre-Technical Studies', 'Religious Education'],
+  'Grade 6': ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Creative Arts & Sports', 'Physical & Health Education', 'Pre-Technical Studies', 'Religious Education'],
+}
+
+// CBC strands per learning area — empty array = single overall score
+const CBC_STRANDS = {
+  'Psychomotor & Creative Activities': ['Movement Activities', 'Creative Activities'],
+  'Language Activities': ['Listening & Speaking', 'Reading Readiness', 'Writing Readiness'],
+  'Mathematical Activities': ['Numbers', 'Measurement', 'Spatial Reasoning'],
+  'Environmental Activities': ['Living Things', 'Non-Living Things', 'Weather & Environment'],
+  'Religious & Moral Education': [],
+  'English': ['Listening & Speaking', 'Reading', 'Writing', 'Grammar & Vocabulary'],
+  'Kiswahili': ['Kusikiliza na Kuzungumza', 'Kusoma', 'Kuandika', 'Sarufi na Msamiati'],
+  'Mathematics': ['Numbers', 'Measurement', 'Geometry', 'Data Handling'],
+  'Creative Arts': ['Music', 'Art & Craft'],
+  'Physical & Health Education': ['Physical Activity', 'Health Education'],
+  'Religious Education': [],
+  'Integrated Science': ['Living Things', 'Matter', 'Forces & Energy', 'Earth & Space'],
+  'Social Studies': ['Citizenship', 'Our Physical Environment', 'History & Culture'],
+  'Creative Arts & Sports': ['Visual Arts', 'Performing Arts', 'Games & Sports'],
+  'Pre-Technical Studies': ['Basic Technology', 'Agriculture', 'Home Science'],
 }
 
 const selectedGrade = ref('Grade 1')
-const selectedArea = ref('Mathematics')
+const selectedArea = ref('English')
 const viewMode = ref('bulk')
 const searchQuery = ref('')
 const bulkRows = ref([])
@@ -247,22 +281,19 @@ const loadingBulk = ref(false)
 const bulkSaving = ref(false)
 const bulkSaveMsg = ref('')
 const bulkSaveError = ref(false)
-
 const showModal = ref(false)
 const modalStudent = ref(null)
-const modalForm = reactive({ learning_area: '', score: '', remarks: '' })
+const modalForm = reactive({ learning_area: '', strand: '', score: '', remarks: '' })
 
-const learningAreas = computed(() => AREAS_BY_GRADE[selectedGrade.value] || AREAS_BY_GRADE.default)
-
+const learningAreas = computed(() => AREAS_BY_GRADE[selectedGrade.value] || AREAS_BY_GRADE['Grade 1'])
+const activeStrands = computed(() => CBC_STRANDS[selectedArea.value] || [])
+const modalStrands = computed(() => CBC_STRANDS[modalForm.learning_area] || [])
 const hasPendingChanges = computed(() => bulkRows.value.some(r => r._changed))
 
 const filteredBulk = computed(() => {
   const q = searchQuery.value.toLowerCase()
   if (!q) return bulkRows.value
-  return bulkRows.value.filter(r =>
-    r.student_name.toLowerCase().includes(q) ||
-    r.admission_number.toLowerCase().includes(q)
-  )
+  return bulkRows.value.filter(r => r.student_name.toLowerCase().includes(q))
 })
 
 const scoreClass = (score) => ({
@@ -284,16 +315,30 @@ const loadBulkData = async () => {
   loadingBulk.value = true
   try {
     const data = await apiFetch(
-      `/api/academics/grade/${encodeURIComponent(selectedGrade.value)}/${encodeURIComponent(appStore.currentTerm)}`
+      `/api/academics/grade/${encodeURIComponent(selectedGrade.value)}/${encodeURIComponent(appStore.currentTerm)}?academic_year=${appStore.currentYear}`
     )
-    bulkRows.value = data.map(s => ({
-      student_id: s.student_id,
-      student_name: s.student_name,
-      admission_number: s.admission_number,
-      score: s.scores[selectedArea.value]?.score || '',
-      remarks: s.scores[selectedArea.value]?.remarks || '',
-      _changed: false,
-    }))
+    const strands = activeStrands.value
+    bulkRows.value = data.map(s => {
+      const areaScores = s.scores[selectedArea.value] || {}
+      const strandScores = {}
+      if (strands.length === 0) {
+        strandScores[''] = areaScores['']?.score || ''
+      } else {
+        for (const strand of strands) {
+          strandScores[strand] = areaScores[strand]?.score || ''
+        }
+      }
+      return {
+        student_id: s.student_id,
+        student_name: s.student_name,
+        admission_number: s.admission_number,
+        strandScores,
+        remarks: strands.length === 0
+          ? (areaScores['']?.remarks || '')
+          : (areaScores[strands[0]]?.remarks || ''),
+        _changed: false,
+      }
+    })
   } catch (e) {
     console.error(e)
   } finally {
@@ -301,31 +346,56 @@ const loadBulkData = async () => {
   }
 }
 
+const onAreaChange = () => loadBulkData()
+
 const selectGrade = (grade) => {
   selectedGrade.value = grade
-  const areas = AREAS_BY_GRADE[grade] || AREAS_BY_GRADE.default
-  selectedArea.value = areas[0]
+  selectedArea.value = (AREAS_BY_GRADE[grade] || AREAS_BY_GRADE['Grade 1'])[0]
   loadBulkData()
 }
 
 const saveBulk = async () => {
   bulkSaveMsg.value = ''
   bulkSaveError.value = false
-  const changed = bulkRows.value.filter(r => r._changed && r.score)
+  const changed = bulkRows.value.filter(r => r._changed)
   if (!changed.length) return
 
   bulkSaving.value = true
   try {
-    const payload = changed.map(r => ({
-      student_id: r.student_id,
-      term: appStore.currentTerm,
-      learning_area: selectedArea.value,
-      score: r.score,
-      remarks: r.remarks || null,
-    }))
-    await academicService.saveScores(payload)
+    const payload = []
+    for (const row of changed) {
+      const strands = activeStrands.value
+      if (strands.length === 0) {
+        if (row.strandScores['']) {
+          payload.push({
+            student_id: row.student_id,
+            academic_year: String(appStore.currentYear),
+            term: appStore.currentTerm,
+            learning_area: selectedArea.value,
+            strand: '',
+            score: row.strandScores[''],
+            remarks: row.remarks || null,
+          })
+        }
+      } else {
+        for (const strand of strands) {
+          if (row.strandScores[strand]) {
+            payload.push({
+              student_id: row.student_id,
+              academic_year: String(appStore.currentYear),
+              term: appStore.currentTerm,
+              learning_area: selectedArea.value,
+              strand,
+              score: row.strandScores[strand],
+              remarks: row.remarks || null,
+            })
+          }
+        }
+      }
+    }
+    if (payload.length) await academicService.saveScores(payload)
     bulkRows.value.forEach(r => { r._changed = false })
-    bulkSaveMsg.value = `${changed.length} score${changed.length !== 1 ? 's' : ''} saved successfully.`
+    bulkSaveMsg.value = `${changed.length} student(s) saved successfully.`
     setTimeout(() => { bulkSaveMsg.value = '' }, 4000)
   } catch (e) {
     bulkSaveMsg.value = 'Save failed: ' + (e?.message || '')
@@ -338,8 +408,9 @@ const saveBulk = async () => {
 const openModal = (s) => {
   modalStudent.value = s
   modalForm.learning_area = selectedArea.value
-  modalForm.score = s.score || ''
-  modalForm.remarks = s.remarks || ''
+  modalForm.strand = activeStrands.value[0] || ''
+  modalForm.score = ''
+  modalForm.remarks = ''
   showModal.value = true
 }
 
@@ -348,10 +419,12 @@ const submitSingle = async () => {
   try {
     await academicService.saveScores([{
       student_id: modalStudent.value.student_id,
+      academic_year: String(appStore.currentYear),
       term: appStore.currentTerm,
       learning_area: modalForm.learning_area,
+      strand: modalForm.strand,
       score: modalForm.score,
-      remarks: modalForm.remarks,
+      remarks: modalForm.remarks || null,
     }])
     showModal.value = false
     await loadBulkData()
@@ -361,6 +434,7 @@ const submitSingle = async () => {
 }
 
 watch(() => appStore.currentTerm, loadBulkData)
+watch(() => appStore.currentYear, loadBulkData)
 
 onMounted(() => {
   selectedArea.value = learningAreas.value[0]

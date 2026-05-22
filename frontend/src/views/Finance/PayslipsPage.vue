@@ -23,7 +23,14 @@
     <div v-if="payroll.length > 0" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-3.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
         <span class="font-semibold text-sm text-slate-700">{{ payroll.length }} payroll record(s) — {{ filterMonth }}</span>
-        <span class="text-sm font-bold text-slate-800">Total: KES {{ fmt(totalNet) }}</span>
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-bold text-slate-800">Total: KES {{ fmt(totalNet) }}</span>
+          <button @click="exportPayroll"
+            class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+        </div>
       </div>
       <table class="w-full text-sm">
         <thead>
@@ -147,6 +154,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
+import { downloadCsv } from '@/utils/csvExport'
 
 const payroll = ref([])
 const loaded = ref(false)
@@ -173,6 +181,17 @@ const viewPayslip = async (id) => {
   try {
     selectedPayslip.value = await apiFetch(`/api/finance/payslip/${id}`)
   } catch { alert('Could not load payslip.') }
+}
+
+const exportPayroll = () => {
+  downloadCsv(`payroll-${filterMonth.value}`, [
+    { key: 'staff_name', label: 'Staff Name' },
+    { key: 'payment_month', label: 'Month' },
+    { key: 'basic_salary', label: 'Basic Salary' },
+    { key: 'allowances', label: 'Allowances' },
+    { key: 'deductions', label: 'Deductions' },
+    { key: 'net_pay', label: 'Net Pay' },
+  ], payroll.value)
 }
 
 const printPage = () => window.print()

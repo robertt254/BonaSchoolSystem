@@ -126,6 +126,9 @@ import { ref, defineComponent, h, onMounted } from 'vue'
 import studentService from '@/services/studentService'
 import academicService from '@/services/academicService'
 import { apiFetch } from '@/services/api'
+import { useAppStore } from '@/stores/app'
+
+const appStore = useAppStore()
 
 // Inline report card document component
 const scoreClass = (s) => ({
@@ -149,7 +152,7 @@ const ReportCardDoc = defineComponent({
           h('div', { class: 'text-right' }, [
             h('p', { class: 'text-white/40 text-[10px] uppercase tracking-widest font-bold' }, 'Official Report Card'),
             h('p', { class: 'text-white font-extrabold text-lg mt-0.5' }, props.data.term),
-            h('p', { class: 'text-white/50 text-xs' }, `Academic Year ${new Date().getFullYear()}`),
+            h('p', { class: 'text-white/50 text-xs' }, `Academic Year ${props.data.academic_year || new Date().getFullYear()}`),
           ]),
         ]),
       ]),
@@ -169,29 +172,53 @@ const ReportCardDoc = defineComponent({
         ]),
         h('div', { class: 'px-5 py-4' }, [
           h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Term / Year'),
-          h('p', { class: 'font-bold text-slate-800 text-sm' }, `${props.data.term} · ${new Date().getFullYear()}`),
+          h('p', { class: 'font-bold text-slate-800 text-sm' }, `${props.data.term} · ${props.data.academic_year || new Date().getFullYear()}`),
         ]),
       ]),
-      // Results table
+      // Results table — supports strand-level CBC scores
       h('div', { class: 'px-8 py-6' }, [
         h('p', { class: 'text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4' }, 'CBC Assessment Results'),
         props.data.results.length
           ? h('table', { class: 'w-full border-collapse text-sm' }, [
               h('thead', {}, h('tr', { class: 'bg-slate-50 border-y border-slate-200' }, [
-                h('th', { class: 'px-5 py-3 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider' }, 'Learning Area'),
+                h('th', { class: 'px-5 py-3 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider w-1/3' }, 'Learning Area / Strand'),
                 h('th', { class: 'px-5 py-3 text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider w-28' }, 'Score'),
                 h('th', { class: 'px-5 py-3 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider' }, "Teacher's Remarks"),
               ])),
-              h('tbody', {}, props.data.results.map((r, i) => h('tr', {
-                key: r.learning_area,
-                class: i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50',
-              }, [
-                h('td', { class: 'border-b border-slate-100 px-5 py-3 font-semibold text-slate-800' }, r.learning_area),
-                h('td', { class: 'border-b border-slate-100 px-5 py-3 text-center' },
-                  h('span', { class: `inline-block px-3 py-0.5 rounded-full text-xs font-black ${scoreClass(r.score)}` }, r.score)
-                ),
-                h('td', { class: 'border-b border-slate-100 px-5 py-3 text-slate-500 text-xs italic' }, r.remarks || '—'),
-              ])))
+              h('tbody', {}, props.data.results.flatMap((r, i) => {
+                const strandEntries = Object.entries(r.strands || {})
+                // Single overall score (no strands or empty-string strand)
+                if (strandEntries.length === 0 || (strandEntries.length === 1 && strandEntries[0][0] === '')) {
+                  const score = strandEntries[0]?.[1] || ''
+                  return [h('tr', {
+                    key: r.learning_area,
+                    class: i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50',
+                  }, [
+                    h('td', { class: 'border-b border-slate-100 px-5 py-3 font-semibold text-slate-800' }, r.learning_area),
+                    h('td', { class: 'border-b border-slate-100 px-5 py-3 text-center' },
+                      score ? h('span', { class: `inline-block px-3 py-0.5 rounded-full text-xs font-black ${scoreClass(score)}` }, score) : h('span', { class: 'text-slate-300' }, '—')
+                    ),
+                    h('td', { class: 'border-b border-slate-100 px-5 py-3 text-slate-500 text-xs italic' }, r.remarks || '—'),
+                  ])]
+                }
+                // Strand-level rows — area header + one row per strand
+                return [
+                  h('tr', { key: r.learning_area + '_header', class: 'bg-school-navy/5' }, [
+                    h('td', { colspan: 3, class: 'px-5 py-2 font-extrabold text-slate-700 text-xs uppercase tracking-wider border-b border-slate-200' }, r.learning_area),
+                  ]),
+                  ...strandEntries.map(([strand, score], si) =>
+                    h('tr', { key: r.learning_area + strand, class: si % 2 === 0 ? 'bg-white' : 'bg-slate-50/30' }, [
+                      h('td', { class: 'border-b border-slate-100 pl-10 pr-5 py-2.5 text-slate-600 text-xs' }, strand),
+                      h('td', { class: 'border-b border-slate-100 px-5 py-2.5 text-center' },
+                        score ? h('span', { class: `inline-block px-2.5 py-0.5 rounded-full text-xs font-black ${scoreClass(score)}` }, score) : h('span', { class: 'text-slate-300' }, '—')
+                      ),
+                      h('td', { class: 'border-b border-slate-100 px-5 py-2.5 text-slate-400 text-xs italic' },
+                        si === 0 ? (r.remarks || '') : ''
+                      ),
+                    ])
+                  ),
+                ]
+              }))
             ])
           : h('div', { class: 'py-10 text-center text-slate-400 text-sm border border-slate-200 rounded-lg' }, 'No assessments recorded for this term.'),
       ]),
@@ -260,7 +287,9 @@ const loadReport = async () => {
   generating.value = true
   reportData.value = null
   try {
-    reportData.value = await academicService.getReportCard(selectedStudent.value, selectedTerm.value)
+    reportData.value = await academicService.getReportCard(
+      selectedStudent.value, selectedTerm.value, appStore.currentYear
+    )
   } catch {
     alert('Failed to load report card.')
   } finally {
@@ -274,7 +303,9 @@ const loadBulk = async () => {
   try {
     const gradeStudents = students.value.filter(s => s.grade_level === bulkGrade.value)
     const reports = await Promise.all(
-      gradeStudents.map(s => academicService.getReportCard(s.id, selectedTerm.value).catch(() => null))
+      gradeStudents.map(s => academicService.getReportCard(
+        s.id, selectedTerm.value, appStore.currentYear
+      ).catch(() => null))
     )
     bulkReports.value = reports.filter(Boolean)
   } catch (e) {

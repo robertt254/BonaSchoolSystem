@@ -75,11 +75,27 @@ class Assessment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    academic_year = Column(String(9), nullable=False, server_default="2024")
     term = Column(String(10), nullable=False)
     learning_area = Column(String(100), nullable=False)
+    strand = Column(String(100), nullable=False, server_default="")
     score = Column(String(5), nullable=False)
     remarks = Column(String(500), nullable=True)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class FeeCarryForward(Base):
+    """Explicit cross-year balance carry-forward for a student."""
+    __tablename__ = "fee_carry_forwards"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False, index=True)
+    amount = Column(Numeric(10, 2), nullable=False)   # positive = owes, negative = credit
+    academic_year = Column(String(9), nullable=False)
+    term = Column(String(10), nullable=False)
+    note = Column(String(200), nullable=True)
+    recorded_by = Column(String(100), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
 class Attendance(Base):

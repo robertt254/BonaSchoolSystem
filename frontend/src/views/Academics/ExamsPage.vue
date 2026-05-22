@@ -126,8 +126,13 @@
       </div>
 
       <div v-if="rankings.students.length > 0" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div class="border-b border-slate-100 px-5 py-3.5 bg-slate-50">
+        <div class="border-b border-slate-100 px-5 py-3.5 bg-slate-50 flex items-center justify-between">
           <h3 class="font-semibold text-sm text-slate-700">{{ rankForm.grade_level }} · {{ rankForm.term }} Rankings</h3>
+          <button @click="exportRankings"
+            class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
@@ -179,6 +184,7 @@
 import { ref } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
+import { downloadCsv } from '@/utils/csvExport'
 
 const appStore = useAppStore()
 const GRADES = ['Play Group','PP1','PP2','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6']
@@ -245,6 +251,22 @@ const rankForm = ref({ grade_level: 'Grade 1', term: 'Term 1', exam_type: '' })
 const rankings = ref({ subjects: [], students: [] })
 const loadingRankings = ref(false)
 const rankingsLoaded = ref(false)
+
+const exportRankings = () => {
+  const headers = [
+    { key: 'position', label: 'Position' },
+    { key: 'student_name', label: 'Student Name' },
+    ...rankings.value.subjects.map(s => ({ key: `score_${s}`, label: s })),
+    { key: 'total_marks', label: 'Total Marks' },
+    { key: 'percentage', label: 'Percentage (%)' },
+  ]
+  const rows = rankings.value.students.map(s => {
+    const row = { position: s.position, student_name: s.student_name, total_marks: s.total_marks, percentage: s.percentage }
+    for (const subj of rankings.value.subjects) row[`score_${subj}`] = s.scores[subj]?.marks ?? ''
+    return row
+  })
+  downloadCsv(`rankings-${rankForm.value.grade_level}-${rankForm.value.term}`, headers, rows)
+}
 
 const loadRankings = async () => {
   loadingRankings.value = true

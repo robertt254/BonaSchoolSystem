@@ -25,16 +25,21 @@
             class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none"
           />
         </div>
-        <button
-          @click="printList"
-          class="flex items-center gap-2 border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition print:hidden"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-            <rect x="6" y="14" width="12" height="8"/>
-          </svg>
-          Print List
-        </button>
+        <div class="flex gap-2 print:hidden">
+          <button @click="exportDefaulters"
+            class="flex items-center gap-2 border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+          <button @click="printList"
+            class="flex items-center gap-2 border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Print List
+          </button>
+        </div>
       </div>
     </div>
 
@@ -112,6 +117,7 @@
 import { ref, computed, onMounted } from 'vue'
 import feeService from '@/services/feeService'
 import { useAppStore } from '@/stores/app'
+import { downloadCsv } from '@/utils/csvExport'
 
 const appStore = useAppStore()
 const selectedTerm = ref(appStore.currentTerm)
@@ -143,6 +149,17 @@ const loadDefaulters = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const exportDefaulters = () => {
+  downloadCsv(`defaulters-${selectedTerm.value}`, [
+    { key: 'student_name', label: 'Student Name' },
+    { key: 'admission_number', label: 'Adm No.' },
+    { key: 'grade_level', label: 'Grade' },
+    { key: 'expected_fee', label: 'Expected (KES)' },
+    { key: 'total_paid', label: 'Paid (KES)' },
+    { key: 'outstanding_balance', label: 'Outstanding (KES)' },
+  ], filtered.value)
 }
 
 const printList = () => window.print()

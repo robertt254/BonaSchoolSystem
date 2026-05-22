@@ -53,6 +53,11 @@
         class="bg-school-purple text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-school-purple-l transition disabled:opacity-50">
         {{ loading ? 'Generating…' : 'Generate Report' }}
       </button>
+      <button v-if="rows.length > 0" @click="exportReport"
+        class="flex items-center gap-1.5 bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
       <button v-if="rows.length > 0" @click="printPage"
         class="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-200 transition flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -97,6 +102,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
+import { downloadCsv } from '@/utils/csvExport'
 
 const appStore = useAppStore()
 const GRADES = ['Play Group','PP1','PP2','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6']
@@ -224,6 +230,11 @@ const runExamPerformance = async () => {
     { key: 'num_students', label: 'Students', align: 'right' },
   ]
   rows.value = data
+}
+
+const exportReport = () => {
+  if (!rows.value.length) return
+  downloadCsv(`report-${selectedReport.value.id}-${filters.year}`, columns.value, rows.value)
 }
 
 const printPage = () => window.print()

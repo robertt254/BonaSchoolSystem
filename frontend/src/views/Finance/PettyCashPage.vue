@@ -6,11 +6,18 @@
         <h1 class="text-2xl font-extrabold text-slate-800">Petty Cash</h1>
         <p class="text-sm text-slate-400 mt-0.5">Imprest ledger — track all small cash in/out movements.</p>
       </div>
-      <button @click="showModal = true; resetForm()"
-        class="bg-school-purple text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-school-purple-l transition flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Add Entry
-      </button>
+      <div class="flex gap-2">
+        <button @click="exportLedger"
+          class="flex items-center gap-1.5 bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+        <button @click="showModal = true; resetForm()"
+          class="bg-school-purple text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-school-purple-l transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Entry
+        </button>
+      </div>
     </div>
 
     <!-- Balance card -->
@@ -127,6 +134,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
+import { downloadCsv } from '@/utils/csvExport'
 
 const transactions = ref([])
 const showModal = ref(false)
@@ -139,6 +147,17 @@ const totalOut = computed(() => transactions.value.filter(t => t.transaction_typ
 
 const fmt = (n) => Number(n || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''
+
+const exportLedger = () => {
+  downloadCsv('petty-cash-ledger', [
+    { key: 'transaction_date', label: 'Date' },
+    { key: 'transaction_type', label: 'Type' },
+    { key: 'description', label: 'Description' },
+    { key: 'category', label: 'Category' },
+    { key: 'amount', label: 'Amount (KES)' },
+    { key: 'running_balance', label: 'Balance (KES)' },
+  ], transactions.value.slice().reverse())
+}
 
 const load = async () => {
   try {
