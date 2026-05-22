@@ -176,3 +176,111 @@ class LeaveRequest(Base):
     reviewed_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     reviewed_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class ExamResult(Base):
+    """Numeric exam mark per student/subject/exam type."""
+    __tablename__ = "exam_results"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    grade_level = Column(String(20), nullable=False, index=True)
+    subject = Column(String(100), nullable=False)
+    exam_type = Column(String(20), nullable=False)   # CAT1 | CAT2 | MidTerm | EndTerm
+    marks = Column(Numeric(5, 1), nullable=False)
+    max_marks = Column(Integer, nullable=False, server_default="100")
+    term = Column(String(10), nullable=False)
+    academic_year = Column(Integer, nullable=False)
+    recorded_by = Column(String(100), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class LibraryBook(Base):
+    """Book in the school library catalogue."""
+    __tablename__ = "library_books"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(200), nullable=False)
+    author = Column(String(200), nullable=True)
+    isbn = Column(String(20), unique=True, nullable=True)
+    category = Column(String(100), nullable=True)
+    quantity = Column(Integer, nullable=False, server_default="1")
+    available = Column(Integer, nullable=False, server_default="1")
+    condition = Column(String(20), nullable=False, server_default="'Good'")
+    acquired_date = Column(Date, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class LibraryBorrow(Base):
+    """Book borrow/return transaction."""
+    __tablename__ = "library_borrows"
+
+    id = Column(Integer, primary_key=True, index=True)
+    book_id = Column(Integer, ForeignKey("library_books.id", ondelete="CASCADE"), nullable=False)
+    borrower_type = Column(String(10), nullable=False)   # student | staff
+    borrower_id = Column(Integer, nullable=False)
+    borrower_name = Column(String(200), nullable=False)
+    borrowed_date = Column(Date, server_default=func.current_date(), nullable=False)
+    due_date = Column(Date, nullable=False)
+    return_date = Column(Date, nullable=True)
+    fine_amount = Column(Numeric(8, 2), nullable=False, server_default="0")
+    recorded_by = Column(String(100), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class SchoolEvent(Base):
+    """School calendar event."""
+    __tablename__ = "school_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(200), nullable=False)
+    description = Column(Text, nullable=True)
+    event_type = Column(String(50), nullable=False)   # exam | holiday | meeting | sports | other
+    start_date = Column(Date, nullable=False, index=True)
+    end_date = Column(Date, nullable=True)
+    all_day = Column(Boolean, nullable=False, server_default="true")
+    created_by = Column(String(100), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class DisciplinaryRecord(Base):
+    """Student disciplinary incident record."""
+    __tablename__ = "disciplinary_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    incident_date = Column(Date, nullable=False)
+    incident_type = Column(String(100), nullable=False)
+    description = Column(Text, nullable=False)
+    action_taken = Column(String(500), nullable=True)
+    action_date = Column(Date, nullable=True)
+    severity = Column(String(20), nullable=False, server_default="'Minor'")   # Minor | Moderate | Serious
+    status = Column(String(20), nullable=False, server_default="'Open'")      # Open | Resolved
+    recorded_by = Column(String(100), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class Budget(Base):
+    """Expense budget per category/term/year."""
+    __tablename__ = "budgets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    category = Column(String(100), nullable=False)
+    academic_year = Column(Integer, nullable=False)
+    term = Column(String(10), nullable=False)
+    budgeted_amount = Column(Numeric(12, 2), nullable=False)
+    created_by = Column(String(100), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class PettyCashTransaction(Base):
+    """Petty cash fund transaction (IN = top-up, OUT = expenditure)."""
+    __tablename__ = "petty_cash"
+
+    id = Column(Integer, primary_key=True, index=True)
+    transaction_type = Column(String(5), nullable=False)    # IN | OUT
+    amount = Column(Numeric(10, 2), nullable=False)
+    description = Column(String(500), nullable=False)
+    category = Column(String(100), nullable=True)
+    recorded_by = Column(String(100), nullable=False)
+    transaction_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)

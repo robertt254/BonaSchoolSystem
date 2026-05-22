@@ -1,5 +1,6 @@
 from datetime import datetime
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from typing import Optional
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from database import get_db
@@ -389,6 +390,53 @@ def update_fee_structure(
     return row
 
 
+# ── Bulk payment ──────────────────────────────────────────────────────────────
+
+class BulkPaymentEntry(BaseModel):
+    student_id: int
+    amount: float
+    payment_type: str
+    term: str
+
+from pydantic import BaseModel as _BaseModel
+from typing import List as _List
+
+@router.post("/bulk", status_code=201)
+def record_bulk_payments(
+    payments: list,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if current_user.role not in {"accountant", "admin"}:
+        raise HTTPException(status_code=403, detail="Not authorized to record payments")
+
+    created = []
+    for p in payments:
+        student = db.query(models.Student).filter(
+            models.Student.id == p["student_id"],
+            models.Student.is_deleted == False,
+        ).first()
+        if not student:
+            continue
+        receipt = _generate_receipt_number(db)
+        new_fee = models.FeePayment(
+            student_id=p["student_id"],
+            amount=p["amount"],
+            payment_type=p.get("payment_type", "Tuition"),
+            term=p["term"],
+            recorded_by=current_user.name,
+            receipt_number=receipt,
+        )
+        db.add(new_fee)
+        db.flush()
+        log_action(db, current_user.id, "CREATE", "fee", new_fee.id,
+                   {"receipt": receipt, "amount": str(p["amount"]), "student_id": p["student_id"]})
+        created.append(new_fee.id)
+
+    db.commit()
+    return {"created": len(created)}
+
+
 @router.delete("/structure/{entry_id}")
 def delete_fee_structure(
     entry_id: int,
@@ -406,3 +454,36 @@ def delete_fee_structure(
     db.delete(row)
     db.commit()
     return {"message": "Fee structure entry deleted"}
+
+
+@router.get("/collection-summary")
+def collection_summary(
+    academic_year: Optional[str] = Query(None),
+    term: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    from sqlalchemy import extract
+    q = db.query(
+        models.FeePayment.term,
+        func.sum(models.FeePayment.amount).label("total_paid"),
+        func.count(models.FeePayment.id).label("num_payments"),
+        func.count(func.distinct(models.FeePayment.student_id)).label("unique_students"),
+    )
+    if academic_year:
+        try:
+            q = q.filter(extract("year", models.FeePayment.payment_date) == int(academic_year))
+        except (ValueError, TypeError):
+            pass
+    if term:
+        q = q.filter(models.FeePayment.term == term)
+    rows = q.group_by(models.FeePayment.term).order_by(models.FeePayment.term).all()
+    return [
+        {
+            "term": r.term,
+            "total_paid": round(float(r.total_paid or 0), 2),
+            "num_payments": r.num_payments,
+            "unique_students": r.unique_students,
+        }
+        for r in rows
+    ]

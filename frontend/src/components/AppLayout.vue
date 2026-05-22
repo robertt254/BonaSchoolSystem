@@ -92,6 +92,41 @@
             </template>
             Timetable
           </NavItem>
+          <NavItem to="/academics/exams">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+            </template>
+            Exams &amp; Marks
+          </NavItem>
+          <NavItem to="/academics/discipline">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </template>
+            Discipline
+          </NavItem>
+        </template>
+
+        <template v-if="['teacher','principal','admin','accountant','secretary'].includes(userRole)">
+          <NavItem to="/library">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+            </template>
+            Library
+          </NavItem>
+          <NavItem to="/calendar">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </template>
+            Calendar
+          </NavItem>
         </template>
 
         <template v-if="['secretary','principal','admin'].includes(userRole)">
@@ -148,6 +183,30 @@
             </template>
             Fee Structure
           </NavItem>
+          <NavItem to="/finance/payslips">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </template>
+            Payslips
+          </NavItem>
+          <NavItem to="/finance/petty-cash">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </template>
+            Petty Cash
+          </NavItem>
+          <NavItem to="/finance/budget">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </template>
+            Budget
+          </NavItem>
         </template>
 
         <template v-if="['admin','principal'].includes(userRole)">
@@ -175,6 +234,30 @@
               </svg>
             </template>
             Leave
+          </NavItem>
+          <NavItem to="/admin/promotion">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/>
+              </svg>
+            </template>
+            Promotion
+          </NavItem>
+          <NavItem to="/admin/year-transition">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/>
+              </svg>
+            </template>
+            Year Transition
+          </NavItem>
+          <NavItem to="/admin/reports">
+            <template #icon>
+              <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </template>
+            Reports
           </NavItem>
         </template>
 
@@ -407,6 +490,16 @@ const pageTitle = computed(() => {
     'leave-management':   'Leave Management',
     'students-dashboard': 'Students',
     'classes-dashboard':  'Classes',
+    'exams':              'Exams & Marks',
+    'discipline':         'Disciplinary Records',
+    'library':            'Library',
+    'calendar':           'School Calendar',
+    'petty-cash':         'Petty Cash',
+    'budget':             'Budget vs Actual',
+    'payslips':           'Payslips',
+    'promotion':          'Student Promotion',
+    'year-transition':    'Year Transition',
+    'reports':            'Report Builder',
   }
   return m[route.name] || 'Overview'
 })

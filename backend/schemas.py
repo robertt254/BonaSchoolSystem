@@ -314,6 +314,202 @@ class SubjectResponse(BaseModel):
         from_attributes = True
 
 
+# ── Exam Results ──────────────────────────────────────────────────────────────
+
+class ExamResultEntry(BaseModel):
+    student_id: int
+    marks: float = Field(..., ge=0)
+    max_marks: int = Field(100, ge=1)
+
+class ExamBulkCreate(BaseModel):
+    grade_level: str
+    term: str
+    exam_type: str = Field(..., pattern=r"^(CAT1|CAT2|MidTerm|EndTerm)$")
+    subject: str = Field(..., min_length=1, max_length=100)
+    academic_year: int = Field(..., ge=2020, le=2100)
+    results: List[ExamResultEntry]
+
+class ExamResultResponse(BaseModel):
+    id: int
+    student_id: int
+    grade_level: str
+    subject: str
+    exam_type: str
+    marks: float
+    max_marks: int
+    term: str
+    academic_year: int
+    recorded_by: str
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+# ── Library ────────────────────────────────────────────────────────────────────
+
+class BookCreate(BaseModel):
+    title: str = Field(..., min_length=1, max_length=200)
+    author: Optional[str] = Field(None, max_length=200)
+    isbn: Optional[str] = Field(None, max_length=20)
+    category: Optional[str] = Field(None, max_length=100)
+    quantity: int = Field(1, ge=1)
+    condition: str = Field("Good", max_length=20)
+    acquired_date: Optional[date] = None
+
+class BookUpdate(BaseModel):
+    title: Optional[str] = Field(None, max_length=200)
+    author: Optional[str] = Field(None, max_length=200)
+    category: Optional[str] = Field(None, max_length=100)
+    quantity: Optional[int] = Field(None, ge=1)
+    condition: Optional[str] = Field(None, max_length=20)
+
+class BookResponse(BaseModel):
+    id: int
+    title: str
+    author: Optional[str] = None
+    isbn: Optional[str] = None
+    category: Optional[str] = None
+    quantity: int
+    available: int
+    condition: str
+    acquired_date: Optional[date] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+class BorrowCreate(BaseModel):
+    book_id: int
+    borrower_type: str = Field(..., pattern=r"^(student|staff)$")
+    borrower_id: int
+    borrower_name: str = Field(..., min_length=1, max_length=200)
+    due_date: date
+
+class BorrowResponse(BaseModel):
+    id: int
+    book_id: int
+    book_title: str
+    borrower_type: str
+    borrower_id: int
+    borrower_name: str
+    borrowed_date: date
+    due_date: date
+    return_date: Optional[date] = None
+    fine_amount: float
+    recorded_by: str
+    is_overdue: bool
+
+    class Config:
+        from_attributes = True
+
+
+# ── School Events ──────────────────────────────────────────────────────────────
+
+class EventCreate(BaseModel):
+    title: str = Field(..., min_length=1, max_length=200)
+    description: Optional[str] = None
+    event_type: str = Field(..., max_length=50)
+    start_date: date
+    end_date: Optional[date] = None
+    all_day: bool = True
+
+class EventResponse(EventCreate):
+    id: int
+    created_by: str
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+# ── Disciplinary Records ───────────────────────────────────────────────────────
+
+class DisciplineCreate(BaseModel):
+    student_id: int
+    incident_date: date
+    incident_type: str = Field(..., min_length=1, max_length=100)
+    description: str = Field(..., min_length=1)
+    action_taken: Optional[str] = Field(None, max_length=500)
+    action_date: Optional[date] = None
+    severity: str = Field("Minor", pattern=r"^(Minor|Moderate|Serious)$")
+
+class DisciplineUpdate(BaseModel):
+    action_taken: Optional[str] = Field(None, max_length=500)
+    action_date: Optional[date] = None
+    status: Optional[str] = Field(None, pattern=r"^(Open|Resolved)$")
+    severity: Optional[str] = Field(None, pattern=r"^(Minor|Moderate|Serious)$")
+
+class DisciplineResponse(BaseModel):
+    id: int
+    student_id: int
+    student_name: str
+    grade_level: str
+    incident_date: date
+    incident_type: str
+    description: str
+    action_taken: Optional[str] = None
+    action_date: Optional[date] = None
+    severity: str
+    status: str
+    recorded_by: str
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+# ── Budget ─────────────────────────────────────────────────────────────────────
+
+class BudgetCreate(BaseModel):
+    category: str = Field(..., min_length=1, max_length=100)
+    academic_year: int = Field(..., ge=2020, le=2100)
+    term: str
+    budgeted_amount: float = Field(..., gt=0)
+
+class BudgetResponse(BaseModel):
+    id: int
+    category: str
+    academic_year: int
+    term: str
+    budgeted_amount: float
+    actual_spent: float = 0.0
+    variance: float = 0.0
+    created_by: str
+
+    class Config:
+        from_attributes = True
+
+
+# ── Petty Cash ─────────────────────────────────────────────────────────────────
+
+class PettyCashCreate(BaseModel):
+    transaction_type: str = Field(..., pattern=r"^(IN|OUT)$")
+    amount: float = Field(..., gt=0)
+    description: str = Field(..., min_length=1, max_length=500)
+    category: Optional[str] = Field(None, max_length=100)
+
+class PettyCashResponse(BaseModel):
+    id: int
+    transaction_type: str
+    amount: float
+    description: str
+    category: Optional[str] = None
+    recorded_by: str
+    transaction_date: datetime
+    running_balance: float = 0.0
+
+    class Config:
+        from_attributes = True
+
+
+# ── Promotion ──────────────────────────────────────────────────────────────────
+
+class PromotionRequest(BaseModel):
+    student_ids: List[int]
+    to_grade: str
+
+
 class LeaveRequestCreate(BaseModel):
     leave_type: str = Field(..., min_length=1, max_length=50)
     start_date: date

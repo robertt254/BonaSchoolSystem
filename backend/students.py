@@ -330,6 +330,101 @@ def delete_student(
     return {"message": f"Student {student_id} archived. Record preserved for audit purposes."}
 
 
+GRADE_PROGRESSION = {
+    "Play Group": "PP1", "PP1": "PP2", "PP2": "Grade 1",
+    "Grade 1": "Grade 2", "Grade 2": "Grade 3", "Grade 3": "Grade 4",
+    "Grade 4": "Grade 5", "Grade 5": "Grade 6", "Grade 6": None,
+}
+
+
+@router.post("/promote")
+def promote_students(
+    payload: schemas.PromotionRequest,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if current_user.role not in {"admin", "principal"}:
+        raise HTTPException(status_code=403, detail="Only admin or principal can promote students")
+
+    promoted, graduated = 0, 0
+    for sid in payload.student_ids:
+        student = db.query(models.Student).filter(
+            models.Student.id == sid,
+            models.Student.is_deleted == False,
+        ).first()
+        if not student:
+            continue
+
+        if payload.to_grade is None:
+            next_grade = GRADE_PROGRESSION.get(student.grade_level)
+        else:
+            next_grade = payload.to_grade
+
+        if next_grade is None:
+            student.status = "Graduated"
+            graduated += 1
+            log_action(db, current_user.id, "UPDATE", "student", sid,
+                       {"from": student.grade_level, "status": "Graduated"})
+        else:
+            log_action(db, current_user.id, "UPDATE", "student", sid,
+                       {"from": student.grade_level, "to": next_grade})
+            student.grade_level = next_grade
+            promoted += 1
+
+    db.commit()
+    return {"promoted": promoted, "graduated": graduated}
+
+
+@router.post("/year-transition")
+def year_transition(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Promote ALL active students to next grade; Grade 6 → Graduated."""
+    if current_user.role not in {"admin", "principal"}:
+        raise HTTPException(status_code=403, detail="Only admin or principal can run year transition")
+
+    students = db.query(models.Student).filter(
+        models.Student.is_deleted == False,
+        models.Student.status == "Active",
+    ).all()
+
+    promoted, graduated = 0, 0
+    for student in students:
+        next_grade = GRADE_PROGRESSION.get(student.grade_level)
+        if next_grade is None:
+            student.status = "Graduated"
+            graduated += 1
+        else:
+            student.grade_level = next_grade
+            promoted += 1
+        log_action(db, current_user.id, "UPDATE", "student", student.id,
+                   {"year_transition": True,
+                    "from": student.grade_level if next_grade else student.grade_level,
+                    "to": next_grade or "Graduated"})
+
+    db.commit()
+    return {"promoted": promoted, "graduated": graduated, "total": promoted + graduated}
+
+
+@router.get("/enrollment-summary")
+def enrollment_summary(
+    academic_year: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    q = db.query(models.Student.grade_level, func.count(models.Student.id).label("count")).filter(
+        models.Student.is_deleted == False,
+        models.Student.status == "Active",
+    )
+    rows = q.group_by(models.Student.grade_level).all()
+    grade_order = ["Play Group","PP1","PP2","Grade 1","Grade 2","Grade 3","Grade 4","Grade 5","Grade 6"]
+    order_map = {g: i for i, g in enumerate(grade_order)}
+    result = [{"grade_level": r.grade_level, "count": r.count} for r in rows]
+    result.sort(key=lambda x: order_map.get(x["grade_level"], 99))
+    return result
+
+
 @router.post("/{student_id}/restore", response_model=schemas.StudentResponse)
 def restore_student(
     student_id: int,

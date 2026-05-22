@@ -21,6 +21,10 @@ import timetable
 import leave
 import sms_routes
 import subjects
+import exams
+import library
+import events
+import discipline
 from database import engine, SessionLocal
 from limiter import limiter
 
@@ -122,6 +126,14 @@ async def startup():
         "ALTER TABLE expenses ADD COLUMN IF NOT EXISTS expense_date TIMESTAMPTZ NOT NULL DEFAULT NOW()",
         # subjects table — created via create_all on newer deploys
         "ALTER TABLE subjects ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        # new feature tables — create_all handles structure; guard against col additions
+        "ALTER TABLE exam_results       ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        "ALTER TABLE library_books      ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        "ALTER TABLE library_borrows    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        "ALTER TABLE school_events      ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        "ALTER TABLE disciplinary_records ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        "ALTER TABLE budgets            ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()",
+        "ALTER TABLE petty_cash         ADD COLUMN IF NOT EXISTS transaction_date TIMESTAMPTZ NOT NULL DEFAULT NOW()",
     ]
     try:
         with engine.connect() as conn:
@@ -151,6 +163,10 @@ app.include_router(timetable.router)
 app.include_router(leave.router)
 app.include_router(sms_routes.router)
 app.include_router(subjects.router)
+app.include_router(exams.router)
+app.include_router(library.router)
+app.include_router(events.router)
+app.include_router(discipline.router)
 
 
 # ── Health check (used by Render's healthCheckPath) ───────────────────────────
