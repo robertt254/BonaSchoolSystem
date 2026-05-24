@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import extract
+from sqlalchemy import extract, text
 from datetime import date
 from pydantic import BaseModel, Field
 import secrets, re
@@ -32,20 +32,21 @@ def verify_staff_reader(current_user: models.User = Depends(auth.get_current_use
 def get_all_staff(db: Session = Depends(get_db), current_user: models.User = Depends(verify_staff_reader)):
     users = db.query(models.User).order_by(models.User.name).all()
     current_year = date.today().year
+    # Single aggregated query for all staff leave days — avoids N+1
+    leave_rows = db.execute(
+        text(
+            "SELECT staff_id, COALESCE(SUM(end_date - start_date + 1), 0) AS days "
+            "FROM leave_requests WHERE status='approved' "
+            "AND EXTRACT(year FROM start_date)=:yr GROUP BY staff_id"
+        ),
+        {"yr": current_year},
+    ).all()
+    leave_days_by_staff = {row.staff_id: int(row.days) for row in leave_rows}
+    include_salary = current_user.role in {"admin", "accountant"}
     result = []
     for user in users:
-        approved_leaves = (
-            db.query(models.LeaveRequest)
-            .filter(
-                models.LeaveRequest.staff_id == user.id,
-                models.LeaveRequest.status == "approved",
-                extract("year", models.LeaveRequest.start_date) == current_year,
-            )
-            .all()
-        )
-        days_used = sum((l.end_date - l.start_date).days + 1 for l in approved_leaves)
+        days_used = leave_days_by_staff.get(user.id, 0)
         entitlement = user.accrued_leave_days if user.accrued_leave_days is not None else 21
-        include_salary = current_user.role in {"admin", "accountant"}
         result.append(schemas.UserResponse(
             id=user.id,
             username=user.username,

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, ForeignKey, DateTime, Date, Boolean, Text
+from sqlalchemy import Column, Integer, String, Numeric, ForeignKey, DateTime, Date, Boolean, Text, Index
 from sqlalchemy.sql import func
 from database import Base
 
@@ -32,7 +32,7 @@ class Student(Base):
     first_name = Column(String(100), index=True, nullable=False)
     last_name = Column(String(100), index=True, nullable=False)
     admission_number = Column(String(20), unique=True, index=True, nullable=False)
-    grade_level = Column(String(20), nullable=False)
+    grade_level = Column(String(20), nullable=False, index=True)
     status = Column(String(20), nullable=False, default="Active")
     date_of_birth = Column(Date, nullable=True)
     gender = Column(String(10), nullable=True)
@@ -43,7 +43,7 @@ class Student(Base):
     address = Column(String(200), nullable=True)
     previous_school = Column(String(200), nullable=True)
     # Soft delete — never hard-delete student records
-    is_deleted = Column(Boolean, nullable=False, default=False, server_default="false")
+    is_deleted = Column(Boolean, nullable=False, default=False, server_default="false", index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
@@ -51,7 +51,7 @@ class FeePayment(Base):
     __tablename__ = "fees"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False, index=True)
     # Numeric(10, 2) avoids floating-point rounding errors for currency
     amount = Column(Numeric(10, 2), nullable=False)
     payment_type = Column(String(50), nullable=False)
@@ -78,7 +78,7 @@ class Assessment(Base):
     __tablename__ = "assessments"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False, index=True)
     academic_year = Column(String(9), nullable=False, server_default="2024")
     term = Column(String(10), nullable=False)
     learning_area = Column(String(100), nullable=False)
@@ -86,6 +86,10 @@ class Assessment(Base):
     score = Column(String(5), nullable=False)
     remarks = Column(String(500), nullable=True)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index('idx_assessments_student_term_year', 'student_id', 'term', 'academic_year'),
+    )
 
 
 class FeeCarryForward(Base):
@@ -106,10 +110,14 @@ class Attendance(Base):
     __tablename__ = "attendance"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
-    date = Column(Date, server_default=func.current_date(), nullable=False)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False, index=True)
+    date = Column(Date, server_default=func.current_date(), nullable=False, index=True)
     is_present = Column(Boolean, default=True, nullable=False)
     remarks = Column(String(500), nullable=True)
+
+    __table_args__ = (
+        Index('idx_attendance_student_date', 'student_id', 'date'),
+    )
 
 
 class AuditLog(Base):
@@ -130,14 +138,18 @@ class Payroll(Base):
     __tablename__ = "payroll"
 
     id = Column(Integer, primary_key=True, index=True)
-    staff_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
-    payment_month = Column(String(7), nullable=False)          # YYYY-MM
+    staff_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    payment_month = Column(String(7), nullable=False, index=True)          # YYYY-MM
     basic_salary = Column(Numeric(10, 2), nullable=False)
     allowances = Column(Numeric(10, 2), nullable=False, server_default="0")
     deductions = Column(Numeric(10, 2), nullable=False, server_default="0")
     net_pay = Column(Numeric(10, 2), nullable=False)
     recorded_by = Column(String(100), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index('idx_payroll_staff_month', 'staff_id', 'payment_month'),
+    )
 
 
 class Expense(Base):
@@ -187,7 +199,7 @@ class LeaveRequest(Base):
     __tablename__ = "leave_requests"
 
     id = Column(Integer, primary_key=True, index=True)
-    staff_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    staff_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     leave_type = Column(String(50), nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
@@ -203,7 +215,7 @@ class ExamResult(Base):
     __tablename__ = "exam_results"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False, index=True)
     grade_level = Column(String(20), nullable=False, index=True)
     subject = Column(String(100), nullable=False)
     exam_type = Column(String(20), nullable=False)   # CAT1 | CAT2 | MidTerm | EndTerm
@@ -213,6 +225,10 @@ class ExamResult(Base):
     academic_year = Column(Integer, nullable=False)
     recorded_by = Column(String(100), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index('idx_exam_results_student_term_year', 'student_id', 'term', 'academic_year'),
+    )
 
 
 class LibraryBook(Base):
@@ -268,7 +284,7 @@ class DisciplinaryRecord(Base):
     __tablename__ = "disciplinary_records"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False, index=True)
     incident_date = Column(Date, nullable=False)
     incident_type = Column(String(100), nullable=False)
     description = Column(Text, nullable=False)

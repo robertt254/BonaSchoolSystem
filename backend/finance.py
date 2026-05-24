@@ -88,16 +88,19 @@ def preview_payroll(
 ):
     """Return all staff with their configured salary and whether payroll already ran for this month."""
     staff_list = db.query(models.User).order_by(models.User.name).all()
+    # Single query for all paid staff IDs — avoids N+1
+    paid_ids = {
+        row.staff_id
+        for row in db.query(models.Payroll.staff_id)
+        .filter(models.Payroll.payment_month == month, models.Payroll.staff_id.isnot(None))
+        .all()
+    }
     result = []
     for s in staff_list:
         basic = float(s.basic_salary or 0)
         allow = float(s.allowances or 0)
         deduct = float(s.deductions or 0)
         net = max(0.0, basic + allow - deduct)
-        already_paid = db.query(models.Payroll).filter(
-            models.Payroll.staff_id == s.id,
-            models.Payroll.payment_month == month,
-        ).first() is not None
         result.append({
             "staff_id": s.id,
             "staff_name": s.name,
@@ -106,7 +109,7 @@ def preview_payroll(
             "allowances": allow,
             "deductions": deduct,
             "net_pay": net,
-            "already_paid": already_paid,
+            "already_paid": s.id in paid_ids,
         })
     return result
 

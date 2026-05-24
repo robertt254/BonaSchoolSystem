@@ -143,6 +143,21 @@ async def startup():
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS deductions   NUMERIC(10,2) NOT NULL DEFAULT 0",
         # Portal access flag — teachers and non-portal roles cannot log in
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS can_login BOOLEAN NOT NULL DEFAULT TRUE",
+        # ── Performance indexes (safe to run multiple times) ──────────────────
+        "CREATE INDEX IF NOT EXISTS idx_students_grade      ON students(grade_level)",
+        "CREATE INDEX IF NOT EXISTS idx_students_deleted    ON students(is_deleted)",
+        "CREATE INDEX IF NOT EXISTS idx_fees_student        ON fees(student_id)",
+        "CREATE INDEX IF NOT EXISTS idx_assessments_student ON assessments(student_id)",
+        "CREATE INDEX IF NOT EXISTS idx_assessments_stterm  ON assessments(student_id, term, academic_year)",
+        "CREATE INDEX IF NOT EXISTS idx_attendance_student  ON attendance(student_id)",
+        "CREATE INDEX IF NOT EXISTS idx_attendance_date     ON attendance(date)",
+        "CREATE INDEX IF NOT EXISTS idx_attendance_std_date ON attendance(student_id, date)",
+        "CREATE INDEX IF NOT EXISTS idx_payroll_staff       ON payroll(staff_id)",
+        "CREATE INDEX IF NOT EXISTS idx_payroll_staff_month ON payroll(staff_id, payment_month)",
+        "CREATE INDEX IF NOT EXISTS idx_leave_staff         ON leave_requests(staff_id)",
+        "CREATE INDEX IF NOT EXISTS idx_exam_student        ON exam_results(student_id)",
+        "CREATE INDEX IF NOT EXISTS idx_exam_std_term_year  ON exam_results(student_id, term, academic_year)",
+        "CREATE INDEX IF NOT EXISTS idx_discipline_student  ON disciplinary_records(student_id)",
     ]
     try:
         with engine.connect() as conn:

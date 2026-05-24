@@ -24,6 +24,18 @@
       </button>
     </div>
 
+    <!-- Error banner -->
+    <div v-if="loadError" class="bg-red-50 border border-red-200 rounded-xl px-5 py-4 flex items-start gap-3">
+      <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>
+        <p class="font-bold text-red-800 text-sm">Failed to load payroll data</p>
+        <p class="text-red-700 text-xs mt-0.5">{{ loadError }}</p>
+      </div>
+      <button @click="loadError = null" class="ml-auto text-red-400 hover:text-red-600">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
     <!-- Run result banner -->
     <div v-if="runResult" class="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-4 flex items-start gap-3">
       <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -219,6 +231,7 @@ const payroll        = ref([])
 const selectedPayslip = ref(null)
 const loadingPreview = ref(false)
 const runResult      = ref(null)
+const loadError      = ref(null)
 
 const unpaidCount  = computed(() => preview.value.filter(r => !r.already_paid && r.basic_salary > 0).length)
 const paidCount    = computed(() => preview.value.filter(r => r.already_paid).length)
@@ -236,6 +249,7 @@ const fmtMonthLabel = (ym) => {
 
 const loadPreview = async () => {
   loadingPreview.value = true
+  loadError.value = null
   runResult.value = null
   try {
     const [prev, hist] = await Promise.all([
@@ -244,8 +258,9 @@ const loadPreview = async () => {
     ])
     preview.value = prev
     payroll.value = await enrichPayroll(hist)
-  } catch (e) { alert('Failed to load payroll preview.') }
-  finally { loadingPreview.value = false }
+  } catch (e) {
+    loadError.value = e?.message || 'An unexpected error occurred.'
+  } finally { loadingPreview.value = false }
 }
 
 const enrichPayroll = async (records) => {
@@ -266,13 +281,13 @@ const runPayroll = async () => {
   try {
     runResult.value = await financeService.runMonthPayroll(selectedMonth.value)
     await loadPreview()
-  } catch (e) { alert(e?.message || 'Payroll failed.') }
+  } catch (e) { loadError.value = e?.message || 'Payroll execution failed.' }
 }
 
 const viewPayslip = async (id) => {
   try {
     selectedPayslip.value = await apiFetch(`/api/finance/payslip/${id}`)
-  } catch { alert('Could not load payslip.') }
+  } catch (e) { loadError.value = e?.message || 'Could not load payslip.' }
 }
 
 const exportPayroll = () => {
