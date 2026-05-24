@@ -45,6 +45,8 @@ def list_leave_requests(
         )
 
     if status:
+        if status not in {"pending", "approved", "rejected"}:
+            raise HTTPException(status_code=400, detail="status must be pending, approved, or rejected")
         q = q.filter(models.LeaveRequest.status == status)
 
     rows = q.order_by(models.LeaveRequest.created_at.desc()).all()

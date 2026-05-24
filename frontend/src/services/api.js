@@ -15,6 +15,13 @@ export const getHeaders = () => {
 }
 
 export async function apiFetch(path, options = {}) {
+  const authStore = useAuthStore()
+  if (authStore.isExpired()) {
+    authStore.logout()
+    window.location.href = '/login'
+    throw new Error('Session expired. Please log in again.')
+  }
+
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: { ...getHeaders(), ...(options.headers || {}) },

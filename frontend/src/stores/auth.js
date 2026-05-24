@@ -66,5 +66,8 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('username')
   }
 
-  return { token, tokenExpiresAt, user, login, logout }
+  const isExpired = () =>
+    tokenExpiresAt.value ? Date.now() >= tokenExpiresAt.value : !token.value
+
+  return { token, tokenExpiresAt, user, login, logout, isExpired }
 })

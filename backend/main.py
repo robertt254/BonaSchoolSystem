@@ -66,8 +66,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "Accept"],
 )
 
 
@@ -161,6 +161,8 @@ async def startup():
         "CREATE INDEX IF NOT EXISTS idx_exam_student        ON exam_results(student_id)",
         "CREATE INDEX IF NOT EXISTS idx_exam_std_term_year  ON exam_results(student_id, term, academic_year)",
         "CREATE INDEX IF NOT EXISTS idx_discipline_student  ON disciplinary_records(student_id)",
+        "CREATE INDEX IF NOT EXISTS idx_audit_timestamp     ON audit_logs(timestamp DESC)",
+        "CREATE INDEX IF NOT EXISTS idx_fees_payment_date   ON fees(payment_date DESC)",
         # ── Unique constraints (will fail silently if duplicates exist) ────────
         # Use CREATE UNIQUE INDEX so the constraint is advisory; duplicates cause a
         # warning, not a server crash. Application-level checks prevent new dupes.

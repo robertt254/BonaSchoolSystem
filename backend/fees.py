@@ -114,10 +114,15 @@ def record_payment(
     if current_user.role not in {"accountant", "admin"}:
         raise HTTPException(status_code=403, detail="Not authorized to record payments")
 
-    student = db.query(models.Student).filter(
-        models.Student.id == fee.student_id,
-        models.Student.is_deleted == False,
-    ).first()
+    student = (
+        db.query(models.Student)
+        .filter(
+            models.Student.id == fee.student_id,
+            models.Student.is_deleted == False,
+        )
+        .with_for_update()
+        .first()
+    )
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
 

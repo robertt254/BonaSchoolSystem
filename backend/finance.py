@@ -127,10 +127,15 @@ def run_month_payroll(
         if basic == 0:
             skipped_names.append(s.name)
             continue
-        existing = db.query(models.Payroll).filter(
-            models.Payroll.staff_id == s.id,
-            models.Payroll.payment_month == payload.month,
-        ).first()
+        existing = (
+            db.query(models.Payroll)
+            .filter(
+                models.Payroll.staff_id == s.id,
+                models.Payroll.payment_month == payload.month,
+            )
+            .with_for_update()
+            .first()
+        )
         if existing:
             skipped_names.append(s.name)
             continue
