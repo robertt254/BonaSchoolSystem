@@ -305,9 +305,6 @@ class PayrollResponse(BaseModel):
     class Config:
         from_attributes = True
 
-    class Config:
-        from_attributes = True
-
 
 class ExpenseCreate(BaseModel):
     amount: float = Field(..., gt=0)

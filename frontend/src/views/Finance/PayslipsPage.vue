@@ -252,24 +252,12 @@ const loadPreview = async () => {
   loadError.value = null
   runResult.value = null
   try {
-    const [prev, hist] = await Promise.all([
-      financeService.previewPayroll(selectedMonth.value),
-      financeService.getPayrollByMonth(selectedMonth.value),
-    ])
-    preview.value = prev
-    payroll.value = await enrichPayroll(hist)
+    const data = await financeService.getPayrollMonthly(selectedMonth.value)
+    preview.value = data.preview
+    payroll.value = data.history
   } catch (e) {
     loadError.value = e?.message || 'An unexpected error occurred.'
   } finally { loadingPreview.value = false }
-}
-
-const enrichPayroll = async (records) => {
-  if (!records.length) return []
-  try {
-    const allStaff = await apiFetch('/api/staff/')
-    const map = Object.fromEntries(allStaff.map(s => [s.id, s]))
-    return records.map(p => ({ ...p, staff_name: map[p.staff_id]?.name || `Staff #${p.staff_id}` }))
-  } catch { return records }
 }
 
 const confirmRun = () => {

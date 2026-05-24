@@ -26,42 +26,31 @@ def require_payroll_manager(current_user: models.User = Depends(auth.get_current
 
 
 
-@router.get("/payroll", response_model=list[schemas.PayrollResponse])
-def get_payroll_ledger(
-    month: Optional[str] = Query(None),
-    skip: int = 0,
-    limit: int = 200,
-    db: Session = Depends(get_db),
-    current_user: models.User = Depends(require_payroll_manager),
-):
-    q = db.query(models.Payroll)
-    if month:
-        q = q.filter(models.Payroll.payment_month == month)
-    return q.order_by(models.Payroll.payment_month.desc(), models.Payroll.id.desc()).offset(skip).limit(limit).all()
-
-
-@router.get("/payroll/preview")
-def preview_payroll(
+@router.get("/payroll/monthly")
+def get_payroll_monthly(
     month: str = Query(..., pattern=r"^\d{4}-(0[1-9]|1[0-2])$"),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(require_payroll_manager),
 ):
-    """Return all staff with their configured salary and whether payroll already ran for this month."""
+    """Single endpoint: returns preview (all staff + status) and history (paid records) for a month."""
     staff_list = db.query(models.User).order_by(models.User.name).all()
-    # Single query for all paid staff IDs — avoids N+1
-    paid_ids = {
-        row.staff_id
-        for row in db.query(models.Payroll.staff_id)
-        .filter(models.Payroll.payment_month == month, models.Payroll.staff_id.isnot(None))
+    staff_map = {s.id: s for s in staff_list}
+
+    paid_rows = (
+        db.query(models.Payroll)
+        .filter(models.Payroll.payment_month == month)
+        .order_by(models.Payroll.id.desc())
         .all()
-    }
-    result = []
+    )
+    paid_ids = {p.staff_id for p in paid_rows if p.staff_id is not None}
+
+    preview = []
     for s in staff_list:
         basic = float(s.basic_salary or 0)
         allow = float(s.allowances or 0)
         deduct = float(s.deductions or 0)
         net = max(0.0, basic + allow - deduct)
-        result.append({
+        preview.append({
             "staff_id": s.id,
             "staff_name": s.name,
             "job_title": s.job_title or "",
@@ -71,7 +60,24 @@ def preview_payroll(
             "net_pay": net,
             "already_paid": s.id in paid_ids,
         })
-    return result
+
+    history = []
+    for p in paid_rows:
+        staff = staff_map.get(p.staff_id)
+        history.append({
+            "id": p.id,
+            "staff_id": p.staff_id,
+            "staff_name": staff.name if staff else f"Staff #{p.staff_id}",
+            "payment_month": p.payment_month,
+            "basic_salary": float(p.basic_salary),
+            "allowances": float(p.allowances),
+            "deductions": float(p.deductions),
+            "net_pay": float(p.net_pay),
+            "recorded_by": p.recorded_by,
+            "created_at": p.created_at.isoformat() if p.created_at else None,
+        })
+
+    return {"preview": preview, "history": history}
 
 
 @router.post("/payroll/run-month", status_code=201)
