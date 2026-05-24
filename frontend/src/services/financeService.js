@@ -9,8 +9,8 @@ export default {
   // Payroll (accountant + admin only)
   getPayrollMonthly: (month) =>
     apiFetch(`/api/finance/payroll/monthly?month=${month}`),
-  runMonthPayroll: (month) =>
-    apiFetch('/api/finance/payroll/run-month', { method: 'POST', body: JSON.stringify({ month }) }),
+  runMonthPayroll: (month, entries) =>
+    apiFetch('/api/finance/payroll/run-month', { method: 'POST', body: JSON.stringify({ month, entries }) }),
 
   // Petty cash
   getPettyCash: () => apiFetch('/api/finance/petty-cash'),

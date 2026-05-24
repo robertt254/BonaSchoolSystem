@@ -32,8 +32,13 @@ def get_payroll_monthly(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(require_payroll_manager),
 ):
-    """Single endpoint: returns preview (all staff + status) and history (paid records) for a month."""
-    staff_list = db.query(models.User).order_by(models.User.name).all()
+    """Returns all non-admin staff with salary data + already-paid status, plus paid records for the month."""
+    staff_list = (
+        db.query(models.User)
+        .filter(models.User.role != "admin")
+        .order_by(models.User.name)
+        .all()
+    )
     staff_map = {s.id: s for s in staff_list}
 
     paid_rows = (
@@ -53,6 +58,7 @@ def get_payroll_monthly(
         preview.append({
             "staff_id": s.id,
             "staff_name": s.name,
+            "role": s.role,
             "job_title": s.job_title or "",
             "basic_salary": basic,
             "allowances": allow,
@@ -86,10 +92,18 @@ def run_month_payroll(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(require_payroll_manager),
 ):
-    """Execute payroll for all staff for the given month. Skips staff with no salary or already paid."""
-    staff_list = db.query(models.User).order_by(models.User.name).all()
-    created_names = []
-    skipped_names = []
+    """Execute payroll for submitted staff entries. Each payslip is logged individually."""
+    if not payload.entries:
+        raise HTTPException(status_code=400, detail="No staff entries provided")
+
+    entry_map = {e.staff_id: e for e in payload.entries}
+    staff_list = (
+        db.query(models.User)
+        .filter(models.User.id.in_(list(entry_map.keys())))
+        .all()
+    )
+
+    created_names, skipped_names = [], []
     for s in staff_list:
         basic = float(s.basic_salary or 0)
         if basic == 0:
@@ -102,9 +116,12 @@ def run_month_payroll(
         if existing:
             skipped_names.append(s.name)
             continue
-        allow = float(s.allowances or 0)
-        deduct = float(s.deductions or 0)
+
+        entry = entry_map[s.id]
+        allow = max(0.0, float(entry.allowances))
+        deduct = max(0.0, float(entry.deductions))
         net = max(0.0, basic + allow - deduct)
+
         p = models.Payroll(
             staff_id=s.id,
             payment_month=payload.month,
@@ -115,13 +132,23 @@ def run_month_payroll(
             recorded_by=current_user.name,
         )
         db.add(p)
+        db.flush()  # obtain p.id before logging
+
+        role_label = s.job_title or s.role.replace("_", " ").title()
+        log_action(db, current_user.id, "CREATE", "payroll", p.id, {
+            "detail": f"Paid salary for {s.name} ({role_label})",
+            "month": payload.month,
+            "net_pay": str(round(net, 2)),
+        })
         created_names.append(s.name)
-    db.flush()
-    log_action(db, current_user.id, "CREATE", "payroll_batch", None,
-               {"month": payload.month, "count": len(created_names), "names": ", ".join(created_names)})
+
     db.commit()
-    return {"created": len(created_names), "skipped": len(skipped_names),
-            "created_names": created_names, "skipped_names": skipped_names}
+    return {
+        "created": len(created_names),
+        "skipped": len(skipped_names),
+        "created_names": created_names,
+        "skipped_names": skipped_names,
+    }
 
 
 @router.post("/expenses", response_model=schemas.ExpenseResponse)

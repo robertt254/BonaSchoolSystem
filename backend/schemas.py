@@ -206,8 +206,15 @@ class UserResponse(UserBase):
         from_attributes = True
 
 
+class PayrollStaffEntry(BaseModel):
+    staff_id: int
+    allowances: float = Field(0.0, ge=0)
+    deductions: float = Field(0.0, ge=0)
+
+
 class RunPayrollRequest(BaseModel):
     month: str = Field(..., pattern=r"^\d{4}-(0[1-9]|1[0-2])$")
+    entries: list[PayrollStaffEntry]
 
 
 class AssessmentBase(BaseModel):
