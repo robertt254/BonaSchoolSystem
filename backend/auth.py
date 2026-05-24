@@ -97,43 +97,6 @@ async def login(
     }
 
 
-@router.post("/setup-users")
-def setup_initial_users(db: Session = Depends(get_db)):
-    """One-time bootstrap — disabled in production (APP_ENV=production)."""
-    if os.getenv("APP_ENV", "development") == "production":
-        raise HTTPException(status_code=404, detail="Not found")
-    if db.query(models.User).first():
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Users already exist. Setup is disabled.",
-        )
-
-    initial_users = [
-        models.User(
-            username="admin",
-            hashed_password=get_password_hash(os.getenv("ADMIN_INITIAL_PASSWORD", "ChangeMe@1234")),
-            role="admin",
-            name="System Admin",
-        ),
-        models.User(
-            username="principal",
-            hashed_password=get_password_hash(os.getenv("PRINCIPAL_INITIAL_PASSWORD", "ChangeMe@1234")),
-            role="principal",
-            name="Jane Principal",
-        ),
-        models.User(
-            username="accountant",
-            hashed_password=get_password_hash(os.getenv("ACCOUNTANT_INITIAL_PASSWORD", "ChangeMe@1234")),
-            role="accountant",
-            name="Mary Finance",
-        ),
-    ]
-
-    db.add_all(initial_users)
-    db.commit()
-
-    return {"message": "Database seeded. Change all default passwords immediately."}
-
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(

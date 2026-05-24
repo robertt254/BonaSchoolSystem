@@ -25,46 +25,6 @@ def require_payroll_manager(current_user: models.User = Depends(auth.get_current
     return current_user
 
 
-@router.post("/payroll", response_model=schemas.PayrollResponse)
-def execute_payroll(
-    payroll: schemas.PayrollCreate,
-    db: Session = Depends(get_db),
-    current_user: models.User = Depends(require_payroll_manager),
-):
-    staff = db.query(models.User).filter(models.User.id == payroll.staff_id).first()
-    if not staff:
-        raise HTTPException(status_code=404, detail="Staff member not found")
-
-    new_payroll = models.Payroll(
-        **payroll.model_dump(),
-        recorded_by=current_user.name,
-    )
-    db.add(new_payroll)
-    db.flush()
-    payroll_id = new_payroll.id   # capture before commit clears the identity map
-    log_action(db, current_user.id, "CREATE", "payroll", payroll_id,
-               {"staff_id": payroll.staff_id, "month": payroll.payment_month,
-                "net_pay": str(payroll.net_pay)})
-    db.commit()
-
-    try:
-        db.refresh(new_payroll)
-        return new_payroll
-    except Exception:
-        # Fallback for older Render deploys where created_at may not exist yet.
-        # The startup ALTER TABLE migration adds it on next redeploy.
-        return schemas.PayrollResponse(
-            id=payroll_id,
-            staff_id=payroll.staff_id,
-            payment_month=payroll.payment_month,
-            basic_salary=float(payroll.basic_salary),
-            allowances=float(payroll.allowances),
-            deductions=float(payroll.deductions),
-            net_pay=float(payroll.net_pay),
-            recorded_by=current_user.name,
-            created_at=None,
-        )
-
 
 @router.get("/payroll", response_model=list[schemas.PayrollResponse])
 def get_payroll_ledger(

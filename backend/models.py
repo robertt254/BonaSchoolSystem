@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, ForeignKey, DateTime, Date, Boolean, Text, Index
+from sqlalchemy import Column, Integer, String, Numeric, ForeignKey, DateTime, Date, Boolean, Text, Index, UniqueConstraint
 from sqlalchemy.sql import func
 from database import Base
 
@@ -73,6 +73,11 @@ class FeeStructure(Base):
     amount = Column(Numeric(10, 2), nullable=False)
     academic_year = Column(Integer, nullable=False)
 
+    __table_args__ = (
+        UniqueConstraint('grade_level', 'term', 'fee_type', 'academic_year',
+                         name='uq_fee_structure_entry'),
+    )
+
 
 class Assessment(Base):
     __tablename__ = "assessments"
@@ -129,7 +134,7 @@ class AuditLog(Base):
     action = Column(String(10), nullable=False)       # CREATE | UPDATE | DELETE
     resource = Column(String(50), nullable=False)     # student | fee | assessment | attendance | staff
     resource_id = Column(Integer, nullable=True)
-    detail = Column(String(2000), nullable=True)      # JSON string for extra context
+    detail = Column(Text, nullable=True)               # JSON string for extra context
     timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
 
 
@@ -149,6 +154,7 @@ class Payroll(Base):
 
     __table_args__ = (
         Index('idx_payroll_staff_month', 'staff_id', 'payment_month'),
+        UniqueConstraint('staff_id', 'payment_month', name='uq_payroll_staff_month'),
     )
 
 

@@ -119,6 +119,13 @@ class FeeCreate(FeeBase):
     pass
 
 
+class BulkPaymentItem(BaseModel):
+    student_id: int
+    amount: float = Field(..., gt=0, description="Payment amount must be positive")
+    payment_type: PaymentType = PaymentType.tuition
+    term: Term
+
+
 class FeeResponse(FeeBase):
     id: int
     payment_date: datetime

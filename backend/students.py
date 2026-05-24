@@ -2,23 +2,17 @@ from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, case
 from database import get_db
 import models, schemas, auth
 from audit import log_action
+from constants import CBC_TERMLY_FEES, CBC_GRADES
 
-# Fallback fee amounts (mirrored from fees.py) used for profile balance calc.
-_CBC_FEES = {
-    "Play Group": 12000.00, "PP1": 15000.00, "PP2": 15000.00,
-    "Grade 1": 18000.00, "Grade 2": 18000.00, "Grade 3": 18000.00,
-    "Grade 4": 20000.00, "Grade 5": 20000.00, "Grade 6": 20000.00,
-}
+_CBC_FEES = CBC_TERMLY_FEES   # local alias
 
 router = APIRouter(prefix="/api/students", tags=["Students"])
 
 WRITE_ROLES = {"admin", "principal", "secretary"}
-
-CBC_GRADES = ["Play Group", "PP1", "PP2", "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6"]
 
 
 @router.get("/classes/summary")
@@ -28,31 +22,47 @@ def get_classes_summary(
 ):
     """Return per-grade headcount, present-today count, and gender split."""
     today = datetime.now().date()
-    result = []
-    for grade in CBC_GRADES:
-        students = db.query(models.Student).filter(
-            models.Student.grade_level == grade,
-            models.Student.is_deleted == False,
-            models.Student.status == "Active",
-        ).all()
-        total = len(students)
-        if total == 0:
-            continue
-        ids = [s.id for s in students]
-        present_today = db.query(func.count(models.Attendance.id)).filter(
-            models.Attendance.student_id.in_(ids),
+
+    # Single query for all active students
+    all_students = db.query(models.Student).filter(
+        models.Student.is_deleted == False,
+        models.Student.status == "Active",
+    ).all()
+    if not all_students:
+        return []
+
+    all_ids = [s.id for s in all_students]
+
+    # Single query for today's present set
+    present_set = {
+        row.student_id
+        for row in db.query(models.Attendance.student_id).filter(
+            models.Attendance.student_id.in_(all_ids),
             models.Attendance.date == today,
             models.Attendance.is_present == True,
-        ).scalar() or 0
+        ).all()
+    }
+
+    # Group in Python
+    from collections import defaultdict
+    by_grade: dict = defaultdict(list)
+    for s in all_students:
+        by_grade[s.grade_level].append(s)
+
+    result = []
+    for grade in CBC_GRADES:
+        students = by_grade.get(grade, [])
+        if not students:
+            continue
         male = sum(1 for s in students if (s.gender or "").lower() == "male")
         female = sum(1 for s in students if (s.gender or "").lower() == "female")
         result.append({
             "grade_level": grade,
-            "total": total,
-            "present_today": present_today,
+            "total": len(students),
+            "present_today": sum(1 for s in students if s.id in present_set),
             "male": male,
             "female": female,
-            "other": total - male - female,
+            "other": len(students) - male - female,
         })
     return result
 
@@ -68,34 +78,45 @@ def get_class_roster(
         models.Student.grade_level == grade,
         models.Student.is_deleted == False,
     ).order_by(models.Student.last_name).all()
+    if not students:
+        return []
 
+    ids = [s.id for s in students]
     year = datetime.now().year
+
+    # Batch: attendance counts per student
+    att_rows = db.query(
+        models.Attendance.student_id,
+        func.count(models.Attendance.id).label("total"),
+        func.sum(case((models.Attendance.is_present == True, 1), else_=0)).label("present"),
+    ).filter(models.Attendance.student_id.in_(ids)).group_by(models.Attendance.student_id).all()
+    att = {r.student_id: (int(r.total), int(r.present)) for r in att_rows}
+
+    # Batch: fee structures for this grade this year (same for all students in grade)
+    fee_structs = {
+        fs.term: float(fs.amount)
+        for fs in db.query(models.FeeStructure).filter(
+            models.FeeStructure.grade_level == grade,
+            models.FeeStructure.academic_year == year,
+        ).all()
+    }
+    grade_annual_expected = sum(
+        fee_structs.get(t, _CBC_FEES.get(grade, 0.0))
+        for t in ["Term 1", "Term 2", "Term 3"]
+    )
+
+    # Batch: total paid per student (all terms)
+    paid_rows = db.query(
+        models.FeePayment.student_id,
+        func.sum(models.FeePayment.amount).label("total"),
+    ).filter(models.FeePayment.student_id.in_(ids)).group_by(models.FeePayment.student_id).all()
+    paid = {r.student_id: float(r.total) for r in paid_rows}
+
     roster = []
     for s in students:
-        total_days = db.query(func.count(models.Attendance.id)).filter(
-            models.Attendance.student_id == s.id
-        ).scalar() or 0
-        days_present = db.query(func.count(models.Attendance.id)).filter(
-            models.Attendance.student_id == s.id,
-            models.Attendance.is_present == True,
-        ).scalar() or 0
+        total_days, days_present = att.get(s.id, (0, 0))
         att_pct = round(days_present / total_days * 100) if total_days > 0 else None
-
-        total_expected = 0.0
-        for term in ["Term 1", "Term 2", "Term 3"]:
-            fs = db.query(models.FeeStructure).filter(
-                models.FeeStructure.grade_level == s.grade_level,
-                models.FeeStructure.term == term,
-                models.FeeStructure.academic_year == year,
-            ).first()
-            total_expected += float(fs.amount) if fs else _CBC_FEES.get(s.grade_level, 0.0)
-
-        total_paid = float(
-            db.query(func.sum(models.FeePayment.amount)).filter(
-                models.FeePayment.student_id == s.id
-            ).scalar() or 0
-        )
-
+        total_paid = paid.get(s.id, 0.0)
         roster.append({
             "id": s.id,
             "first_name": s.first_name,
@@ -105,7 +126,7 @@ def get_class_roster(
             "date_of_birth": s.date_of_birth.isoformat() if s.date_of_birth else None,
             "status": s.status,
             "attendance_pct": att_pct,
-            "fee_balance": round(total_expected - total_paid, 2),
+            "fee_balance": round(grade_annual_expected - total_paid, 2),
         })
     return roster
 

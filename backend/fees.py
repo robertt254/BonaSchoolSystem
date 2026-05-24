@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -7,23 +7,12 @@ from database import get_db
 import models, schemas, auth
 from audit import log_action
 from notifications import notify_payment
+from constants import CBC_TERMLY_FEES, TERM_ORDER, TERM_BY_NUM
 
 router = APIRouter(prefix="/api/fees", tags=["Finance & Fees"])
 
-CBC_TERMLY_FEES_FALLBACK = {
-    "Play Group": 12000.00,
-    "PP1": 15000.00,
-    "PP2": 15000.00,
-    "Grade 1": 18000.00,
-    "Grade 2": 18000.00,
-    "Grade 3": 18000.00,
-    "Grade 4": 20000.00,
-    "Grade 5": 20000.00,
-    "Grade 6": 20000.00,
-}
-
-TERM_ORDER = {"Term 1": 1, "Term 2": 2, "Term 3": 3}
-TERM_BY_NUM = {1: "Term 1", 2: "Term 2", 3: "Term 3"}
+# Keep local alias so internal helpers are unchanged
+CBC_TERMLY_FEES_FALLBACK = CBC_TERMLY_FEES
 
 FINANCE_ROLES = {"accountant", "admin", "principal"}
 
@@ -182,12 +171,18 @@ def get_student_payments(
 
 @router.get("/", response_model=list[schemas.FeeResponse])
 def get_all_payments(
+    skip: int = 0,
+    limit: int = Query(default=200, le=1000),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
     if current_user.role not in FINANCE_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized to view financials")
-    return db.query(models.FeePayment).order_by(models.FeePayment.payment_date.desc()).all()
+    return (
+        db.query(models.FeePayment)
+        .order_by(models.FeePayment.payment_date.desc())
+        .offset(skip).limit(limit).all()
+    )
 
 
 @router.get("/balance/{student_id}/{term}")
@@ -219,7 +214,7 @@ def get_student_balance(
     )
 
     rollover_credit = _get_rollover_credit(db, student_id, student.grade_level, current_term_num)
-    carry_forward = _get_carry_forward(db, student_id, academic_year or "", term) if academic_year else 0.0
+    carry_forward = _get_carry_forward(db, student_id, academic_year, term) if academic_year else 0.0
 
     outstanding = round(max(0.0, expected + carry_forward - total_paid - rollover_credit), 2)
 
@@ -307,32 +302,70 @@ def get_defaulters(
     if current_user.role not in FINANCE_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized to view financials")
 
-    students = db.query(models.Student).filter(models.Student.is_deleted == False).all()
-    defaulters = []
     current_term_num = TERM_ORDER.get(term, 1)
+    year = datetime.now().year
+
+    # ── 1. Load fee structures for this year in one query ──────────────────
+    fee_structs = {
+        (fs.grade_level, fs.term): float(fs.amount)
+        for fs in db.query(models.FeeStructure)
+        .filter(models.FeeStructure.academic_year == year).all()
+    }
+
+    def expected_fee(grade: str, t: str) -> float:
+        return fee_structs.get((grade, t), CBC_TERMLY_FEES_FALLBACK.get(grade, 0.0))
+
+    # ── 2. Load all payments grouped by (student_id, term) ─────────────────
+    pay_rows = db.query(
+        models.FeePayment.student_id,
+        models.FeePayment.term,
+        func.sum(models.FeePayment.amount).label("total"),
+    ).group_by(models.FeePayment.student_id, models.FeePayment.term).all()
+    paid_map = {(r.student_id, r.term): float(r.total) for r in pay_rows}
+
+    # ── 3. Load carry-forwards for this academic year ──────────────────────
+    cf_map: dict = {}
+    if academic_year:
+        cf_rows = db.query(
+            models.FeeCarryForward.student_id,
+            models.FeeCarryForward.term,
+            func.sum(models.FeeCarryForward.amount).label("total"),
+        ).filter(
+            models.FeeCarryForward.academic_year == academic_year
+        ).group_by(
+            models.FeeCarryForward.student_id, models.FeeCarryForward.term
+        ).all()
+        cf_map = {(r.student_id, r.term): float(r.total) for r in cf_rows}
+
+    # ── 4. Compute balances in Python (no more per-student queries) ─────────
+    students = db.query(models.Student).filter(models.Student.is_deleted == False).all()
+    prior_terms = [TERM_BY_NUM[n] for n in range(1, current_term_num)]
+
+    defaulters = []
     for s in students:
-        expected = _get_expected_fee(db, s.grade_level, term)
-        if expected == 0:
+        exp = expected_fee(s.grade_level, term)
+        if exp == 0:
             continue
-        paid = float(
-            db.query(func.sum(models.FeePayment.amount)).filter(
-                models.FeePayment.student_id == s.id,
-                models.FeePayment.term == term,
-            ).scalar() or 0.0
-        )
-        credit = _get_rollover_credit(db, s.id, s.grade_level, current_term_num)
-        carry_fwd = _get_carry_forward(db, s.id, academic_year or "", term) if academic_year else 0.0
-        balance = round(max(0.0, expected + carry_fwd - paid - credit), 2)
+
+        paid = paid_map.get((s.id, term), 0.0)
+        carry_fwd = cf_map.get((s.id, term), 0.0)
+
+        # Rollover: overpayment from all prior terms this year
+        cum_exp = sum(expected_fee(s.grade_level, t) for t in prior_terms)
+        cum_paid = sum(paid_map.get((s.id, t), 0.0) for t in prior_terms)
+        rollover = max(0.0, round(cum_paid - cum_exp, 2))
+
+        balance = round(max(0.0, exp + carry_fwd - paid - rollover), 2)
         if balance > 0:
             defaulters.append({
                 "student_id": s.id,
                 "student_name": f"{s.first_name} {s.last_name}",
                 "admission_number": s.admission_number,
                 "grade_level": s.grade_level,
-                "expected_fee": expected,
+                "expected_fee": exp,
                 "carry_forward": carry_fwd,
                 "total_paid": paid,
-                "rollover_credit": credit,
+                "rollover_credit": rollover,
                 "outstanding_balance": balance,
             })
     return defaulters
@@ -464,34 +497,36 @@ def update_fee_structure(
 
 @router.post("/bulk", status_code=201)
 def record_bulk_payments(
-    payments: list,
+    payments: List[schemas.BulkPaymentItem],
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
     if current_user.role not in {"accountant", "admin"}:
         raise HTTPException(status_code=403, detail="Not authorized to record payments")
+    if len(payments) > 500:
+        raise HTTPException(status_code=400, detail="Bulk limit is 500 payments per request")
 
     created = []
     for p in payments:
         student = db.query(models.Student).filter(
-            models.Student.id == p["student_id"],
+            models.Student.id == p.student_id,
             models.Student.is_deleted == False,
         ).first()
         if not student:
             continue
         receipt = _generate_receipt_number(db)
         new_fee = models.FeePayment(
-            student_id=p["student_id"],
-            amount=p["amount"],
-            payment_type=p.get("payment_type", "Tuition"),
-            term=p["term"],
+            student_id=p.student_id,
+            amount=p.amount,
+            payment_type=p.payment_type,
+            term=p.term,
             recorded_by=current_user.name,
             receipt_number=receipt,
         )
         db.add(new_fee)
         db.flush()
         log_action(db, current_user.id, "CREATE", "fee", new_fee.id,
-                   {"receipt": receipt, "amount": str(p["amount"]), "student_id": p["student_id"]})
+                   {"receipt": receipt, "amount": str(p.amount), "student_id": p.student_id})
         created.append(new_fee.id)
 
     db.commit()

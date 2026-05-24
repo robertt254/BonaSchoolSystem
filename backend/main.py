@@ -158,21 +158,39 @@ async def startup():
         "CREATE INDEX IF NOT EXISTS idx_exam_student        ON exam_results(student_id)",
         "CREATE INDEX IF NOT EXISTS idx_exam_std_term_year  ON exam_results(student_id, term, academic_year)",
         "CREATE INDEX IF NOT EXISTS idx_discipline_student  ON disciplinary_records(student_id)",
+        # ── Unique constraints (will fail silently if duplicates exist) ────────
+        # Use CREATE UNIQUE INDEX so the constraint is advisory; duplicates cause a
+        # warning, not a server crash. Application-level checks prevent new dupes.
+        "CREATE UNIQUE INDEX IF NOT EXISTS uq_payroll_staff_month "
+        "  ON payroll(staff_id, payment_month) WHERE staff_id IS NOT NULL",
+        "CREATE UNIQUE INDEX IF NOT EXISTS uq_fee_structure_entry "
+        "  ON fee_structure(grade_level, term, fee_type, academic_year)",
+        # audit_logs.detail: ALTER TYPE not needed — Text is compatible with VARCHAR
+        "ALTER TABLE audit_logs ALTER COLUMN detail TYPE TEXT",
     ]
-    try:
-        with engine.connect() as conn:
-            for stmt in _safe_add_columns:
+    # Run each migration statement independently so one failure doesn't block others.
+    with engine.connect() as conn:
+        for stmt in _safe_add_columns:
+            try:
                 conn.execute(text(stmt))
-            # One-time: revoke portal access for any existing non-portal role accounts
+                conn.commit()
+            except Exception as exc:
+                conn.rollback()
+                logger.warning("Migration step skipped (may be harmless): %.80s — %s", stmt, exc)
+
+        # One-time: revoke portal access for any existing non-portal role accounts
+        try:
             conn.execute(text(
                 "UPDATE users SET can_login = FALSE "
                 "WHERE role NOT IN ('principal','secretary','accountant','admin','senior_teacher') "
                 "AND can_login = TRUE"
             ))
             conn.commit()
-        logger.info("Schema migration checks complete.")
-    except Exception as exc:
-        logger.error("Schema migration failed: %s", exc)
+        except Exception as exc:
+            conn.rollback()
+            logger.warning("Portal-access update skipped: %s", exc)
+
+    logger.info("Schema migration checks complete.")
 
     if os.path.exists(FRONTEND_DIST):
         logger.info("Frontend dist found at %s", FRONTEND_DIST)
