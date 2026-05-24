@@ -62,6 +62,7 @@
           <option value="">All Roles</option>
           <option value="admin">Admin</option>
           <option value="principal">Principal</option>
+          <option value="senior_teacher">Senior Teacher</option>
           <option value="teacher">Teacher</option>
           <option value="accountant">Accountant</option>
           <option value="secretary">Secretary</option>

@@ -59,11 +59,16 @@
             {{ noSalaryRows.length }} no salary configured
           </p>
         </div>
-        <div v-if="paidRows.length > 0" class="ml-auto">
+        <div v-if="paidRows.length > 0" class="ml-auto flex items-center gap-2">
           <button @click="exportPayroll"
             class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Export CSV
+          </button>
+          <button v-if="isAdmin" @click="confirmVoid" :disabled="voiding"
+            class="flex items-center gap-1.5 text-xs font-semibold text-red-600 bg-white border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 transition disabled:opacity-50">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            {{ voiding ? 'Voiding…' : 'Void Payroll' }}
           </button>
         </div>
       </div>
@@ -262,10 +267,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
+import { useAuthStore } from '@/stores/auth'
 import financeService from '@/services/financeService'
 import { downloadCsv } from '@/utils/csvExport'
 
 const printPage = () => window.print()
+
+const authStore = useAuthStore()
+const isAdmin = computed(() => authStore.user?.role === 'admin')
 
 const today = new Date()
 const selectedMonth = ref(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`)
@@ -275,6 +284,7 @@ const editMap        = ref({})
 const selectedPayslip = ref(null)
 const loading        = ref(false)
 const running        = ref(false)
+const voiding        = ref(false)
 const error          = ref(null)
 const runResult      = ref(null)
 
@@ -361,6 +371,28 @@ const runPayroll = async () => {
   }
 }
 
+const confirmVoid = () => {
+  if (!confirm(
+    `Void all payroll records for ${fmtMonthLabel(selectedMonth.value)}?\n\n` +
+    `This will permanently delete ${paidRows.value.length} payslip(s) and cannot be undone.`
+  )) return
+  voidPayroll()
+}
+
+const voidPayroll = async () => {
+  voiding.value = true
+  error.value = null
+  try {
+    await financeService.voidPayrollMonth(selectedMonth.value)
+    runResult.value = null
+    await loadData()
+  } catch (e) {
+    error.value = e?.message || 'Failed to void payroll.'
+  } finally {
+    voiding.value = false
+  }
+}
+
 const viewPayslip = async (id) => {
   try {
     selectedPayslip.value = await apiFetch(`/api/finance/payslip/${id}`)
@@ -385,7 +417,17 @@ onMounted(loadData)
 
 <style>
 @media print {
-  body > *:not(#payslip-content) { display: none !important; }
-  #payslip-content { display: block !important; position: static !important; }
+  /* Hide everything, then reveal only the payslip content */
+  body * { visibility: hidden !important; }
+  #payslip-content,
+  #payslip-content * { visibility: visible !important; }
+  #payslip-content {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    padding: 2rem !important;
+    background: white !important;
+  }
 }
 </style>

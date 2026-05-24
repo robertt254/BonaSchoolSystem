@@ -86,6 +86,24 @@ def get_payroll_monthly(
     return {"preview": preview, "history": history}
 
 
+@router.delete("/payroll/monthly", status_code=204)
+def void_payroll_month(
+    month: str = Query(..., pattern=r"^\d{4}-(0[1-9]|1[0-2])$"),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(require_payroll_manager),
+):
+    """Delete all payroll records for a month. Restricted to admin only."""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Only admin can void a payroll run")
+    records = db.query(models.Payroll).filter(models.Payroll.payment_month == month).all()
+    count = len(records)
+    for r in records:
+        db.delete(r)
+    log_action(db, current_user.id, "DELETE", "payroll_batch", None,
+               {"month": month, "voided_count": count})
+    db.commit()
+
+
 @router.post("/payroll/run-month", status_code=201)
 def run_month_payroll(
     payload: schemas.RunPayrollRequest,
