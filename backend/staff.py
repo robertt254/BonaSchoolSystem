@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import extract, text
 from datetime import date
@@ -244,17 +245,31 @@ def reset_staff_password(
 
 @router.get("/audit-logs")
 def get_audit_logs(
+    action: Optional[str] = Query(None),
+    resource: Optional[str] = Query(None),
+    user_id: Optional[int] = Query(None),
+    date_from: Optional[str] = Query(None, description="ISO date YYYY-MM-DD"),
+    date_to: Optional[str] = Query(None, description="ISO date YYYY-MM-DD"),
+    limit: int = Query(default=100, le=500),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
     if current_user.role not in {"admin", "principal"}:
         raise HTTPException(status_code=403, detail="Not authorized to view audit logs")
-    logs = (
-        db.query(models.AuditLog)
-        .order_by(models.AuditLog.timestamp.desc())
-        .limit(500)
-        .all()
-    )
+
+    q = db.query(models.AuditLog)
+    if action:
+        q = q.filter(models.AuditLog.action == action.upper())
+    if resource:
+        q = q.filter(models.AuditLog.resource == resource.lower())
+    if user_id:
+        q = q.filter(models.AuditLog.user_id == user_id)
+    if date_from:
+        q = q.filter(models.AuditLog.timestamp >= date_from)
+    if date_to:
+        q = q.filter(models.AuditLog.timestamp <= f"{date_to}T23:59:59")
+
+    logs = q.order_by(models.AuditLog.timestamp.desc()).limit(limit).all()
     return [
         {
             "id": l.id,

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, text
 from database import get_db
 import models, schemas, auth
 from audit import log_action
@@ -20,21 +20,10 @@ FINANCE_ROLES = {"accountant", "admin", "principal"}
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _generate_receipt_number(db: Session) -> str:
+    """Atomic receipt number using a PostgreSQL sequence — no race condition possible."""
     year = datetime.now().year
-    prefix = f"BNS-{year}-"
-    last = (
-        db.query(models.FeePayment)
-        .filter(models.FeePayment.receipt_number.isnot(None))
-        .filter(models.FeePayment.receipt_number.like(f"{prefix}%"))
-        .with_for_update()
-        .order_by(models.FeePayment.id.desc())
-        .first()
-    )
-    if last and last.receipt_number:
-        last_seq = int(last.receipt_number.split("-")[2])
-    else:
-        last_seq = 0
-    return f"{prefix}{last_seq + 1:05d}"
+    seq = db.execute(text("SELECT nextval('receipt_number_seq')")).scalar()
+    return f"BNS-{year}-{seq:05d}"
 
 
 def _get_expected_fee(db: Session, grade_level: str, term: str) -> float:

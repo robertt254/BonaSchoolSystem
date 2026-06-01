@@ -260,14 +260,23 @@ def get_budgets(
         q = q.filter(models.Budget.term == term)
     budgets = q.order_by(models.Budget.term, models.Budget.category).all()
 
+    # One query for all actuals — avoids N queries (one per budget line)
+    years = {b.academic_year for b in budgets}
+    actuals_rows = (
+        db.query(
+            models.Expense.category,
+            func.extract("year", models.Expense.expense_date).label("yr"),
+            func.sum(models.Expense.amount).label("total"),
+        )
+        .filter(func.extract("year", models.Expense.expense_date).in_(years))
+        .group_by(models.Expense.category, func.extract("year", models.Expense.expense_date))
+        .all()
+    )
+    actuals_map = {(row.category, int(row.yr)): float(row.total) for row in actuals_rows}
+
     result = []
     for b in budgets:
-        actual = float(
-            db.query(func.sum(models.Expense.amount)).filter(
-                models.Expense.category == b.category,
-                func.extract("year", models.Expense.expense_date) == b.academic_year,
-            ).scalar() or 0
-        )
+        actual = actuals_map.get((b.category, b.academic_year), 0.0)
         variance = float(b.budgeted_amount) - actual
         result.append({
             "id": b.id,

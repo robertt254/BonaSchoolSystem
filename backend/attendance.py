@@ -72,12 +72,10 @@ def log_bulk_attendance(
         ).all()
         date_str = today.strftime("%d %b %Y")
         for student in absent_students:
-            background_tasks.add_task(
-                notify_absence,
-                f"{student.first_name} {student.last_name}",
-                student.guardian_phone,
-                date_str,
-            )
+            name = f"{student.first_name} {student.last_name}"
+            background_tasks.add_task(notify_absence, name, student.guardian_phone, date_str)
+            if student.guardian2_phone:
+                background_tasks.add_task(notify_absence, name, student.guardian2_phone, date_str)
 
     return {"message": "Attendance updated successfully"}
 

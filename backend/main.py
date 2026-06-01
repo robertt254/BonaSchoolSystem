@@ -163,6 +163,8 @@ async def startup():
         "CREATE INDEX IF NOT EXISTS idx_discipline_student  ON disciplinary_records(student_id)",
         "CREATE INDEX IF NOT EXISTS idx_audit_timestamp     ON audit_logs(timestamp DESC)",
         "CREATE INDEX IF NOT EXISTS idx_fees_payment_date   ON fees(payment_date DESC)",
+        # Atomic sequence for receipt numbers — replaces race-prone Python counter
+        "CREATE SEQUENCE IF NOT EXISTS receipt_number_seq START 1",
         # ── Unique constraints (will fail silently if duplicates exist) ────────
         # Use CREATE UNIQUE INDEX so the constraint is advisory; duplicates cause a
         # warning, not a server crash. Application-level checks prevent new dupes.
