@@ -215,6 +215,10 @@ def terminate_staff(
     if not db_user:
         raise HTTPException(status_code=404, detail="Staff member not found")
 
+    # Only admins can terminate other admin accounts
+    if db_user.role == "admin" and admin.role != "admin":
+        raise HTTPException(status_code=403, detail="Only an admin can terminate another admin account")
+
     log_action(db, admin.id, "DELETE", "staff", user_id,
                {"username": db_user.username, "role": db_user.role})
     db.delete(db_user)

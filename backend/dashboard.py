@@ -71,6 +71,7 @@ def get_dashboard_stats(
             if (direct_paid + rollover) < expected_s:
                 defaulters_count += 1
     except Exception:
+        db.rollback()  # reset aborted transaction so subsequent queries work
         active_students = []
         term_expected = 0
         term_collected = 0

@@ -125,6 +125,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const authStore = useAuthStore()
 const isReviewer = computed(() => ['admin', 'principal'].includes(authStore.user?.role))
@@ -200,7 +203,7 @@ const reviewRequest = async (id, action) => {
     await apiFetch(`/api/leave/${id}/review?action=${action}`, { method: 'PUT' })
     await loadRequests()
   } catch (e) {
-    alert('Action failed: ' + (e?.message || ''))
+    toast.error('Action failed: ' + (e?.message || ''))
   }
 }
 
@@ -210,7 +213,7 @@ const cancelRequest = async (id) => {
     await apiFetch(`/api/leave/${id}`, { method: 'DELETE' })
     await loadRequests()
   } catch (e) {
-    alert('Cancel failed.')
+    toast.error('Cancel failed.')
   }
 }
 

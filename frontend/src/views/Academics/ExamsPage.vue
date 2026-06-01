@@ -43,15 +43,17 @@
         </div>
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Subject</label>
-          <input v-model="form.subject" type="text" placeholder="e.g. Mathematics"
-            class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none w-44" />
+          <select v-model="form.subject" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none w-48">
+            <option value="" disabled>— select subject —</option>
+            <option v-for="s in subjectsForGrade" :key="s" :value="s">{{ s }}</option>
+          </select>
         </div>
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Max Marks</label>
           <input v-model.number="form.max_marks" type="number" min="1" max="300"
             class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none w-24" />
         </div>
-        <button @click="loadStudents" :disabled="loadingStudents || !form.subject.trim()"
+        <button @click="loadStudents" :disabled="loadingStudents || !form.subject"
           class="bg-school-purple text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-school-purple-l transition disabled:opacity-50">
           {{ loadingStudents ? 'Loading…' : 'Load Class' }}
         </button>
@@ -69,7 +71,8 @@
             <tr class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
               <th class="px-5 py-4 text-left">Student</th>
               <th class="px-5 py-4 text-left">Adm No.</th>
-              <th class="px-5 py-4 text-center w-40">Marks / {{ form.max_marks }}</th>
+              <th class="px-5 py-4 text-center w-36">Marks / {{ form.max_marks }}</th>
+              <th class="px-5 py-4 text-center w-44">Grade</th>
             </tr>
           </thead>
           <tbody>
@@ -79,6 +82,14 @@
               <td class="px-5 py-3 text-center">
                 <input v-model.number="s.marks" type="number" min="0" :max="form.max_marks" step="0.5"
                   class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-center w-24 outline-none focus:border-school-purple" />
+              </td>
+              <td class="px-5 py-3 text-center">
+                <span v-if="s.marks !== '' && s.marks !== null"
+                  class="px-2.5 py-1 rounded-full text-xs font-bold"
+                  :class="gradeLabel(s.marks, form.max_marks).cls">
+                  {{ gradeLabel(s.marks, form.max_marks).label }}
+                </span>
+                <span v-else class="text-slate-300 text-xs">—</span>
               </td>
             </tr>
           </tbody>
@@ -156,8 +167,16 @@
                   </span>
                 </td>
                 <td class="px-5 py-3.5 font-semibold text-slate-800">{{ s.student_name }}</td>
-                <td v-for="subj in rankings.subjects" :key="subj" class="px-3 py-3.5 text-center text-slate-600">
-                  {{ s.scores[subj]?.marks ?? '—' }}
+                <td v-for="subj in rankings.subjects" :key="subj" class="px-3 py-3.5 text-center">
+                  <span v-if="s.scores[subj]?.marks != null" class="font-medium text-slate-700">
+                    {{ s.scores[subj].marks }}
+                  </span>
+                  <span v-if="s.scores[subj]?.marks != null"
+                    class="ml-1 px-1.5 py-0.5 rounded text-[10px] font-bold"
+                    :class="gradeLabel(s.scores[subj].marks, 100).cls">
+                    {{ gradeLabel(s.scores[subj].marks, 100).abbr }}
+                  </span>
+                  <span v-else class="text-slate-300">—</span>
                 </td>
                 <td class="px-5 py-3.5 text-center font-bold text-slate-800">{{ s.total_marks }}</td>
                 <td class="px-5 py-3.5 text-center">
@@ -181,13 +200,51 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
 import { downloadCsv } from '@/utils/csvExport'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
 
 const appStore = useAppStore()
 const GRADES = ['Play Group','PP1','PP2','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6']
+
+// ── Grading scale (marks out of 100) ────────────────────────────────────────
+function gradeLabel(marks, maxMarks = 100) {
+  const pct = (Number(marks) / Number(maxMarks)) * 100
+  if (pct >= 80) return { label: 'Exceeding Expectations', abbr: 'EE', cls: 'bg-emerald-50 text-emerald-700' }
+  if (pct >= 70) return { label: 'Meeting Expectations',   abbr: 'ME', cls: 'bg-blue-50 text-blue-700' }
+  if (pct >= 60) return { label: 'Approaching Expectations', abbr: 'AE', cls: 'bg-amber-50 text-amber-700' }
+  return            { label: 'Below Expectations',          abbr: 'BE', cls: 'bg-red-50 text-red-600' }
+}
+
+// ── Subjects per grade ───────────────────────────────────────────────────────
+const allSubjectsByGrade = ref({})  // { "Grade 1": ["Math", ...], ... }
+const subjectsForGrade = computed(() =>
+  allSubjectsByGrade.value[form.value.grade_level] ?? []
+)
+
+async function fetchSubjects() {
+  try {
+    const data = await apiFetch('/api/subjects/by-grade')
+    // data = { "Grade 1": [{name, ...}], ... }
+    const mapped = {}
+    for (const [grade, subjects] of Object.entries(data)) {
+      mapped[grade] = subjects.map(s => s.name)
+    }
+    allSubjectsByGrade.value = mapped
+  } catch {
+    // silent — subjects may not be configured yet
+  }
+}
+
+fetchSubjects()
+
+// Reset subject when grade changes
+watch(() => form.value?.grade_level, () => {
+  form.value.subject = subjectsForGrade.value[0] ?? ''
+})
 
 const tabs = [
   { id: 'entry', label: 'Enter Marks' },
@@ -202,7 +259,7 @@ const loadingStudents = ref(false)
 const saving = ref(false)
 
 const loadStudents = async () => {
-  if (!form.value.subject.trim()) return
+  if (!form.value.subject) return
   loadingStudents.value = true
   try {
     const data = await apiFetch(
@@ -215,7 +272,7 @@ const loadStudents = async () => {
       marks: s.scores[form.value.subject]?.marks ?? '',
     }))
   } catch {
-    alert('Failed to load students.')
+    toast.error('Failed to load students.')
   } finally {
     loadingStudents.value = false
   }
@@ -238,9 +295,9 @@ const saveMarks = async () => {
         results,
       }),
     })
-    alert('Marks saved successfully.')
+    toast.success('Marks saved successfully.')
   } catch {
-    alert('Failed to save marks.')
+    toast.error('Failed to save marks.')
   } finally {
     saving.value = false
   }
@@ -280,7 +337,7 @@ const loadRankings = async () => {
     rankings.value = data
     rankingsLoaded.value = true
   } catch {
-    alert('Failed to load rankings.')
+    toast.error('Failed to load rankings.')
   } finally {
     loadingRankings.value = false
   }

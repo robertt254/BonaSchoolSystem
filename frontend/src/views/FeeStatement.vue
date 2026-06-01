@@ -258,6 +258,9 @@ import feeService from '@/services/feeService'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const printPage = () => window.print()
 
@@ -323,7 +326,7 @@ const saveCarryForward = async () => {
     cfForm.value = { academic_year: appStore.currentYear, term: 'Term 1', amount: '', note: '' }
     await loadCarryForwards()
     if (statementData.value) await generateStatement()
-  } catch (e) { alert(e?.message || 'Failed to save.') }
+  } catch (e) { toast.error(e?.message || 'Failed to save.') }
   finally { cfSaving.value = false }
 }
 
@@ -333,7 +336,7 @@ const deleteCarryForward = async (id) => {
     await feeService.deleteCarryForward(id)
     await loadCarryForwards()
     if (statementData.value) await generateStatement()
-  } catch { alert('Delete failed.') }
+  } catch { toast.error('Delete failed.') }
 }
 
 const generateStatement = async () => {
@@ -348,7 +351,7 @@ const generateStatement = async () => {
     statementData.value = stmt
     allPayments.value   = payments
   } catch {
-    alert('Failed to generate statement.')
+    toast.error('Failed to generate statement.')
   } finally {
     loading.value = false
   }

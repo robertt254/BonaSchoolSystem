@@ -71,15 +71,12 @@
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div v-if="loading" class="flex flex-col justify-center items-center py-20 relative z-10">
-      <div
-        class="w-8 h-8 border-4 border-[#E2E8F0] border-t-school-navy rounded-full animate-spin mx-auto"
-      ></div>
-      <div
-        class="text-[12px] font-semibold uppercase tracking-widest text-[#94A3B8] mt-4 text-center"
-      >
-        Loading...
+    <!-- Skeleton loading state -->
+    <div v-if="loading" class="space-y-4">
+      <SkeletonLoader type="stats" :count="4" />
+      <div class="bg-white border border-slate-100 rounded-xl p-5">
+        <div class="skel-bar h-3 w-40 rounded mb-3" style="background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.4s infinite" />
+        <div class="skel-bar h-2 w-full rounded" style="background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.4s infinite" />
       </div>
     </div>
 
@@ -107,13 +104,11 @@
 
     <div v-else class="space-y-4">
       <!-- Stats Grid -->
-      <div
-        class="grid grid-cols-2 lg:grid-cols-4 gap-4"
-        style="animation: slideIn 0.4s 0.08s ease both"
-      >
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Total Enrolled — all roles -->
         <div
           class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
+          style="animation: slideIn 0.4s 0.06s ease both"
         >
           <span
             class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-[#2563EB] to-[#818CF8]"
@@ -127,7 +122,7 @@
               </svg>
             </div>
           </div>
-          <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">{{ totalStudents }}</h2>
+          <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">{{ displayStudents }}</h2>
           <div class="flex items-center gap-[6px]">
             <span class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold bg-[rgba(100,116,139,0.09)] text-[#64748B]">Active</span>
             <span class="text-[12px] text-[#94A3B8]">Across all grades</span>
@@ -138,6 +133,7 @@
         <div
           v-if="canViewFinance"
           class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
+          style="animation: slideIn 0.4s 0.14s ease both"
         >
           <span class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-[#059669] to-[#34D399]"></span>
           <div class="flex items-start justify-between mb-3">
@@ -148,7 +144,7 @@
               </svg>
             </div>
           </div>
-          <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">{{ formatCurrency(totalRevenue) }}</h2>
+          <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">{{ formatCurrency(displayRevenue) }}</h2>
           <div class="flex items-center gap-[6px]">
             <span class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold bg-[rgba(100,116,139,0.09)] text-[#64748B]">YTD</span>
             <span class="text-[12px] text-[#94A3B8]">Historical payments</span>
@@ -159,6 +155,7 @@
         <div
           v-if="canViewHR"
           class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
+          style="animation: slideIn 0.4s 0.22s ease both"
         >
           <span class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-school-purple to-school-purple-ll"></span>
           <div class="flex items-start justify-between mb-3">
@@ -170,7 +167,7 @@
               </svg>
             </div>
           </div>
-          <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">{{ totalStaff }}</h2>
+          <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">{{ displayStaff }}</h2>
           <div class="flex items-center gap-[6px]">
             <span class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold bg-[rgba(100,116,139,0.09)] text-[#64748B]">Active</span>
             <span class="text-[12px] text-[#94A3B8]">Teachers & admin</span>
@@ -180,6 +177,7 @@
         <!-- Today's Attendance — all roles -->
         <div
           class="bg-white border border-slate-200 rounded-xl p-5 relative overflow-hidden transition-all duration-200 cursor-default hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300"
+          style="animation: slideIn 0.4s 0.30s ease both"
         >
           <span class="absolute top-0 left-0 right-0 h-[3px] rounded-t-[12px] bg-gradient-to-r from-[#D97706] to-[#FBBF24]"></span>
           <div class="flex items-start justify-between mb-3">
@@ -191,7 +189,7 @@
             </div>
           </div>
           <h2 class="font-heading text-3xl font-extrabold text-slate-800 leading-none mb-1.5">
-            {{ todayAttendancePct !== null ? todayAttendancePct + '%' : '—' }}
+            {{ todayAttendancePct !== null ? displayAttendance + '%' : '—' }}
           </h2>
           <div class="flex items-center gap-[6px]">
             <span class="inline-flex items-center px-[8px] py-[2px] rounded-full text-[11px] font-bold"
@@ -448,6 +446,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 import { apiFetch } from '@/services/api'
+import { useCounter } from '@/composables/useCounter'
+import SkeletonLoader from '@/components/ui/SkeletonLoader.vue'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
@@ -478,6 +478,12 @@ const totalStudents = ref(0)
 const totalRevenue = ref(0)
 const totalStaff = ref(0)
 const todayAttendancePct = ref(null)
+
+// Animated display counters
+const displayStudents   = useCounter(totalStudents)
+const displayRevenue    = useCounter(totalRevenue)
+const displayStaff      = useCounter(totalStaff)
+const displayAttendance = useCounter(computed(() => todayAttendancePct.value ?? 0), 700, 1)
 const termCollected = ref(0)
 const termExpected = ref(0)
 const termPct = ref(0)

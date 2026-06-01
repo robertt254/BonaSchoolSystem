@@ -351,6 +351,53 @@ def delete_student(
     return {"message": f"Student {student_id} archived. Record preserved for audit purposes."}
 
 
+@router.patch("/{student_id}/deactivate")
+def deactivate_student(
+    student_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """
+    Mark a student as Transferred (fee-cleared deactivation).
+    Records are preserved. Requires all outstanding fees to be settled first.
+    """
+    if current_user.role not in WRITE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized to deactivate students")
+
+    db_student = db.query(models.Student).filter(
+        models.Student.id == student_id,
+        models.Student.is_deleted == False,
+        models.Student.status == "Active",
+    ).first()
+    if not db_student:
+        raise HTTPException(status_code=404, detail="Active student not found")
+
+    # Check outstanding balance across all terms
+    total_paid = float(
+        db.query(func.sum(models.FeePayment.amount))
+        .filter(models.FeePayment.student_id == student_id)
+        .scalar() or 0
+    )
+    from fees import _get_expected_fee
+    total_expected = sum(
+        _get_expected_fee(db, db_student.grade_level, t)
+        for t in ["Term 1", "Term 2", "Term 3"]
+    )
+    outstanding = round(total_expected - total_paid, 2)
+    if outstanding > 0:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Student has an outstanding fee balance of KES {outstanding:,.2f}. "
+                   "All fees must be settled before deactivation.",
+        )
+
+    db_student.status = "Transferred"
+    log_action(db, current_user.id, "UPDATE", "student", student_id,
+               {"status": "Transferred", "admission_number": db_student.admission_number})
+    db.commit()
+    return {"message": f"{db_student.first_name} {db_student.last_name} has been deactivated (Transferred). Records retained."}
+
+
 GRADE_PROGRESSION = {
     "Play Group": "PP1", "PP1": "PP2", "PP2": "Grade 1",
     "Grade 1": "Grade 2", "Grade 2": "Grade 3", "Grade 3": "Grade 4",

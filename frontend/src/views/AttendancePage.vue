@@ -178,6 +178,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const GRADES = ['Play Group','PP1','PP2','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6']
 
@@ -202,7 +205,7 @@ const loadClassList = async () => {
   try {
     classList.value = await apiFetch(`/api/attendance/today/${encodeURIComponent(selectedGrade.value)}`)
   } catch {
-    alert('Error loading class list.')
+    toast.error('Error loading class list.')
   } finally {
     loadingClass.value = false
   }
@@ -215,9 +218,9 @@ const saveAttendance = async () => {
       method: 'POST',
       body: JSON.stringify(classList.value),
     })
-    alert('Roll call submitted successfully.')
+    toast.success('Roll call submitted successfully.')
   } catch {
-    alert('Error saving attendance.')
+    toast.error('Error saving attendance.')
   } finally {
     saving.value = false
   }

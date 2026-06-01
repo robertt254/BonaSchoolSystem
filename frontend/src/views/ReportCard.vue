@@ -127,6 +127,9 @@ import studentService from '@/services/studentService'
 import academicService from '@/services/academicService'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const appStore = useAppStore()
 
@@ -291,7 +294,7 @@ const loadReport = async () => {
       selectedStudent.value, selectedTerm.value, appStore.currentYear
     )
   } catch {
-    alert('Failed to load report card.')
+    toast.error('Failed to load report card.')
   } finally {
     generating.value = false
   }
@@ -309,7 +312,7 @@ const loadBulk = async () => {
     )
     bulkReports.value = reports.filter(Boolean)
   } catch (e) {
-    alert('Failed to load reports.')
+    toast.error('Failed to load reports.')
   } finally {
     generating.value = false
   }

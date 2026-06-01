@@ -2,22 +2,28 @@
   <div class="max-w-7xl mx-auto space-y-6">
 
     <!-- Header stats -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
+    <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div v-for="n in 4" :key="n" class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
+        <div class="skel-bar h-2 w-24 rounded mb-3" />
+        <div class="skel-bar h-8 w-12 rounded" />
+      </div>
+    </div>
+    <div v-else class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.04s ease both">
         <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Students</p>
-        <p class="text-3xl font-extrabold text-slate-800">{{ students.length }}</p>
+        <p class="text-3xl font-extrabold text-slate-800">{{ displayTotal }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.12s ease both">
         <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Active</p>
-        <p class="text-3xl font-extrabold text-emerald-600">{{ activeCount }}</p>
+        <p class="text-3xl font-extrabold text-emerald-600">{{ displayActive }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.20s ease both">
         <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Male</p>
-        <p class="text-3xl font-extrabold text-blue-600">{{ maleCount }}</p>
+        <p class="text-3xl font-extrabold text-blue-600">{{ displayMale }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.28s ease both">
         <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Female</p>
-        <p class="text-3xl font-extrabold text-pink-500">{{ femaleCount }}</p>
+        <p class="text-3xl font-extrabold text-pink-500">{{ displayFemale }}</p>
       </div>
     </div>
 
@@ -66,8 +72,8 @@
 
     <!-- Student table -->
     <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
-      <div v-if="loading" class="py-16 flex justify-center">
-        <div class="w-8 h-8 border-4 border-slate-200 border-t-school-purple rounded-full animate-spin"></div>
+      <div v-if="loading" class="p-4 space-y-2">
+        <SkeletonLoader type="table" :count="8" />
       </div>
 
       <div v-else-if="filtered.length === 0" class="py-16 text-center text-slate-400 text-sm">
@@ -93,7 +99,8 @@
             <tr
               v-for="(s, i) in filtered"
               :key="s.id"
-              class="hover:bg-slate-50 transition-colors"
+              class="hover:bg-slate-50 hover:border-l-2 hover:border-l-school-purple/30 transition-all duration-150"
+              :style="{ animation: `slideIn 0.3s ${Math.min(i * 0.04, 0.4)}s ease both` }"
             >
               <td class="px-6 py-3.5 text-slate-400 text-xs">{{ i + 1 }}</td>
               <td class="px-6 py-3.5">
@@ -149,6 +156,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import studentService from '@/services/studentService'
+import { useCounter } from '@/composables/useCounter'
+import SkeletonLoader from '@/components/ui/SkeletonLoader.vue'
 
 const GRADES = ['Play Group', 'PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6']
 
@@ -173,9 +182,15 @@ const filtered = computed(() => {
   return list
 })
 
+const totalCount  = computed(() => students.value.length)
 const activeCount = computed(() => students.value.filter(s => s.status === 'Active').length)
-const maleCount = computed(() => students.value.filter(s => s.gender === 'Male').length)
+const maleCount   = computed(() => students.value.filter(s => s.gender === 'Male').length)
 const femaleCount = computed(() => students.value.filter(s => s.gender === 'Female').length)
+
+const displayTotal  = useCounter(totalCount)
+const displayActive = useCounter(activeCount)
+const displayMale   = useCounter(maleCount)
+const displayFemale = useCounter(femaleCount)
 
 const formatDate = (d) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 const calcAge = (dob) => {
@@ -190,3 +205,15 @@ onMounted(async () => {
   finally { loading.value = false }
 })
 </script>
+
+<style scoped>
+.skel-bar {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+</style>

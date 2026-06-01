@@ -154,6 +154,9 @@ import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
 import { downloadCsv } from '@/utils/csvExport'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const appStore = useAppStore()
 
@@ -218,7 +221,7 @@ const save = async () => {
     }
     showModal.value = false
     await load()
-  } catch (e) { alert(e?.message || 'Failed to save.') }
+  } catch (e) { toast.error(e?.message || 'Failed to save.') }
   finally { saving.value = false }
 }
 
@@ -227,7 +230,7 @@ const deleteBudget = async (id) => {
   try {
     await apiFetch(`/api/finance/budget/${id}`, { method: 'DELETE' })
     await load()
-  } catch { alert('Delete failed.') }
+  } catch { toast.error('Delete failed.') }
 }
 
 onMounted(load)

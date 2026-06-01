@@ -154,6 +154,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const today = new Date()
 const viewYear = ref(today.getFullYear())
@@ -257,7 +260,7 @@ const saveEvent = async () => {
     showModal.value = false
     selectedEvent.value = null
     await loadEvents()
-  } catch (e) { alert(e?.message || 'Failed to save.') }
+  } catch (e) { toast.error(e?.message || 'Failed to save.') }
   finally { saving.value = false }
 }
 
@@ -267,7 +270,7 @@ const deleteEvent = async (id) => {
     await apiFetch(`/api/events/${id}`, { method: 'DELETE' })
     selectedEvent.value = null
     await loadEvents()
-  } catch { alert('Delete failed.') }
+  } catch { toast.error('Delete failed.') }
 }
 
 const fmtDate = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''

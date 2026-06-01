@@ -135,6 +135,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
 import { downloadCsv } from '@/utils/csvExport'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const transactions = ref([])
 const showModal = ref(false)
@@ -177,7 +180,7 @@ const saveEntry = async () => {
     await apiFetch('/api/finance/petty-cash', { method: 'POST', body: JSON.stringify(form.value) })
     showModal.value = false
     await load()
-  } catch (e) { alert(e?.message || 'Failed to save.') }
+  } catch (e) { toast.error(e?.message || 'Failed to save.') }
   finally { saving.value = false }
 }
 
@@ -186,7 +189,7 @@ const deleteTx = async (id) => {
   try {
     await apiFetch(`/api/finance/petty-cash/${id}`, { method: 'DELETE' })
     await load()
-  } catch { alert('Delete failed.') }
+  } catch { toast.error('Delete failed.') }
 }
 
 onMounted(load)

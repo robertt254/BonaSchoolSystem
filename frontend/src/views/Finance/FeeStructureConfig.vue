@@ -133,6 +133,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
 
 const appStore = useAppStore()
 
@@ -230,7 +232,7 @@ const deleteEntry = async (id) => {
     await apiFetch(`/api/fees/structure/${id}`, { method: 'DELETE' })
     await loadEntries()
   } catch (e) {
-    alert('Delete failed: ' + (e?.message || ''))
+    toast.error('Delete failed: ' + (e?.message || ''))
   }
 }
 

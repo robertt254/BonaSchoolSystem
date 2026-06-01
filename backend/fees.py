@@ -100,7 +100,7 @@ def record_payment(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
-    if current_user.role not in {"accountant", "admin"}:
+    if current_user.role not in {"accountant", "admin", "secretary", "principal"}:
         raise HTTPException(status_code=403, detail="Not authorized to record payments")
 
     student = (
@@ -495,7 +495,7 @@ def record_bulk_payments(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
-    if current_user.role not in {"accountant", "admin"}:
+    if current_user.role not in {"accountant", "admin", "secretary", "principal"}:
         raise HTTPException(status_code=403, detail="Not authorized to record payments")
     if len(payments) > 500:
         raise HTTPException(status_code=400, detail="Bulk limit is 500 payments per request")

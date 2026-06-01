@@ -235,6 +235,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
 import studentService from '@/services/studentService'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const GRADES = ['Play Group','PP1','PP2','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6']
 
@@ -312,7 +315,7 @@ const saveRecord = async () => {
     }) })
     showModal.value = false
     await loadRecords()
-  } catch (e) { alert(e?.message || 'Failed to record.') }
+  } catch (e) { toast.error(e?.message || 'Failed to record.') }
   finally { saving.value = false }
 }
 
@@ -341,7 +344,7 @@ const submitResolve = async () => {
     })
     showDetailModal.value = false
     await loadRecords()
-  } catch { alert('Failed to update.') }
+  } catch { toast.error('Failed to update.') }
   finally { savingAction.value = false }
 }
 
@@ -350,7 +353,7 @@ const deleteRecord = async (id) => {
   try {
     await apiFetch(`/api/discipline/${id}`, { method: 'DELETE' })
     await loadRecords()
-  } catch { alert('Delete failed.') }
+  } catch { toast.error('Delete failed.') }
 }
 
 const fmtDate = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'

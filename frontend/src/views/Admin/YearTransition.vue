@@ -81,6 +81,9 @@
 import { ref, computed } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const appStore = useAppStore()
 
@@ -106,7 +109,7 @@ const loadSummary = async () => {
     const data = await apiFetch(`/api/students/enrollment-summary?academic_year=${appStore.currentYear}`)
     summary.value = data.map(r => ({ grade: r.grade_level, count: r.count, next: GRADE_PROGRESSION[r.grade_level] }))
     summaryLoaded.value = true
-  } catch { alert('Failed to load summary.') }
+  } catch { toast.error('Failed to load summary.') }
   finally { loadingSummary.value = false }
 }
 
@@ -117,7 +120,7 @@ const runTransition = async () => {
     const res = await apiFetch('/api/students/year-transition', { method: 'POST' })
     result.value = res
     done.value = true
-  } catch (e) { alert(e?.message || 'Transition failed.') }
+  } catch (e) { toast.error(e?.message || 'Transition failed.') }
   finally { running.value = false }
 }
 </script>

@@ -12,15 +12,15 @@
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div
-      v-if="loading"
-      class="flex flex-col justify-center items-center py-20 text-slate-400 space-y-4"
-    >
-      <div
-        class="w-8 h-8 border-4 border-[#E2E8F0] border-t-school-navy rounded-full animate-spin mx-auto"
-      ></div>
-      <span class="text-xs font-bold tracking-widest uppercase">Loading Finance Data...</span>
+    <!-- Skeleton loading state -->
+    <div v-if="loading" class="space-y-8">
+      <SkeletonLoader type="stats" :count="3" />
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-8">
+        <div class="skel-bar h-3 w-44 rounded mb-6" />
+        <div class="flex items-end gap-2 h-36">
+          <div v-for="n in 12" :key="n" class="flex-1 skel-bar rounded" :style="{ height: (30 + Math.random() * 70) + 'px' }" />
+        </div>
+      </div>
     </div>
 
     <div v-else class="space-y-8">
@@ -97,8 +97,8 @@
         </div>
       </div>
 
-      <!-- Monthly Collection Chart -->
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden">
+      <!-- Monthly Collection Chart (Chart.js) -->
+      <div class="bg-white rounded-[12px] border border-[#E2E8F0] hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden transition-shadow">
         <div class="border-b border-slate-100 px-8 py-5 flex items-center justify-between bg-slate-50">
           <div>
             <h3 class="text-lg font-bold text-slate-800 tracking-tight">Monthly Collections</h3>
@@ -106,29 +106,8 @@
           </div>
           <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">KES</span>
         </div>
-        <div class="px-8 py-6">
-          <div v-if="monthlyCollection.some(m => m.total > 0)" class="flex items-end gap-1.5 h-36">
-            <div
-              v-for="m in monthlyCollection"
-              :key="m.month"
-              class="flex-1 flex flex-col items-center gap-1 group"
-            >
-              <span class="text-[9px] font-bold text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                {{ m.total > 0 ? formatCurrencyShort(m.total) : '' }}
-              </span>
-              <div class="w-full flex flex-col justify-end rounded overflow-hidden bg-slate-100" style="height:88px">
-                <div
-                  class="w-full bg-school-navy/80 hover:bg-school-navy rounded transition-all duration-700"
-                  :style="{ height: (m.total / maxMonthly * 88) + 'px' }"
-                  :title="m.month + ': ' + formatCurrency(m.total)"
-                ></div>
-              </div>
-              <span class="text-[9px] text-slate-400 font-semibold">{{ m.month }}</span>
-            </div>
-          </div>
-          <div v-else class="h-36 flex items-center justify-center">
-            <p class="text-sm text-slate-400">No payments recorded for {{ new Date().getFullYear() }}.</p>
-          </div>
+        <div class="px-8 py-6" style="height:220px">
+          <canvas ref="chartCanvas" />
         </div>
       </div>
 
@@ -445,13 +424,20 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
+import { Chart, BarElement, BarController, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js'
 import feeService from '@/services/feeService'
 import studentService from '@/services/studentService'
 import staffService from '@/services/staffService'
 import financeService from '@/services/financeService'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import { useToast } from '@/composables/useToast'
+import SkeletonLoader from '@/components/ui/SkeletonLoader.vue'
+
+Chart.register(BarElement, BarController, CategoryScale, LinearScale, Tooltip, Legend)
+
+const toast = useToast()
 
 const appStore = useAppStore()
 const authStore = useAuthStore()
@@ -467,6 +453,8 @@ const monthlyCollection = ref([])
 
 const showExpenseModal = ref(false)
 const showFeeModal = ref(false)
+const chartCanvas = ref(null)
+let chartInstance = null
 
 const feeForm = reactive({
   student_id: '',
@@ -507,12 +495,64 @@ const loadData = async () => {
   }
 }
 
+function buildChart() {
+  if (!chartCanvas.value || !monthlyCollection.value.length) return
+  const labels = monthlyCollection.value.map(m => m.month)
+  const data   = monthlyCollection.value.map(m => m.total)
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null }
+  chartInstance = new Chart(chartCanvas.value, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Collections (KES)',
+        data,
+        backgroundColor: 'rgba(10,15,30,0.75)',
+        hoverBackgroundColor: '#0A0F1E',
+        borderRadius: 6,
+        borderSkipped: false,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' KES ' + ctx.parsed.y.toLocaleString('en-KE'),
+          },
+        },
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10, weight: '600' } } },
+        y: {
+          grid: { color: '#f1f5f9' },
+          ticks: {
+            color: '#94a3b8',
+            font: { size: 10 },
+            callback: v => v >= 1000 ? (v / 1000).toFixed(0) + 'K' : v,
+          },
+        },
+      },
+    },
+  })
+}
+
+watch(monthlyCollection, async () => {
+  await nextTick()
+  buildChart()
+})
+
 let refreshTimer = null
 onMounted(() => {
   loadData()
   refreshTimer = setInterval(loadData, 60_000)
 })
-onUnmounted(() => clearInterval(refreshTimer))
+onUnmounted(() => {
+  clearInterval(refreshTimer)
+  if (chartInstance) chartInstance.destroy()
+})
 
 // --- COMPUTED FINANCE METRICS ---
 const totalRevenue = computed(() =>
@@ -571,10 +611,10 @@ const submitFee = async () => {
   try {
     await feeService.recordFee(feeForm)
     closeFeeModal()
+    toast.success('Fee payment recorded successfully.')
     await loadData()
   } catch (error) {
-    alert(error.message || 'Failed to record fee.')
-    console.error(error)
+    toast.error(error.message || 'Failed to record fee.')
   }
 }
 
@@ -594,10 +634,10 @@ const submitExpense = async () => {
   try {
     await financeService.recordExpense(expenseForm)
     closeExpenseModal()
+    toast.success('Expense recorded.')
     await loadData()
   } catch (error) {
-    alert(error.message || 'Failed to record expense.')
-    console.error(error)
+    toast.error(error.message || 'Failed to record expense.')
   }
 }
 
@@ -610,3 +650,15 @@ const formatCurrency = (amount) => {
   }).format(amount)
 }
 </script>
+
+<style scoped>
+.skel-bar {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+</style>

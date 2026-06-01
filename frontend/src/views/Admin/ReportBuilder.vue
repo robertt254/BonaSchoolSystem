@@ -103,6 +103,8 @@ import { ref, reactive, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
 import { downloadCsv } from '@/utils/csvExport'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
 
 const appStore = useAppStore()
 const GRADES = ['Play Group','PP1','PP2','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6']
@@ -170,7 +172,7 @@ const runReport = async () => {
     else if (id === 'attendance') await runAttendance()
     else if (id === 'exam_performance') await runExamPerformance()
     ranReport.value = true
-  } catch (e) { alert('Report failed: ' + (e?.message || 'Unknown error')) }
+  } catch (e) { toast.error('Report failed: ' + (e?.message || 'Unknown error')) }
   finally { loading.value = false }
 }
 

@@ -384,6 +384,7 @@
       </main>
     </div>
   </div>
+  <ToastContainer />
 </template>
 
 <script setup>
@@ -392,6 +393,7 @@ import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 import ChangePasswordModal from '@/components/ChangePasswordModal.vue'
+import ToastContainer from '@/components/ui/ToastContainer.vue'
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 

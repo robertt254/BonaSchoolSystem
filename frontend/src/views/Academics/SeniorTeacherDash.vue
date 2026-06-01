@@ -236,6 +236,8 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { apiFetch } from '@/services/api'
 import academicService from '@/services/academicService'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
 
 const appStore = useAppStore()
 
@@ -429,7 +431,7 @@ const submitSingle = async () => {
     showModal.value = false
     await loadBulkData()
   } catch (e) {
-    alert('Save failed: ' + (e?.message || ''))
+    toast.error('Save failed: ' + (e?.message || ''))
   }
 }
 

@@ -252,6 +252,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const tabs = [{ id: 'books', label: 'Catalogue' }, { id: 'borrows', label: 'Borrowing Records' }]
 const activeTab = ref('books')
@@ -306,7 +309,7 @@ const saveBook = async () => {
     }
     showBookModal.value = false
     await loadBooks()
-  } catch (e) { alert(e?.message || 'Failed to save book.') }
+  } catch (e) { toast.error(e?.message || 'Failed to save book.') }
   finally { savingBook.value = false }
 }
 
@@ -315,7 +318,7 @@ const deleteBook = async (id) => {
   try {
     await apiFetch(`/api/library/books/${id}`, { method: 'DELETE' })
     await loadBooks()
-  } catch (e) { alert(e?.message || 'Delete failed.') }
+  } catch (e) { toast.error(e?.message || 'Delete failed.') }
 }
 
 // Borrows
@@ -356,7 +359,7 @@ const saveBorrow = async () => {
     })
     showBorrowModal.value = false
     await Promise.all([loadBooks(), loadBorrows()])
-  } catch (e) { alert(e?.message || 'Failed to record borrow.') }
+  } catch (e) { toast.error(e?.message || 'Failed to record borrow.') }
   finally { savingBorrow.value = false }
 }
 
@@ -365,7 +368,7 @@ const returnBook = async (borrowId) => {
   try {
     await apiFetch(`/api/library/borrows/${borrowId}/return`, { method: 'PUT' })
     await Promise.all([loadBooks(), loadBorrows()])
-  } catch (e) { alert(e?.message || 'Return failed.') }
+  } catch (e) { toast.error(e?.message || 'Return failed.') }
 }
 
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'

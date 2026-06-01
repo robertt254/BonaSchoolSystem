@@ -287,6 +287,9 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import studentService from '@/services/studentService'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const GRADES = ['Play Group', 'PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6']
 const PAGE_SIZE = 50
@@ -429,7 +432,7 @@ const saveStudent = async () => {
     closeModal()
     await fetchStudents()
   } catch (err) {
-    alert("An error occurred. Check the admission number isn't a duplicate.")
+    toast.error("An error occurred. Check the admission number isn't a duplicate.")
     console.error(err)
   } finally {
     saving.value = false
@@ -442,7 +445,7 @@ const deleteStudent = async (student) => {
     await studentService.deleteStudent(student.id)
     await fetchStudents()
   } catch (err) {
-    alert('Failed to delete the student.')
+    toast.error('Failed to delete the student.')
     console.error(err)
   }
 }

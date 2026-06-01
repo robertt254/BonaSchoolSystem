@@ -139,6 +139,9 @@ import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
@@ -217,7 +220,7 @@ const savePeriod = async () => {
     await loadTimetable()
     closeModal()
   } catch (e) {
-    alert('Failed to save: ' + (e?.message || ''))
+    toast.error('Failed to save: ' + (e?.message || ''))
   } finally {
     saving.value = false
   }
@@ -229,7 +232,7 @@ const deleteEntry = async (id) => {
     await apiFetch(`/api/timetable/${id}`, { method: 'DELETE' })
     await loadTimetable()
   } catch (e) {
-    alert('Delete failed.')
+    toast.error('Delete failed.')
   }
 }
 

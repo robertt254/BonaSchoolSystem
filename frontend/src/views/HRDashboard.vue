@@ -173,7 +173,7 @@
                   Reset PW
                 </button>
                 <button
-                  v-if="authStore.user?.username !== staff.username"
+                  v-if="authStore.user?.username !== staff.username && !(staff.role === 'admin' && authStore.user?.role === 'principal')"
                   @click="terminateStaff(staff.id)"
                   class="text-xs font-bold text-school-red/70 hover:text-school-red transition-colors"
                 >
@@ -489,6 +489,9 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import staffService from '@/services/staffService'
 import { useAuthStore } from '@/stores/auth'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const authStore = useAuthStore()
 
@@ -604,7 +607,7 @@ const saveStaff = async () => {
     closeModal()
     await loadStaff()
   } catch (error) {
-    alert(error.message || 'Failed to save staff record')
+    toast.error(error.message || 'Failed to save staff record')
   }
 }
 
@@ -616,7 +619,7 @@ const terminateStaff = async (id) => {
       await staffService.terminateStaff(id)
       await loadStaff()
     } catch (error) {
-      alert(error.message || 'Failed to terminate staff')
+      toast.error(error.message || 'Failed to terminate staff')
     }
   }
 }
@@ -638,7 +641,7 @@ const submitReset = async () => {
   try {
     await staffService.resetPassword(resetTarget.value.id, newPassword.value)
     showResetModal.value = false
-    alert(`Password for ${resetTarget.value.name} has been reset successfully.`)
+    toast.success(`Password for ${resetTarget.value.name} has been reset successfully.`)
   } catch (e) {
     resetError.value = e.message || 'Password reset failed. Please try again.'
   } finally {

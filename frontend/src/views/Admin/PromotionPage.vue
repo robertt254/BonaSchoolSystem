@@ -79,6 +79,9 @@
 import { ref, computed } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useAppStore } from '@/stores/app'
+import { useToast } from '@/composables/useToast'
+const toast = useToast()
+
 
 const appStore = useAppStore()
 
@@ -110,7 +113,7 @@ const loadStudents = async () => {
       `/api/students/?grade_level=${encodeURIComponent(selectedGrade.value)}&academic_year=${appStore.currentYear}&per_page=300`
     )
     students.value = data.students || data
-  } catch { alert('Failed to load students.') }
+  } catch { toast.error('Failed to load students.') }
   finally { loading.value = false; loaded.value = true }
 }
 
@@ -136,7 +139,7 @@ const promote = async () => {
     })
     successMsg.value = `${res.promoted ?? selectedIds.value.length} student(s) promoted to ${toGrade}.`
     await loadStudents()
-  } catch (e) { alert(e?.message || 'Promotion failed.') }
+  } catch (e) { toast.error(e?.message || 'Promotion failed.') }
   finally { promoting.value = false }
 }
 </script>

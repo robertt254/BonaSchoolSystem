@@ -44,6 +44,14 @@
               :class="profile.student.gender === 'Female' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'">
               {{ profile.student.gender }}
             </span>
+            <!-- Deactivate (Transfer) — only for active students, authorised roles -->
+            <button
+              v-if="profile.student.status === 'Active' && canDeactivate"
+              @click="showDeactivateModal = true"
+              class="ml-auto px-4 py-1.5 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors"
+            >
+              Deactivate (Transfer)
+            </button>
           </div>
           <div class="text-slate-500 text-sm flex flex-wrap gap-x-5 gap-y-1.5 mt-1">
             <span>Grade: <strong class="text-slate-700">{{ profile.student.grade_level }}</strong></span>
@@ -244,6 +252,42 @@
         </div>
       </div>
     </template>
+
+    <!-- Deactivate confirmation modal -->
+    <div v-if="showDeactivateModal" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-[12px] shadow-2xl border border-[#E2E8F0] w-full max-w-md overflow-hidden">
+        <div class="p-6 border-b border-slate-100 bg-amber-50 flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          </svg>
+          <div>
+            <h3 class="text-sm font-bold text-amber-800">Deactivate Student</h3>
+            <p class="text-xs text-amber-700 mt-0.5">This will mark the student as Transferred. All records (fees, assessments, attendance) are preserved.</p>
+          </div>
+        </div>
+        <div class="p-6 space-y-3">
+          <p class="text-sm text-slate-700">
+            You are about to deactivate <strong>{{ profile?.student.first_name }} {{ profile?.student.last_name }}</strong>.
+          </p>
+          <div v-if="profile?.fee_balance > 0" class="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-700 font-medium">
+            Outstanding balance of {{ formatCurrency(profile.fee_balance) }} must be cleared before deactivation.
+          </div>
+          <p class="text-xs text-slate-500">This action cannot be undone from this screen. Contact an admin to reactivate.</p>
+        </div>
+        <div class="flex justify-end gap-3 px-6 pb-6">
+          <button @click="showDeactivateModal = false"
+            class="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+            Cancel
+          </button>
+          <button
+            @click="deactivateStudent"
+            :disabled="deactivating || (profile?.fee_balance ?? 0) > 0"
+            class="px-5 py-2.5 text-sm font-bold bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50">
+            {{ deactivating ? 'Deactivating…' : 'Confirm Deactivation' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -252,13 +296,24 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiFetch } from '@/services/api'
 import studentService from '@/services/studentService'
+import { useAuthStore } from '@/stores/auth'
+import { useToast } from '@/composables/useToast'
 
 const route = useRoute()
+const authStore = useAuthStore()
+const toast = useToast()
+
 const loading = ref(true)
 const error = ref(null)
 const profile = ref(null)
 const attendanceRecords = ref([])
 const activeTab = ref('info')
+const showDeactivateModal = ref(false)
+const deactivating = ref(false)
+
+const canDeactivate = computed(() =>
+  ['admin', 'principal', 'secretary'].includes(authStore.user?.role)
+)
 
 const tabs = [
   { id: 'info',        label: 'Personal Info'  },
@@ -294,7 +349,7 @@ const formatCurrency = (amount) =>
 
 const formatDate = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
-onMounted(async () => {
+async function loadProfile() {
   const id = route.params.id
   try {
     const [prof, att] = await Promise.all([
@@ -308,5 +363,22 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
-})
+}
+
+async function deactivateStudent() {
+  if (!profile.value) return
+  deactivating.value = true
+  try {
+    const res = await apiFetch(`/api/students/${profile.value.student.id}/deactivate`, { method: 'PATCH' })
+    toast.success(res.message || 'Student deactivated successfully.')
+    showDeactivateModal.value = false
+    await loadProfile()
+  } catch (err) {
+    toast.error(err.message || 'Deactivation failed.')
+  } finally {
+    deactivating.value = false
+  }
+}
+
+onMounted(loadProfile)
 </script>
