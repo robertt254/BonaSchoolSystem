@@ -154,6 +154,9 @@ def update_staff(
     if not db_user:
         raise HTTPException(status_code=404, detail="Staff member not found")
 
+    if db_user.role == "admin" and admin.role != "admin":
+        raise HTTPException(status_code=403, detail="Only an admin can edit another admin account")
+
     update_data = user_update.model_dump(exclude_unset=True)
     if "password" in update_data:
         update_data["hashed_password"] = auth.get_password_hash(update_data.pop("password"))
@@ -239,6 +242,9 @@ def reset_staff_password(
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="Staff member not found")
+
+    if db_user.role == "admin" and admin.role != "admin":
+        raise HTTPException(status_code=403, detail="Only an admin can reset another admin's password")
 
     db_user.hashed_password = auth.get_password_hash(payload.new_password)
     log_action(db, admin.id, "UPDATE", "staff", user_id,

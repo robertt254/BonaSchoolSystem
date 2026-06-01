@@ -160,13 +160,14 @@
               </td>
               <td class="py-5 px-8 pr-6 text-right space-x-3">
                 <button
+                  v-if="!(staff.role === 'admin' && authStore.user?.role === 'principal')"
                   @click="openModal(staff)"
                   class="text-xs font-bold text-slate-500 hover:text-school-navy transition-colors"
                 >
                   Edit
                 </button>
                 <button
-                  v-if="authStore.user?.username !== staff.username && staff.can_login"
+                  v-if="authStore.user?.username !== staff.username && staff.can_login && !(staff.role === 'admin' && authStore.user?.role === 'principal')"
                   @click="openResetModal(staff)"
                   class="text-xs font-bold text-school-purple/70 hover:text-school-purple transition-colors"
                 >
