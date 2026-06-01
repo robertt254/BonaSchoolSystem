@@ -132,23 +132,21 @@ def get_class_roster(
 
 
 def _generate_admission_number(db: Session) -> str:
-    year = datetime.now().year
-    prefix = f"BNS/{year}/"
     last = (
         db.query(models.Student)
-        .filter(models.Student.admission_number.like(f"{prefix}%"))
+        .filter(models.Student.admission_number.like("BONA-%"))
         .with_for_update()
         .order_by(models.Student.id.desc())
         .first()
     )
     if last and last.admission_number:
         try:
-            seq = int(last.admission_number.split("/")[-1]) + 1
+            seq = int(last.admission_number.split("-")[-1]) + 1
         except (ValueError, IndexError):
             seq = 1
     else:
         seq = 1
-    return f"{prefix}{seq:04d}"
+    return f"BONA-{seq:04d}"
 
 
 @router.post("/", response_model=schemas.StudentResponse)

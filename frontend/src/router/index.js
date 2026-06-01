@@ -63,13 +63,13 @@ const router = createRouter({
           name: 'accountant-dash',
           // AccountantDashboard.vue was replaced by FinanceDashboard.vue in upstream
           component: () => import('../views/Finance/FinanceDashboard.vue'),
-          meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin', 'secretary'] },
         },
         {
           path: 'finance/statements',
           name: 'fee-statement',
           component: () => import('../views/FeeStatement.vue'),
-          meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin', 'secretary'] },
         },
         {
           path: 'academics',
@@ -87,7 +87,7 @@ const router = createRouter({
           path: 'academics/attendance',
           name: 'attendance-page',
           component: () => import('../views/AttendancePage.vue'),
-          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin', 'secretary'] },
         },
         {
           path: 'students/:id',
@@ -99,7 +99,7 @@ const router = createRouter({
           path: 'finance/defaulters',
           name: 'fee-defaulters',
           component: () => import('../views/Finance/FeeDefaulters.vue'),
-          meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['accountant', 'principal', 'admin', 'secretary'] },
         },
         {
           path: 'finance/fee-structure',
