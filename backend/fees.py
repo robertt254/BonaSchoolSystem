@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/fees", tags=["Finance & Fees"])
 # Keep local alias so internal helpers are unchanged
 CBC_TERMLY_FEES_FALLBACK = CBC_TERMLY_FEES
 
-FINANCE_ROLES = {"accountant", "admin", "principal"}
+FINANCE_ROLES = {"accountant", "admin", "principal", "secretary"}
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

@@ -59,7 +59,7 @@
           </NavItem>
         </template>
 
-        <template v-if="['teacher','senior_teacher','principal','admin'].includes(userRole)">
+        <template v-if="['teacher','senior_teacher','principal','admin','secretary'].includes(userRole)">
           <NavItem to="/academics/attendance">
             <template #icon>
               <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -149,7 +149,7 @@
           </NavItem>
         </template>
 
-        <template v-if="['accountant','principal','admin'].includes(userRole)">
+        <template v-if="['accountant','principal','admin','secretary'].includes(userRole)">
           <SectionLabel>Finance</SectionLabel>
           <NavItem to="/finance">
             <template #icon>
