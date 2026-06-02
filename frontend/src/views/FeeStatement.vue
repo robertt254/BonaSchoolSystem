@@ -248,6 +248,112 @@
       </div>
     </div>
 
+    <!-- ── Payment Log ────────────────────────────────────────────────────── -->
+    <div class="bg-white rounded-xl border border-border overflow-hidden print:hidden">
+      <div class="px-5 py-4 border-b border-border bg-surface-muted flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-text-primary text-sm">All Fee Payments Log</h3>
+          <p class="text-xs text-text-muted mt-0.5">Complete record of every logged payment · latest first</p>
+        </div>
+        <button @click="loadLog" :disabled="logLoading"
+          class="text-xs font-semibold text-brand hover:text-brand-light transition-colors">
+          {{ logLoading ? 'Loading…' : 'Refresh' }}
+        </button>
+      </div>
+
+      <!-- log skeleton -->
+      <div v-if="logLoading" class="p-4 space-y-2">
+        <div v-for="n in 6" :key="n" class="flex items-center gap-3 py-2.5 px-1">
+          <div class="skel h-3 w-24 rounded" />
+          <div class="skel h-3 w-32 rounded" />
+          <div class="skel h-3 w-20 rounded" />
+          <div class="skel h-3 w-16 rounded" />
+          <div class="skel h-3 w-28 rounded" />
+        </div>
+      </div>
+
+      <!-- log table -->
+      <div v-else-if="paymentLog.length" class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-muted border-b border-border text-xs font-bold uppercase tracking-widest text-text-muted">
+              <th class="px-5 py-3 text-left">Date & Time</th>
+              <th class="px-5 py-3 text-left">Student</th>
+              <th class="px-5 py-3 text-left">Grade</th>
+              <th class="px-5 py-3 text-left">Type · Term</th>
+              <th class="px-5 py-3 text-left">Receipt</th>
+              <th class="px-5 py-3 text-right">Amount</th>
+              <th class="px-5 py-3 text-left">Logged by</th>
+              <th v-if="canDeletePayments" class="px-5 py-3 text-center w-20">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border">
+            <tr v-for="p in paymentLog" :key="p.id"
+              class="hover:bg-surface-hover transition-colors"
+              :class="deletingId === p.id ? 'opacity-40' : ''">
+              <td class="px-5 py-3 text-text-muted font-mono text-xs whitespace-nowrap">
+                {{ formatDateTime(p.payment_date) }}
+              </td>
+              <td class="px-5 py-3">
+                <span class="font-semibold text-text-primary">{{ p.student_name }}</span>
+                <span class="text-text-muted text-xs ml-1.5 font-mono">{{ p.admission_number }}</span>
+              </td>
+              <td class="px-5 py-3 text-text-secondary text-xs">{{ p.grade_level }}</td>
+              <td class="px-5 py-3 text-xs text-text-secondary">
+                {{ p.payment_type }}
+                <span class="text-text-muted">· {{ p.term }}</span>
+              </td>
+              <td class="px-5 py-3 font-mono text-xs text-brand">{{ p.receipt_number || '—' }}</td>
+              <td class="px-5 py-3 text-right font-bold text-success">{{ formatCurrency(p.amount) }}</td>
+              <td class="px-5 py-3 text-xs text-text-muted">{{ p.recorded_by }}</td>
+              <td v-if="canDeletePayments" class="px-5 py-3 text-center">
+                <button @click="confirmDelete(p)"
+                  class="text-xs font-semibold text-danger/70 hover:text-danger transition-colors">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div v-else class="py-12 text-center text-text-muted text-sm">
+        No payments recorded yet.
+      </div>
+    </div>
+
+    <!-- Delete confirmation modal -->
+    <div v-if="deleteTarget" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-xl shadow-modal border border-border w-full max-w-md overflow-hidden">
+        <div class="px-6 py-5 border-b border-border bg-danger-bg flex items-start gap-3">
+          <svg class="w-5 h-5 text-danger shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          </svg>
+          <div>
+            <h3 class="text-sm font-bold text-danger-text">Delete Fee Payment</h3>
+            <p class="text-xs text-danger-text/80 mt-0.5">This action is permanent and will be recorded in the audit log.</p>
+          </div>
+        </div>
+        <div class="px-6 py-5 space-y-2 text-sm text-text-primary">
+          <p><span class="text-text-muted">Student:</span> <strong>{{ deleteTarget.student_name }}</strong></p>
+          <p><span class="text-text-muted">Amount:</span> <strong class="text-success">{{ formatCurrency(deleteTarget.amount) }}</strong></p>
+          <p><span class="text-text-muted">Receipt:</span> <span class="font-mono text-brand">{{ deleteTarget.receipt_number || 'none' }}</span></p>
+          <p><span class="text-text-muted">Logged by:</span> {{ deleteTarget.recorded_by }}</p>
+          <p><span class="text-text-muted">Date:</span> {{ formatDateTime(deleteTarget.payment_date) }}</p>
+        </div>
+        <div class="flex justify-end gap-3 px-6 pb-5">
+          <button @click="deleteTarget = null"
+            class="px-4 py-2 text-sm font-semibold text-text-secondary hover:bg-surface-hover rounded-lg transition-colors">
+            Cancel
+          </button>
+          <button @click="executeDelete" :disabled="deletingId !== null"
+            class="px-4 py-2 text-sm font-bold bg-danger text-white rounded-lg hover:bg-danger/90 transition-colors disabled:opacity-50">
+            {{ deletingId ? 'Deleting…' : 'Confirm Delete' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -264,8 +370,8 @@ const toast = useToast()
 
 const printPage = () => window.print()
 
-const appStore    = useAppStore()
-const authStore   = useAuthStore()
+const appStore  = useAppStore()
+const authStore = useAuthStore()
 
 const students        = ref([])
 const selectedStudent = ref('')
@@ -293,9 +399,60 @@ const formatCurrency = (v) =>
 const formatDate = (iso) =>
   new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
+const formatDateTime = (iso) => {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+       + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+}
+
+// ── Payment log ──────────────────────────────────────────────────────────────
+const paymentLog  = ref([])
+const logLoading  = ref(false)
+const deleteTarget = ref(null)
+const deletingId  = ref(null)
+
+const canDeletePayments = computed(() =>
+  ['admin', 'principal'].includes(authStore.user?.role)
+)
+
+const loadLog = async () => {
+  logLoading.value = true
+  try {
+    paymentLog.value = await apiFetch('/api/fees/log')
+  } catch (e) {
+    toast.error('Failed to load payment log.')
+  } finally {
+    logLoading.value = false
+  }
+}
+
+const confirmDelete = (payment) => {
+  deleteTarget.value = payment
+}
+
+const executeDelete = async () => {
+  if (!deleteTarget.value) return
+  deletingId.value = deleteTarget.value.id
+  try {
+    await apiFetch(`/api/fees/${deleteTarget.value.id}`, { method: 'DELETE' })
+    toast.success('Payment deleted. Action has been logged in the audit trail.')
+    deleteTarget.value = null
+    await loadLog()
+  } catch (e) {
+    toast.error(e?.message || 'Delete failed.')
+  } finally {
+    deletingId.value = null
+  }
+}
+
 onMounted(async () => {
-  try { students.value = await studentService.getAllStudents() }
-  catch (e) { console.error(e) }
+  try {
+    await Promise.all([
+      studentService.getAllStudents().then(r => { students.value = r }),
+      loadLog(),
+    ])
+  } catch (e) { console.error(e) }
 })
 
 const onStudentChange = () => {

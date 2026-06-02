@@ -179,6 +179,71 @@ def get_all_payments(
     )
 
 
+@router.get("/log")
+def get_payment_log(
+    limit: int = Query(default=500, le=1000),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """All fee payments enriched with student name — for the payment log panel."""
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized to view fee log")
+
+    rows = (
+        db.query(models.FeePayment, models.Student)
+        .join(models.Student, models.FeePayment.student_id == models.Student.id)
+        .order_by(models.FeePayment.payment_date.desc())
+        .limit(limit)
+        .all()
+    )
+    return [
+        {
+            "id":             p.id,
+            "student_id":     p.student_id,
+            "student_name":   f"{s.first_name} {s.last_name}",
+            "admission_number": s.admission_number,
+            "grade_level":    s.grade_level,
+            "amount":         float(p.amount),
+            "term":           p.term,
+            "payment_type":   p.payment_type,
+            "payment_date":   p.payment_date.isoformat() if p.payment_date else None,
+            "receipt_number": p.receipt_number,
+            "recorded_by":    p.recorded_by,
+        }
+        for p, s in rows
+    ]
+
+
+@router.delete("/{payment_id}", status_code=204)
+def delete_payment(
+    payment_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Delete a wrongfully logged fee payment. Restricted to admin and principal. Deletion is audited."""
+    if current_user.role not in {"admin", "principal"}:
+        raise HTTPException(status_code=403, detail="Only admin and principal can delete fee payments")
+
+    payment = db.query(models.FeePayment).filter(models.FeePayment.id == payment_id).first()
+    if not payment:
+        raise HTTPException(status_code=404, detail="Payment not found")
+
+    student = db.query(models.Student).filter(models.Student.id == payment.student_id).first()
+    student_label = f"{student.first_name} {student.last_name} ({student.admission_number})" if student else f"student_id={payment.student_id}"
+
+    log_action(db, current_user.id, "DELETE", "fee", payment_id, {
+        "receipt_number": payment.receipt_number,
+        "amount":         str(payment.amount),
+        "term":           payment.term,
+        "payment_type":   payment.payment_type,
+        "student":        student_label,
+        "recorded_by":    payment.recorded_by,
+        "reason":         "manual_deletion_by_admin",
+    })
+    db.delete(payment)
+    db.commit()
+
+
 @router.get("/balance/{student_id}/{term}")
 def get_student_balance(
     student_id: int,
