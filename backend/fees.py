@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import Optional, List
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
@@ -185,33 +186,100 @@ def get_payment_log(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
-    """All fee payments enriched with student name — for the payment log panel."""
+    """
+    All fee payments (active + deleted) for the payment log statement.
+    Active records come from the FeePayment table.
+    Deleted records are reconstructed from the audit_logs (action=DELETE, resource=fee).
+    """
     if current_user.role not in FINANCE_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized to view fee log")
 
-    rows = (
+    # ── Active payments ───────────────────────────────────────────────────────
+    active_rows = (
         db.query(models.FeePayment, models.Student)
         .join(models.Student, models.FeePayment.student_id == models.Student.id)
         .order_by(models.FeePayment.payment_date.desc())
         .limit(limit)
         .all()
     )
-    return [
+    result = [
         {
-            "id":             p.id,
-            "student_id":     p.student_id,
-            "student_name":   f"{s.first_name} {s.last_name}",
+            "id":               p.id,
+            "status":           "active",
+            "student_id":       p.student_id,
+            "student_name":     f"{s.first_name} {s.last_name}",
             "admission_number": s.admission_number,
-            "grade_level":    s.grade_level,
-            "amount":         float(p.amount),
-            "term":           p.term,
-            "payment_type":   p.payment_type,
-            "payment_date":   p.payment_date.isoformat() if p.payment_date else None,
-            "receipt_number": p.receipt_number,
-            "recorded_by":    p.recorded_by,
+            "grade_level":      s.grade_level,
+            "amount":           float(p.amount),
+            "term":             p.term,
+            "payment_type":     p.payment_type,
+            "payment_date":     p.payment_date.isoformat() if p.payment_date else None,
+            "receipt_number":   p.receipt_number,
+            "recorded_by":      p.recorded_by,
+            "deleted_by":       None,
+            "deleted_at":       None,
         }
-        for p, s in rows
+        for p, s in active_rows
     ]
+
+    # ── Deleted payments (reconstructed from audit log) ───────────────────────
+    deleted_rows = (
+        db.query(models.AuditLog, models.User)
+        .outerjoin(models.User, models.AuditLog.user_id == models.User.id)
+        .filter(
+            models.AuditLog.action   == "DELETE",
+            models.AuditLog.resource == "fee",
+        )
+        .order_by(models.AuditLog.timestamp.desc())
+        .all()
+    )
+    for log, deleter in deleted_rows:
+        try:
+            detail = json.loads(log.detail) if log.detail else {}
+        except Exception:
+            detail = {}
+
+        # Determine friendly deleter label
+        if deleter:
+            role_label = deleter.role.replace("_", " ").title()
+            deleted_by = f"{role_label} ({deleter.name})"
+        else:
+            deleted_by = "Unknown"
+
+        # Parse student label stored as "First Last (BONA-0001)"
+        student_raw = detail.get("student", "")
+        student_name = student_raw.split("(")[0].strip() if "(" in student_raw else student_raw
+        adm = student_raw[student_raw.find("(")+1:student_raw.find(")")] if "(" in student_raw else ""
+
+        try:
+            amount = float(detail.get("amount", 0))
+        except (ValueError, TypeError):
+            amount = 0.0
+
+        result.append({
+            "id":               f"del_{log.id}",
+            "status":           "deleted",
+            "student_id":       None,
+            "student_name":     student_name or "Unknown",
+            "admission_number": adm,
+            "grade_level":      "",
+            "amount":           amount,
+            "term":             detail.get("term", ""),
+            "payment_type":     detail.get("payment_type", ""),
+            "payment_date":     None,
+            "receipt_number":   detail.get("receipt_number"),
+            "recorded_by":      detail.get("recorded_by", ""),
+            "deleted_by":       deleted_by,
+            "deleted_at":       log.timestamp.isoformat() if log.timestamp else None,
+        })
+
+    # Sort combined list — active by payment_date, deleted by deleted_at (latest first)
+    def sort_key(r):
+        ts = r["payment_date"] or r["deleted_at"] or ""
+        return ts
+
+    result.sort(key=sort_key, reverse=True)
+    return result
 
 
 @router.delete("/{payment_id}", status_code=204)

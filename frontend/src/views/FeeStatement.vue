@@ -272,8 +272,24 @@
         </div>
       </div>
 
+      <!-- summary strip -->
+      <div v-else-if="paymentLog.length" class="px-5 py-3 border-b border-border bg-surface-muted flex flex-wrap gap-6 text-sm">
+        <div>
+          <span class="text-text-muted text-xs font-bold uppercase tracking-widest">Total Active</span>
+          <p class="font-extrabold text-success mt-0.5">{{ formatCurrency(activeTotal) }}</p>
+        </div>
+        <div>
+          <span class="text-text-muted text-xs font-bold uppercase tracking-widest">Active Records</span>
+          <p class="font-extrabold text-text-primary mt-0.5">{{ activeCount }}</p>
+        </div>
+        <div>
+          <span class="text-text-muted text-xs font-bold uppercase tracking-widest">Voided Records</span>
+          <p class="font-extrabold text-danger mt-0.5">{{ deletedCount }}</p>
+        </div>
+      </div>
+
       <!-- log table -->
-      <div v-else-if="paymentLog.length" class="overflow-x-auto">
+      <div v-if="paymentLog.length" class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
             <tr class="bg-surface-muted border-b border-border text-xs font-bold uppercase tracking-widest text-text-muted">
@@ -284,30 +300,60 @@
               <th class="px-5 py-3 text-left">Receipt</th>
               <th class="px-5 py-3 text-right">Amount</th>
               <th class="px-5 py-3 text-left">Logged by</th>
+              <th class="px-5 py-3 text-left">Status</th>
               <th v-if="canDeletePayments" class="px-5 py-3 text-center w-20">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-border">
             <tr v-for="p in paymentLog" :key="p.id"
-              class="hover:bg-surface-hover transition-colors"
-              :class="deletingId === p.id ? 'opacity-40' : ''">
-              <td class="px-5 py-3 text-text-muted font-mono text-xs whitespace-nowrap">
-                {{ formatDateTime(p.payment_date) }}
+              class="transition-colors"
+              :class="[
+                p.status === 'deleted' ? 'bg-danger-bg/30 text-text-muted' : 'hover:bg-surface-hover',
+                deletingId === p.id ? 'opacity-40' : '',
+              ]">
+              <td class="px-5 py-3 font-mono text-xs whitespace-nowrap"
+                :class="p.status === 'deleted' ? 'text-text-muted line-through' : 'text-text-muted'">
+                {{ p.status === 'deleted' ? formatDateTime(p.deleted_at) : formatDateTime(p.payment_date) }}
               </td>
               <td class="px-5 py-3">
-                <span class="font-semibold text-text-primary">{{ p.student_name }}</span>
+                <span class="font-semibold" :class="p.status === 'deleted' ? 'line-through text-text-muted' : 'text-text-primary'">
+                  {{ p.student_name }}
+                </span>
                 <span class="text-text-muted text-xs ml-1.5 font-mono">{{ p.admission_number }}</span>
               </td>
-              <td class="px-5 py-3 text-text-secondary text-xs">{{ p.grade_level }}</td>
-              <td class="px-5 py-3 text-xs text-text-secondary">
-                {{ p.payment_type }}
-                <span class="text-text-muted">· {{ p.term }}</span>
+              <td class="px-5 py-3 text-xs" :class="p.status === 'deleted' ? 'text-text-muted' : 'text-text-secondary'">
+                {{ p.grade_level }}
               </td>
-              <td class="px-5 py-3 font-mono text-xs text-brand">{{ p.receipt_number || '—' }}</td>
-              <td class="px-5 py-3 text-right font-bold text-success">{{ formatCurrency(p.amount) }}</td>
-              <td class="px-5 py-3 text-xs text-text-muted">{{ p.recorded_by }}</td>
+              <td class="px-5 py-3 text-xs" :class="p.status === 'deleted' ? 'line-through text-text-muted' : 'text-text-secondary'">
+                {{ p.payment_type }}<span class="text-text-muted"> · {{ p.term }}</span>
+              </td>
+              <td class="px-5 py-3 font-mono text-xs"
+                :class="p.status === 'deleted' ? 'line-through text-text-muted' : 'text-brand'">
+                {{ p.receipt_number || '—' }}
+              </td>
+              <td class="px-5 py-3 text-right font-bold"
+                :class="p.status === 'deleted' ? 'line-through text-danger/60' : 'text-success'">
+                {{ formatCurrency(p.amount) }}
+              </td>
+              <td class="px-5 py-3 text-xs text-text-muted">
+                {{ p.recorded_by }}
+                <span v-if="p.status === 'deleted'" class="block text-danger/80 mt-0.5">
+                  Deleted by: {{ p.deleted_by }}
+                </span>
+              </td>
+              <td class="px-5 py-3">
+                <span v-if="p.status === 'deleted'"
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-danger-bg text-danger-text">
+                  Voided
+                </span>
+                <span v-else
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-success-bg text-success-text">
+                  Active
+                </span>
+              </td>
               <td v-if="canDeletePayments" class="px-5 py-3 text-center">
-                <button @click="confirmDelete(p)"
+                <button v-if="p.status === 'active'"
+                  @click="confirmDelete(p)"
                   class="text-xs font-semibold text-danger/70 hover:text-danger transition-colors">
                   Delete
                 </button>
@@ -414,6 +460,12 @@ const deletingId  = ref(null)
 
 const canDeletePayments = computed(() =>
   ['admin', 'principal'].includes(authStore.user?.role)
+)
+
+const activeCount = computed(() => paymentLog.value.filter(p => p.status === 'active').length)
+const deletedCount = computed(() => paymentLog.value.filter(p => p.status === 'deleted').length)
+const activeTotal = computed(() =>
+  paymentLog.value.filter(p => p.status === 'active').reduce((s, p) => s + p.amount, 0)
 )
 
 const loadLog = async () => {
