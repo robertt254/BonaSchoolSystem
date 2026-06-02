@@ -2,11 +2,11 @@
   <div class="max-w-5xl mx-auto space-y-6">
 
     <!-- Apply for leave -->
-    <div v-if="!isReviewer" class="bg-white rounded-[12px] border border-[#E2E8F0] p-6">
+    <div v-if="!isReviewer" class="bg-white rounded-xl border border-border p-6">
       <h2 class="text-base font-bold text-slate-800 mb-5">Apply for Leave</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Leave Type</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Leave Type</label>
           <select v-model="applyForm.leave_type" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
             <option value="Annual Leave">Annual Leave</option>
             <option value="Sick Leave">Sick Leave</option>
@@ -18,15 +18,15 @@
         </div>
         <div></div>
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Start Date</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Start Date</label>
           <input v-model="applyForm.start_date" type="date" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple" />
         </div>
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">End Date</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">End Date</label>
           <input v-model="applyForm.end_date" type="date" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple" />
         </div>
         <div class="sm:col-span-2">
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Reason</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Reason</label>
           <textarea
             v-model="applyForm.reason"
             rows="3"
@@ -58,7 +58,7 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+    <div class="bg-white rounded-xl border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50">
         <h3 class="font-bold text-slate-800">{{ isReviewer ? 'All Leave Requests' : 'My Leave Requests' }}</h3>
       </div>
@@ -82,7 +82,7 @@
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="font-semibold text-slate-800">{{ req.staff_name }}</span>
                 <span
-                  class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full"
+                  class="text-xs font-bold uppercase px-2 py-0.5 rounded-full"
                   :class="statusClass(req.status)"
                 >{{ req.status }}</span>
                 <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{{ req.leave_type }}</span>

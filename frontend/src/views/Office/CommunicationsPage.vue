@@ -2,10 +2,10 @@
   <div class="max-w-3xl mx-auto space-y-6">
     <!-- Header -->
     <div>
-      <h1 class="font-heading text-[22px] font-bold text-[#0F172A] tracking-tight">
+      <h1 class="font-heading text-2xl font-bold text-text-primary tracking-tight">
         Parent Communications
       </h1>
-      <p class="text-[13px] text-[#94A3B8] mt-1">
+      <p class="text-sm text-text-muted mt-1">
         Send bulk SMS notifications to parents and guardians.
       </p>
     </div>
@@ -13,24 +13,24 @@
     <!-- Compose Card -->
     <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
       <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
-        <h2 class="font-heading text-[15px] font-bold text-[#0F172A]">Compose Message</h2>
+        <h2 class="font-heading text-sm font-bold text-text-primary">Compose Message</h2>
       </div>
 
       <form @submit.prevent="sendBroadcast" class="p-6 space-y-5">
         <!-- Audience -->
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">
+          <label class="block text-xs font-bold uppercase tracking-[0.07em] text-text-muted mb-1.5">
             Recipients
           </label>
           <select
             v-model="form.grade"
             @change="fetchPreview"
-            class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+            class="w-full border border-border rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
           >
             <option value="">All Parents / Guardians</option>
             <option v-for="g in GRADES" :key="g" :value="g">{{ g }} Parents</option>
           </select>
-          <p class="mt-1.5 text-[12px] text-[#94A3B8]">
+          <p class="mt-1.5 text-xs text-text-muted">
             <span v-if="previewLoading">Counting recipients…</span>
             <span v-else-if="recipientCount !== null">
               <span class="font-semibold text-slate-700">{{ recipientCount }}</span>
@@ -41,7 +41,7 @@
 
         <!-- Quick Templates -->
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-2">
+          <label class="block text-xs font-bold uppercase tracking-[0.07em] text-text-muted mb-2">
             Quick Templates
           </label>
           <div class="flex flex-wrap gap-2">
@@ -50,7 +50,7 @@
               :key="tpl.label"
               type="button"
               @click="applyTemplate(tpl.text)"
-              class="px-3 py-1.5 text-[12px] font-semibold rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-school-purple/10 hover:border-school-purple/30 hover:text-school-purple transition-all"
+              class="px-3 py-1.5 text-xs font-semibold rounded-full border border-slate-200 bg-slate-50 text-slate-600 hover:bg-school-purple/10 hover:border-school-purple/30 hover:text-school-purple transition-all"
             >
               {{ tpl.label }}
             </button>
@@ -59,7 +59,7 @@
 
         <!-- Message -->
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">
+          <label class="block text-xs font-bold uppercase tracking-[0.07em] text-text-muted mb-1.5">
             Message
           </label>
           <textarea
@@ -68,13 +68,13 @@
             maxlength="500"
             required
             placeholder="Type your message here…"
-            class="w-full border border-[#E2E8F0] rounded-[12px] p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-white font-medium text-slate-700 transition-all resize-none"
+            class="w-full border border-border rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-white font-medium text-slate-700 transition-all resize-none"
           ></textarea>
           <div class="flex justify-between mt-1">
-            <span class="text-[11px] text-[#94A3B8]">Max 500 characters</span>
+            <span class="text-xs text-text-muted">Max 500 characters</span>
             <span
-              class="text-[11px] font-semibold"
-              :class="form.message.length > 450 ? 'text-school-red' : 'text-[#94A3B8]'"
+              class="text-xs font-semibold"
+              :class="form.message.length > 450 ? 'text-school-red' : 'text-text-muted'"
             >
               {{ form.message.length }}/500
             </span>
@@ -82,10 +82,10 @@
         </div>
 
         <!-- Error / Success -->
-        <div v-if="errorMsg" class="rounded-[10px] bg-red-50 border border-red-200 px-4 py-3 text-[13px] font-medium text-red-700">
+        <div v-if="errorMsg" class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm font-medium text-red-700">
           {{ errorMsg }}
         </div>
-        <div v-if="successMsg" class="rounded-[10px] bg-emerald-50 border border-emerald-200 px-4 py-3 text-[13px] font-medium text-emerald-700">
+        <div v-if="successMsg" class="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm font-medium text-emerald-700">
           {{ successMsg }}
         </div>
 
@@ -94,14 +94,14 @@
           <button
             type="button"
             @click="resetForm"
-            class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-[12px] font-bold transition-colors text-sm"
+            class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl font-bold transition-colors text-sm"
           >
             Clear
           </button>
           <button
             type="submit"
             :disabled="sending || !form.message.trim() || recipientCount === 0"
-            class="px-6 py-2.5 bg-school-navy text-white rounded-[12px] font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-6 py-2.5 bg-school-navy text-white rounded-xl font-bold hover:bg-school-navy/90 hover:shadow-md transition-all text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg v-if="sending" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
@@ -119,9 +119,9 @@
     <!-- Recent Broadcasts History (optional placeholder) -->
     <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
       <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
-        <h2 class="font-heading text-[15px] font-bold text-[#0F172A]">Tips</h2>
+        <h2 class="font-heading text-sm font-bold text-text-primary">Tips</h2>
       </div>
-      <ul class="p-6 space-y-2 text-[13px] text-slate-600">
+      <ul class="p-6 space-y-2 text-sm text-slate-600">
         <li class="flex items-start gap-2">
           <span class="text-school-purple font-bold mt-0.5">•</span>
           Messages are sent from <span class="font-semibold">The Bona School</span> sender ID.

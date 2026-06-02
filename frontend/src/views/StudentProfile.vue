@@ -10,18 +10,18 @@
 
     <!-- Loading -->
     <div v-if="loading" class="flex flex-col items-center py-20 text-slate-400 space-y-4">
-      <div class="w-8 h-8 border-4 border-[#E2E8F0] border-t-school-navy rounded-full animate-spin"></div>
+      <div class="w-8 h-8 border-4 border-border border-t-school-navy rounded-full animate-spin"></div>
       <span class="text-xs font-bold tracking-widest uppercase">Loading Profile...</span>
     </div>
 
     <!-- Error -->
-    <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 p-6 rounded-[12px] text-sm font-medium">
+    <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 p-6 rounded-xl text-sm font-medium">
       {{ error }}
     </div>
 
     <template v-else-if="profile">
       <!-- Profile header card -->
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-6 flex flex-col sm:flex-row sm:items-center gap-6 relative overflow-hidden">
+      <div class="bg-white rounded-xl border border-border p-6 flex flex-col sm:flex-row sm:items-center gap-6 relative overflow-hidden">
         <div class="absolute right-0 top-0 w-32 h-32 rounded-bl-full -mr-8 -mt-8 pointer-events-none"
           :class="profile.student.gender === 'Female' ? 'bg-pink-50' : 'bg-blue-50'"></div>
         <div class="w-20 h-20 rounded-full flex items-center justify-center font-bold text-2xl border-2 border-white shadow-sm z-10 shrink-0"
@@ -34,13 +34,13 @@
               {{ profile.student.first_name }} {{ profile.student.last_name }}
             </h2>
             <span
-              class="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full border"
+              class="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded-full border"
               :class="profile.student.status === 'Active'
                 ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                 : 'bg-slate-50 text-slate-500 border-slate-200'"
             >{{ profile.student.status }}</span>
             <span v-if="profile.student.gender"
-              class="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full"
+              class="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded-full"
               :class="profile.student.gender === 'Female' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'">
               {{ profile.student.gender }}
             </span>
@@ -70,33 +70,33 @@
 
       <!-- Quick metrics -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
-          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Attendance</div>
+        <div class="bg-white rounded-xl border border-border p-5">
+          <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Attendance</div>
           <div class="text-2xl font-extrabold text-school-navy">{{ profile.attendance_percentage }}%</div>
           <div class="text-xs text-slate-400 mt-1">{{ profile.days_present }}/{{ profile.total_days }} days</div>
         </div>
-        <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
-          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Fee Balance</div>
+        <div class="bg-white rounded-xl border border-border p-5">
+          <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Fee Balance</div>
           <div class="text-2xl font-extrabold" :class="profile.fee_balance > 0 ? 'text-school-red' : 'text-emerald-600'">
             {{ formatCurrency(profile.fee_balance) }}
           </div>
           <div class="text-xs text-slate-400 mt-1">Paid {{ formatCurrency(profile.total_paid) }} this year</div>
         </div>
-        <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
-          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Subjects</div>
+        <div class="bg-white rounded-xl border border-border p-5">
+          <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Subjects</div>
           <div class="text-2xl font-extrabold text-slate-800">{{ uniqueSubjects }}</div>
           <div class="text-xs text-slate-400 mt-1">Learning areas assessed</div>
         </div>
-        <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
-          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Payments</div>
+        <div class="bg-white rounded-xl border border-border p-5">
+          <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Payments</div>
           <div class="text-2xl font-extrabold text-slate-800">{{ profile.recent_payments.length }}</div>
           <div class="text-xs text-slate-400 mt-1">Recent transactions</div>
         </div>
       </div>
 
       <!-- Tabs -->
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
-        <div class="flex border-b border-[#E2E8F0]">
+      <div class="bg-white rounded-xl border border-border overflow-hidden">
+        <div class="flex border-b border-border">
           <button
             v-for="t in tabs"
             :key="t.id"
@@ -115,7 +115,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <!-- Student Details -->
             <div>
-              <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Student Details</h4>
+              <h4 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Student Details</h4>
               <dl class="space-y-0">
                 <div v-for="(item, i) in [
                   { label: 'Full Name', value: profile.student.first_name + ' ' + profile.student.last_name },
@@ -130,12 +130,12 @@
                   <dt class="text-sm text-slate-500">{{ item.label }}</dt>
                   <dd class="text-sm text-right max-w-[60%]">
                     <span v-if="item.badge"
-                      class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full"
+                      class="px-2 py-0.5 text-xs font-bold uppercase rounded-full"
                       :class="item.value === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'">
                       {{ item.value || '—' }}
                     </span>
                     <span v-else-if="item.genderBadge && item.value"
-                      class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full"
+                      class="px-2 py-0.5 text-xs font-bold uppercase rounded-full"
                       :class="item.value === 'Female' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'">
                       {{ item.value }}
                     </span>
@@ -147,7 +147,7 @@
             </div>
             <!-- Guardian Details -->
             <div>
-              <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Guardian / Parent Details</h4>
+              <h4 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Guardian / Parent Details</h4>
               <dl class="space-y-0">
                 <div v-for="(item, i) in [
                   { label: 'Primary Guardian', value: profile.student.guardian_name },
@@ -169,7 +169,7 @@
             No assessments recorded yet.
           </div>
           <div v-for="([term, items]) in groupedAssessments" :key="term">
-            <div class="px-6 py-2.5 bg-slate-50 border-y border-[#E2E8F0] text-[11px] font-bold uppercase tracking-widest text-slate-400">
+            <div class="px-6 py-2.5 bg-slate-50 border-y border-border text-xs font-bold uppercase tracking-widest text-slate-400">
               {{ term }}
             </div>
             <table class="w-full text-left border-collapse">
@@ -190,7 +190,7 @@
         <div v-if="activeTab === 'fees'" class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-[#E2E8F0]">
+              <tr class="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-border">
                 <th class="py-4 px-6">Receipt</th>
                 <th class="py-4 px-6">Date</th>
                 <th class="py-4 px-6">Term</th>
@@ -223,7 +223,7 @@
         <div v-if="activeTab === 'attendance'" class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-[#E2E8F0]">
+              <tr class="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-border">
                 <th class="py-4 px-6">Date</th>
                 <th class="py-4 px-6">Status</th>
                 <th class="py-4 px-6">Remarks</th>
@@ -255,7 +255,7 @@
 
     <!-- Deactivate confirmation modal -->
     <div v-if="showDeactivateModal" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
-      <div class="bg-white rounded-[12px] shadow-2xl border border-[#E2E8F0] w-full max-w-md overflow-hidden">
+      <div class="bg-white rounded-xl shadow-2xl border border-border w-full max-w-md overflow-hidden">
         <div class="p-6 border-b border-slate-100 bg-amber-50 flex items-start gap-3">
           <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>

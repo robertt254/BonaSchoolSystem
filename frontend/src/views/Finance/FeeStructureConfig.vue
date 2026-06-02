@@ -2,17 +2,17 @@
   <div class="max-w-5xl mx-auto space-y-6">
 
     <!-- Add entry form -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-6">
+    <div class="bg-white rounded-xl border border-border p-6">
       <h2 class="text-base font-bold text-slate-800 mb-5">Add / Update Fee Entry</h2>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
           <select v-model="form.grade_level" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
             <option v-for="g in grades" :key="g" :value="g">{{ g }}</option>
           </select>
         </div>
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Term</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Term</label>
           <select v-model="form.term" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
             <option value="Term 1">Term 1</option>
             <option value="Term 2">Term 2</option>
@@ -20,7 +20,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Fee Type</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Fee Type</label>
           <select v-model="form.fee_type" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
             <option value="Tuition">Tuition</option>
             <option value="Uniforms">Uniforms</option>
@@ -29,7 +29,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Amount (KES)</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Amount (KES)</label>
           <input
             v-model.number="form.amount"
             type="number"
@@ -39,7 +39,7 @@
           />
         </div>
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Year</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Year</label>
           <input
             v-model.number="form.academic_year"
             type="number"
@@ -78,10 +78,10 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+    <div class="bg-white rounded-xl border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50 flex items-center justify-between">
         <h3 class="font-bold text-slate-800">Fee Schedule · {{ filterYear }}</h3>
-        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400">{{ filteredEntries.length }} entries</span>
+        <span class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ filteredEntries.length }} entries</span>
       </div>
 
       <div v-if="loading" class="py-16 flex justify-center">
@@ -96,11 +96,11 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="bg-slate-50 border-b border-slate-200">
-              <th class="text-left px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Grade</th>
-              <th class="text-left px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Term</th>
-              <th class="text-left px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Fee Type</th>
-              <th class="text-right px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Amount</th>
-              <th class="text-right px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Actions</th>
+              <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Grade</th>
+              <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Term</th>
+              <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Fee Type</th>
+              <th class="text-right px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Amount</th>
+              <th class="text-right px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">

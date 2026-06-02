@@ -18,12 +18,12 @@
     >
       <!-- Logo -->
       <div class="flex items-center gap-3 px-5 py-5 border-b border-white/8">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center font-bold text-sm text-white shadow-lg shrink-0">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-light to-brand-lighter flex items-center justify-center font-bold text-sm text-white shadow-lg shrink-0">
           BS
         </div>
         <div>
           <p class="text-sm font-bold text-white leading-tight">The Bona School</p>
-          <p class="text-[10px] font-semibold uppercase tracking-widest text-white/30 mt-0.5">CBC System</p>
+          <p class="text-xs font-semibold uppercase tracking-widest text-white/30 mt-0.5">CBC System</p>
         </div>
       </div>
 
@@ -272,7 +272,7 @@
           </div>
           <div class="flex-1 min-w-0">
             <p class="text-sm font-semibold text-white truncate">{{ userName }}</p>
-            <p class="text-[11px] text-white/40 capitalize truncate">{{ userRole }}</p>
+            <p class="text-xs text-white/40 capitalize truncate">{{ userRole }}</p>
           </div>
         </div>
         <!-- Actions -->
@@ -316,7 +316,7 @@
 
         <!-- Breadcrumb -->
         <div class="hidden md:block">
-          <p class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">{{ routeSection }}</p>
+          <p class="text-xs font-semibold uppercase tracking-widest text-slate-400">{{ routeSection }}</p>
           <h1 class="text-base font-bold text-slate-800 leading-tight">{{ pageTitle }}</h1>
         </div>
         <p class="md:hidden text-base font-bold text-slate-800">Bona School</p>
@@ -400,7 +400,7 @@ import ToastContainer from '@/components/ui/ToastContainer.vue'
 const SectionLabel = defineComponent({
   setup(_, { slots }) {
     return () => h('p', {
-      class: 'text-[10px] font-bold uppercase tracking-widest text-white/25 px-3 pt-5 pb-1.5',
+      class: 'text-xs font-bold uppercase tracking-widest text-white/25 px-3 pt-5 pb-1.5',
     }, slots.default?.())
   },
 })

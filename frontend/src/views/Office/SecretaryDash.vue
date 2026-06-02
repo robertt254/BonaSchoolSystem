@@ -9,7 +9,7 @@
       </div>
       <button
         @click="openAddModal"
-        class="inline-flex items-center gap-2 bg-school-purple text-white px-5 py-2.5 rounded-[10px] font-semibold text-sm hover:bg-school-purple-l transition-all shadow-sm"
+        class="inline-flex items-center gap-2 bg-school-purple text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-school-purple-l transition-all shadow-sm"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
@@ -20,28 +20,28 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Students</p>
+      <div class="bg-white rounded-xl border border-border p-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Total Students</p>
         <p class="text-3xl font-extrabold text-slate-800">{{ students.length }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Active</p>
+      <div class="bg-white rounded-xl border border-border p-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Active</p>
         <p class="text-3xl font-extrabold text-emerald-600">{{ activeCount }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Male</p>
+      <div class="bg-white rounded-xl border border-border p-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Male</p>
         <p class="text-3xl font-extrabold text-blue-600">{{ maleCount }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Female</p>
+      <div class="bg-white rounded-xl border border-border p-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Female</p>
         <p class="text-3xl font-extrabold text-pink-500">{{ femaleCount }}</p>
       </div>
     </div>
 
     <!-- Search & Filter bar -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-4 flex flex-wrap gap-3 items-end">
+    <div class="bg-white rounded-xl border border-border p-4 flex flex-wrap gap-3 items-end">
       <div class="flex-1 min-w-48">
-        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
+        <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
         <div class="relative">
           <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
@@ -56,7 +56,7 @@
         </div>
       </div>
       <div>
-        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
+        <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
         <select
           v-model="gradeFilter"
           @change="() => { currentPage.value = 1; fetchStudents(1) }"
@@ -70,7 +70,7 @@
     </div>
 
     <!-- Student table -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+    <div class="bg-white rounded-xl border border-border overflow-hidden">
       <div v-if="loading" class="py-16 flex justify-center">
         <div class="w-8 h-8 border-4 border-slate-200 border-t-school-purple rounded-full animate-spin"></div>
       </div>
@@ -82,7 +82,7 @@
       <div v-else class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
-            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-400">
               <th class="text-left px-6 py-3">Student</th>
               <th class="text-left px-6 py-3">Adm No.</th>
               <th class="text-left px-6 py-3">Grade</th>
@@ -122,7 +122,7 @@
               </td>
               <td class="px-6 py-3.5">
                 <span
-                  class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full"
+                  class="px-2 py-0.5 text-xs font-bold uppercase rounded-full"
                   :class="student.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'"
                 >{{ student.status }}</span>
               </td>
@@ -138,7 +138,7 @@
     </div>
 
     <!-- Pagination -->
-    <div v-if="totalCount > PAGE_SIZE" class="flex items-center justify-between bg-white rounded-[12px] border border-[#E2E8F0] px-5 py-3 text-sm">
+    <div v-if="totalCount > PAGE_SIZE" class="flex items-center justify-between bg-white rounded-xl border border-border px-5 py-3 text-sm">
       <span class="text-slate-400">Page {{ currentPage }} of {{ totalPages }}</span>
       <div class="flex gap-2">
         <button
@@ -159,7 +159,7 @@
       v-if="showModal"
       class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 animate-fade-in"
     >
-      <div class="bg-white rounded-[12px] shadow-2xl w-full max-w-lg overflow-hidden max-h-[90vh] overflow-y-auto border border-[#E2E8F0]">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden max-h-[90vh] overflow-y-auto border border-border">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 sticky top-0 z-10">
           <h2 class="text-lg font-extrabold text-slate-800">
             {{ isEditing ? 'Edit Student Record' : 'Enroll New Student' }}
@@ -173,27 +173,27 @@
 
         <form @submit.prevent="saveStudent" class="p-6 space-y-5">
 
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Student Details</p>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Student Details</p>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">First Name <span class="text-school-red">*</span></label>
-              <input v-model="formData.first_name" required type="text" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">First Name <span class="text-school-red">*</span></label>
+              <input v-model="formData.first_name" required type="text" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Last Name <span class="text-school-red">*</span></label>
-              <input v-model="formData.last_name" required type="text" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Last Name <span class="text-school-red">*</span></label>
+              <input v-model="formData.last_name" required type="text" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Date of Birth</label>
-              <input v-model="formData.date_of_birth" type="date" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Date of Birth</label>
+              <input v-model="formData.date_of_birth" type="date" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Gender</label>
-              <select v-model="formData.gender" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm">
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Gender</label>
+              <select v-model="formData.gender" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm">
                 <option value="">— Select —</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -202,13 +202,13 @@
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Admission Number</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Admission Number</label>
             <input
               v-model="formData.admission_number"
               :disabled="isEditing"
               type="text"
               :placeholder="isEditing ? '' : 'Leave blank to auto-generate (BNS/YYYY/NNNN)'"
-              class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm"
+              class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm"
               :class="isEditing ? 'bg-slate-50 text-slate-400 cursor-not-allowed' : ''"
             />
             <p class="text-xs text-slate-400 mt-1">{{ isEditing ? 'Admission numbers cannot be changed.' : 'Auto-generated if left blank.' }}</p>
@@ -216,14 +216,14 @@
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade Level <span class="text-school-red">*</span></label>
-              <select v-model="formData.grade_level" required class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm">
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade Level <span class="text-school-red">*</span></label>
+              <select v-model="formData.grade_level" required class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm">
                 <option v-for="g in GRADES" :key="g" :value="g">{{ g }}</option>
               </select>
             </div>
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Status</label>
-              <select v-model="formData.status" required class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm">
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Status</label>
+              <select v-model="formData.status" required class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm">
                 <option value="Active">Active</option>
                 <option value="Graduated">Graduated</option>
                 <option value="Transferred">Transferred</option>
@@ -233,36 +233,36 @@
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Home Address</label>
-              <input v-model="formData.address" type="text" placeholder="e.g. Ruaka, Nairobi" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Home Address</label>
+              <input v-model="formData.address" type="text" placeholder="e.g. Ruaka, Nairobi" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Previous School</label>
-              <input v-model="formData.previous_school" type="text" placeholder="Transfer from (optional)" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
-            </div>
-          </div>
-
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 pt-2">Primary Guardian / Parent</p>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Name</label>
-              <input v-model="formData.guardian_name" type="text" placeholder="Full name" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Phone</label>
-              <input v-model="formData.guardian_phone" type="tel" placeholder="07XX XXX XXX" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Previous School</label>
+              <input v-model="formData.previous_school" type="text" placeholder="Transfer from (optional)" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
           </div>
 
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 pt-2">Second Guardian / Parent <span class="normal-case font-normal text-slate-300">(optional)</span></p>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-400 pt-2">Primary Guardian / Parent</p>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Name</label>
-              <input v-model="formData.guardian2_name" type="text" placeholder="Full name" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Name</label>
+              <input v-model="formData.guardian_name" type="text" placeholder="Full name" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
             <div>
-              <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Phone</label>
-              <input v-model="formData.guardian2_phone" type="tel" placeholder="07XX XXX XXX" class="w-full border border-slate-300 rounded-[9px] px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Phone</label>
+              <input v-model="formData.guardian_phone" type="tel" placeholder="07XX XXX XXX" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
+            </div>
+          </div>
+
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-400 pt-2">Second Guardian / Parent <span class="normal-case font-normal text-slate-300">(optional)</span></p>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Name</label>
+              <input v-model="formData.guardian2_name" type="text" placeholder="Full name" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Phone</label>
+              <input v-model="formData.guardian2_phone" type="tel" placeholder="07XX XXX XXX" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple outline-none text-sm" />
             </div>
           </div>
 
@@ -270,12 +270,12 @@
             <button
               type="button"
               @click="closeModal"
-              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-[9px] font-semibold transition text-sm"
+              class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg font-semibold transition text-sm"
             >Cancel</button>
             <button
               type="submit"
               :disabled="saving"
-              class="px-5 py-2.5 bg-school-purple text-white rounded-[9px] font-semibold hover:bg-school-purple-l transition text-sm disabled:opacity-50"
+              class="px-5 py-2.5 bg-school-purple text-white rounded-lg font-semibold hover:bg-school-purple-l transition text-sm disabled:opacity-50"
             >{{ saving ? 'Saving…' : isEditing ? 'Save Changes' : 'Enroll Student' }}</button>
           </div>
         </form>

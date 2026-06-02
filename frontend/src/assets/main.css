@@ -1,50 +1,56 @@
 @import 'tailwindcss';
 @config "../../tailwind.config.js";
 
-/* Basic styling for testing */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'DM Sans', sans-serif;
   line-height: 1.6;
-  color: #333;
+  color: #0F172A;
+  background: #F8FAFC;
+  -webkit-font-smoothing: antialiased;
 }
 
-@keyframes countUp {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ── Typography helpers ─────────────────────────────────────────────────── */
+.label-caps {
+  font-size: 0.6875rem;   /* 11px → closest to xs */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #94A3B8;
 }
+
+/* ── Entrance animations ────────────────────────────────────────────────── */
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
 }
+.animate-slide-in { animation: slideIn 0.35s ease both; }
 
-/* Utility classes for the animations */
-.animate-count-up {
-  animation: countUp 0.4s ease both;
-}
-.animate-slide-in {
-  animation: slideIn 0.4s ease both;
-}
-
+/* ── Shimmer skeleton ───────────────────────────────────────────────────── */
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+.skel {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 0.25rem;
+}
+
+/* ── Page transition ────────────────────────────────────────────────────── */
+.page-fade-enter-active,
+.page-fade-leave-active { transition: opacity 0.18s ease; }
+.page-fade-enter-from,
+.page-fade-leave-to     { opacity: 0; }
+
+/* ── Scrollbar hide utility ─────────────────────────────────────────────── */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Print ──────────────────────────────────────────────────────────────── */
+@media print {
+  .print\:hidden { display: none !important; }
 }

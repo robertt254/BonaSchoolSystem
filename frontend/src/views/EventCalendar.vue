@@ -44,7 +44,7 @@
               {{ cell.day }}
             </span>
             <div v-for="ev in cell.events" :key="ev.id"
-              class="text-[10px] font-semibold px-1.5 py-0.5 rounded mb-0.5 truncate cursor-pointer"
+              class="text-xs font-semibold px-1.5 py-0.5 rounded mb-0.5 truncate cursor-pointer"
               :class="eventColor(ev.event_type)"
               @click.stop="selectedEvent = ev">
               {{ ev.title }}

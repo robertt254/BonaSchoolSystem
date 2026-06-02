@@ -172,7 +172,7 @@
                     {{ s.scores[subj].marks }}
                   </span>
                   <span v-if="s.scores[subj]?.marks != null"
-                    class="ml-1 px-1.5 py-0.5 rounded text-[10px] font-bold"
+                    class="ml-1 px-1.5 py-0.5 rounded text-xs font-bold"
                     :class="gradeLabel(s.scores[subj].marks, 100).cls">
                     {{ gradeLabel(s.scores[subj].marks, 100).abbr }}
                   </span>

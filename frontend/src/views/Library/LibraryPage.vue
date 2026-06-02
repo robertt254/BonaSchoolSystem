@@ -129,7 +129,7 @@
                 <td class="px-6 py-4 text-center text-slate-500 text-xs">{{ fmtDate(b.borrowed_date) }}</td>
                 <td class="px-6 py-4 text-center text-xs" :class="b.is_overdue ? 'text-red-600 font-bold' : 'text-slate-500'">
                   {{ fmtDate(b.due_date) }}
-                  <span v-if="b.is_overdue" class="block text-[10px]">OVERDUE</span>
+                  <span v-if="b.is_overdue" class="block text-xs">OVERDUE</span>
                 </td>
                 <td class="px-6 py-4 text-center text-xs text-slate-500">{{ b.return_date ? fmtDate(b.return_date) : '—' }}</td>
                 <td class="px-6 py-4 text-center text-xs" :class="b.fine_amount > 0 ? 'text-red-600 font-bold' : 'text-slate-400'">

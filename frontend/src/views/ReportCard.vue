@@ -153,7 +153,7 @@ const ReportCardDoc = defineComponent({
             h('p', { class: 'text-white/50 text-xs mt-1 font-medium' }, 'Competency-Based Curriculum (CBC) · Nairobi, Kenya'),
           ]),
           h('div', { class: 'text-right' }, [
-            h('p', { class: 'text-white/40 text-[10px] uppercase tracking-widest font-bold' }, 'Official Report Card'),
+            h('p', { class: 'text-white/40 text-xs uppercase tracking-widest font-bold' }, 'Official Report Card'),
             h('p', { class: 'text-white font-extrabold text-lg mt-0.5' }, props.data.term),
             h('p', { class: 'text-white/50 text-xs' }, `Academic Year ${props.data.academic_year || new Date().getFullYear()}`),
           ]),
@@ -162,31 +162,31 @@ const ReportCardDoc = defineComponent({
       // Student info strip — 4 columns
       h('div', { class: 'grid grid-cols-2 sm:grid-cols-4 border-b border-slate-200 bg-slate-50 divide-x divide-slate-200' }, [
         h('div', { class: 'px-5 py-4' }, [
-          h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Student Name'),
+          h('p', { class: 'text-xs font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Student Name'),
           h('p', { class: 'font-bold text-slate-800 text-sm' }, props.data.student_name),
         ]),
         h('div', { class: 'px-5 py-4' }, [
-          h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Admission No.'),
+          h('p', { class: 'text-xs font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Admission No.'),
           h('p', { class: 'font-bold text-slate-800 text-sm font-mono' }, props.data.admission_number),
         ]),
         h('div', { class: 'px-5 py-4' }, [
-          h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Grade Level'),
+          h('p', { class: 'text-xs font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Grade Level'),
           h('p', { class: 'font-bold text-slate-800 text-sm' }, props.data.grade_level),
         ]),
         h('div', { class: 'px-5 py-4' }, [
-          h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Term / Year'),
+          h('p', { class: 'text-xs font-bold uppercase tracking-widest text-slate-400 mb-0.5' }, 'Term / Year'),
           h('p', { class: 'font-bold text-slate-800 text-sm' }, `${props.data.term} · ${props.data.academic_year || new Date().getFullYear()}`),
         ]),
       ]),
       // Results table — supports strand-level CBC scores
       h('div', { class: 'px-8 py-6' }, [
-        h('p', { class: 'text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4' }, 'CBC Assessment Results'),
+        h('p', { class: 'text-xs font-bold uppercase tracking-widest text-slate-400 mb-4' }, 'CBC Assessment Results'),
         props.data.results.length
           ? h('table', { class: 'w-full border-collapse text-sm' }, [
               h('thead', {}, h('tr', { class: 'bg-slate-50 border-y border-slate-200' }, [
-                h('th', { class: 'px-5 py-3 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider w-1/3' }, 'Learning Area / Strand'),
-                h('th', { class: 'px-5 py-3 text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider w-28' }, 'Score'),
-                h('th', { class: 'px-5 py-3 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider' }, "Teacher's Remarks"),
+                h('th', { class: 'px-5 py-3 text-left font-bold text-slate-500 uppercase text-xs tracking-wider w-1/3' }, 'Learning Area / Strand'),
+                h('th', { class: 'px-5 py-3 text-center font-bold text-slate-500 uppercase text-xs tracking-wider w-28' }, 'Score'),
+                h('th', { class: 'px-5 py-3 text-left font-bold text-slate-500 uppercase text-xs tracking-wider' }, "Teacher's Remarks"),
               ])),
               h('tbody', {}, props.data.results.flatMap((r, i) => {
                 const strandEntries = Object.entries(r.strands || {})
@@ -227,22 +227,22 @@ const ReportCardDoc = defineComponent({
       ]),
       // Grading key
       h('div', { class: 'mx-8 mb-5 bg-slate-50 border border-slate-200 rounded-lg p-4' }, [
-        h('p', { class: 'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-2' }, 'CBC Grading Scale'),
+        h('p', { class: 'text-xs font-bold uppercase tracking-widest text-slate-400 mb-2' }, 'CBC Grading Scale'),
         h('div', { class: 'grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs' }, [
           h('div', { class: 'flex items-center gap-2' }, [
-            h('span', { class: 'inline-block w-7 text-center bg-emerald-100 text-emerald-700 rounded font-black text-[11px] py-0.5' }, 'EE'),
+            h('span', { class: 'inline-block w-7 text-center bg-emerald-100 text-emerald-700 rounded font-black text-xs py-0.5' }, 'EE'),
             h('span', { class: 'text-slate-500' }, 'Exceeding Expectations'),
           ]),
           h('div', { class: 'flex items-center gap-2' }, [
-            h('span', { class: 'inline-block w-7 text-center bg-blue-100 text-blue-700 rounded font-black text-[11px] py-0.5' }, 'ME'),
+            h('span', { class: 'inline-block w-7 text-center bg-blue-100 text-blue-700 rounded font-black text-xs py-0.5' }, 'ME'),
             h('span', { class: 'text-slate-500' }, 'Meeting Expectations'),
           ]),
           h('div', { class: 'flex items-center gap-2' }, [
-            h('span', { class: 'inline-block w-7 text-center bg-amber-100 text-amber-700 rounded font-black text-[11px] py-0.5' }, 'AE'),
+            h('span', { class: 'inline-block w-7 text-center bg-amber-100 text-amber-700 rounded font-black text-xs py-0.5' }, 'AE'),
             h('span', { class: 'text-slate-500' }, 'Approaching Expectations'),
           ]),
           h('div', { class: 'flex items-center gap-2' }, [
-            h('span', { class: 'inline-block w-7 text-center bg-red-100 text-red-600 rounded font-black text-[11px] py-0.5' }, 'BE'),
+            h('span', { class: 'inline-block w-7 text-center bg-red-100 text-red-600 rounded font-black text-xs py-0.5' }, 'BE'),
             h('span', { class: 'text-slate-500' }, 'Below Expectations'),
           ]),
         ]),
@@ -252,16 +252,16 @@ const ReportCardDoc = defineComponent({
         h('div', { class: 'text-center' }, [
           h('div', { class: 'w-48 border-t-2 border-slate-700 pt-2' }),
           h('p', { class: 'text-xs font-bold text-slate-600 mt-1' }, 'Class Teacher Signature'),
-          h('p', { class: 'text-[10px] text-slate-400' }, 'Name & Date'),
+          h('p', { class: 'text-xs text-slate-400' }, 'Name & Date'),
         ]),
-        h('div', { class: 'text-center text-[10px] text-slate-400 italic' }, [
+        h('div', { class: 'text-center text-xs text-slate-400 italic' }, [
           h('p', {}, 'This is an official document of'),
           h('p', { class: 'font-semibold text-slate-600 not-italic text-xs' }, 'The Bona School'),
         ]),
         h('div', { class: 'text-center' }, [
           h('div', { class: 'w-48 border-t-2 border-slate-700 pt-2' }),
           h('p', { class: 'text-xs font-bold text-slate-600 mt-1' }, "Principal's Signature"),
-          h('p', { class: 'text-[10px] text-slate-400' }, 'Name & Date'),
+          h('p', { class: 'text-xs text-slate-400' }, 'Name & Date'),
         ]),
       ]),
     ])

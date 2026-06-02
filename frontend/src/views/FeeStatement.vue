@@ -148,19 +148,19 @@
       <!-- Student info strip -->
       <div class="grid grid-cols-4 gap-0 border-b border-slate-200 bg-slate-50 divide-x divide-slate-200">
         <div class="px-6 py-4">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Student</p>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Student</p>
           <p class="font-bold text-slate-800 mt-0.5">{{ statementData.student_name }}</p>
         </div>
         <div class="px-6 py-4">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Grade</p>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Grade</p>
           <p class="font-bold text-slate-800 mt-0.5">{{ statementData.grade_level }}</p>
         </div>
         <div class="px-6 py-4">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Billing Period</p>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Billing Period</p>
           <p class="font-bold text-slate-800 mt-0.5">{{ statementData.term_checked }}</p>
         </div>
         <div class="px-6 py-4">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Academic Year</p>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Academic Year</p>
           <p class="font-bold text-slate-800 mt-0.5">{{ selectedYear }}</p>
         </div>
       </div>

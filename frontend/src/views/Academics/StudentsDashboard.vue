@@ -3,34 +3,34 @@
 
     <!-- Header stats -->
     <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div v-for="n in 4" :key="n" class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
-        <div class="skel-bar h-2 w-24 rounded mb-3" />
-        <div class="skel-bar h-8 w-12 rounded" />
+      <div v-for="n in 4" :key="n" class="bg-white rounded-xl border border-border p-5">
+        <div class="skel h-2 w-24 rounded mb-3" />
+        <div class="skel h-8 w-12 rounded" />
       </div>
     </div>
     <div v-else class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.04s ease both">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Students</p>
+      <div class="bg-white rounded-xl border border-border p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.04s ease both">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Total Students</p>
         <p class="text-3xl font-extrabold text-slate-800">{{ displayTotal }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.12s ease both">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Active</p>
+      <div class="bg-white rounded-xl border border-border p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.12s ease both">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Active</p>
         <p class="text-3xl font-extrabold text-emerald-600">{{ displayActive }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.20s ease both">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Male</p>
+      <div class="bg-white rounded-xl border border-border p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.20s ease both">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Male</p>
         <p class="text-3xl font-extrabold text-blue-600">{{ displayMale }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.28s ease both">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Female</p>
+      <div class="bg-white rounded-xl border border-border p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.28s ease both">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Female</p>
         <p class="text-3xl font-extrabold text-pink-500">{{ displayFemale }}</p>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-4 flex flex-wrap gap-3 items-end">
+    <div class="bg-white rounded-xl border border-border p-4 flex flex-wrap gap-3 items-end">
       <div class="flex-1 min-w-48">
-        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
+        <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
         <div class="relative">
           <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -44,14 +44,14 @@
         </div>
       </div>
       <div>
-        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
+        <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
         <select v-model="gradeFilter" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
           <option value="">All Grades</option>
           <option v-for="g in grades" :key="g" :value="g">{{ g }}</option>
         </select>
       </div>
       <div>
-        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Status</label>
+        <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Status</label>
         <select v-model="statusFilter" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
           <option value="">All</option>
           <option value="Active">Active</option>
@@ -60,7 +60,7 @@
         </select>
       </div>
       <div>
-        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Gender</label>
+        <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Gender</label>
         <select v-model="genderFilter" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
           <option value="">All</option>
           <option value="Male">Male</option>
@@ -71,7 +71,7 @@
     </div>
 
     <!-- Student table -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+    <div class="bg-white rounded-xl border border-border overflow-hidden">
       <div v-if="loading" class="p-4 space-y-2">
         <SkeletonLoader type="table" :count="8" />
       </div>
@@ -83,7 +83,7 @@
       <div v-else class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
-            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-400">
               <th class="text-left px-6 py-3">#</th>
               <th class="text-left px-6 py-3">Student</th>
               <th class="text-left px-6 py-3">Adm No.</th>
@@ -134,7 +134,7 @@
                 <span v-if="!s.guardian_name" class="text-slate-300">—</span>
               </td>
               <td class="px-6 py-3.5">
-                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full"
+                <span class="text-xs font-bold uppercase px-2 py-0.5 rounded-full"
                   :class="s.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'">
                   {{ s.status }}
                 </span>
@@ -206,14 +206,3 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.skel-bar {
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
-}
-@keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-</style>

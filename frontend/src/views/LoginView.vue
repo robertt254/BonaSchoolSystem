@@ -66,7 +66,7 @@
               type="text"
               required
               placeholder="e.g. j.doe"
-              class="w-full px-4 py-3.5 rounded-[9px] border border-slate-300 focus:ring-2 focus:ring-school-purple/10 focus:border-school-purple transition duration-150 outline-none"
+              class="w-full px-4 py-3.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-school-purple/10 focus:border-school-purple transition duration-150 outline-none"
             />
           </div>
 
@@ -78,7 +78,7 @@
               type="password"
               required
               placeholder="••••••••"
-              class="w-full px-4 py-3.5 rounded-[9px] border border-slate-300 focus:ring-2 focus:ring-school-purple/10 focus:border-school-purple transition duration-150 outline-none"
+              class="w-full px-4 py-3.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-school-purple/10 focus:border-school-purple transition duration-150 outline-none"
             />
           </div>
 
@@ -87,7 +87,7 @@
             <button
               type="submit"
               :disabled="isLoading"
-              class="w-full bg-school-purple text-white font-semibold px-8 py-4 rounded-[9px] shadow-none hover:bg-school-purple-l focus:outline-none focus:ring-2 focus:ring-school-purple focus:ring-offset-2 transition duration-200 active:scale-[0.98] disabled:bg-school-grey disabled:text-slate-500 flex justify-center items-center"
+              class="w-full bg-school-purple text-white font-semibold px-8 py-4 rounded-lg shadow-none hover:bg-school-purple-l focus:outline-none focus:ring-2 focus:ring-school-purple focus:ring-offset-2 transition duration-200 active:scale-[0.98] disabled:bg-school-grey disabled:text-slate-500 flex justify-center items-center"
             >
               <span v-if="isLoading" class="animate-spin mr-2">
                 <!-- simple SVG spinner inline -->
@@ -106,7 +106,7 @@
           </div>
         </form>
 
-        <div class="mt-8 text-center text-[11px] text-[#94A3B8]">
+        <div class="mt-8 text-center text-xs text-text-muted">
           Powered by The Bona School IT Dept | &copy; 2025
         </div>
       </div>

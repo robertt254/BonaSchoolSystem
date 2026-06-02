@@ -2,10 +2,10 @@
   <div class="max-w-6xl mx-auto space-y-6">
 
     <!-- Controls -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5">
+    <div class="bg-white rounded-xl border border-border p-5">
       <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4">
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Term</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Term</label>
           <select
             v-model="selectedTerm"
             @change="loadDefaulters"
@@ -17,7 +17,7 @@
           </select>
         </div>
         <div class="flex-1">
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
           <input
             v-model="search"
             type="text"
@@ -45,25 +45,25 @@
 
     <!-- Summary strip -->
     <div class="grid grid-cols-3 gap-4">
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 text-center">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Defaulters</p>
+      <div class="bg-white rounded-xl border border-border p-5 text-center">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Defaulters</p>
         <p class="text-3xl font-extrabold text-school-red">{{ filtered.length }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 text-center">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Total Outstanding</p>
+      <div class="bg-white rounded-xl border border-border p-5 text-center">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Total Outstanding</p>
         <p class="text-2xl font-extrabold text-school-red">{{ formatCurrency(totalOutstanding) }}</p>
       </div>
-      <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 text-center">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Avg Per Student</p>
+      <div class="bg-white rounded-xl border border-border p-5 text-center">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Avg Per Student</p>
         <p class="text-2xl font-extrabold text-slate-700">{{ formatCurrency(avgBalance) }}</p>
       </div>
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+    <div class="bg-white rounded-xl border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between bg-slate-50">
         <h3 class="font-bold text-slate-800">Fee Defaulters · {{ selectedTerm }}</h3>
-        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400">{{ filtered.length }} students</span>
+        <span class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ filtered.length }} students</span>
       </div>
 
       <div v-if="loading" class="py-20 flex justify-center">
@@ -78,14 +78,14 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="bg-slate-50 border-b border-slate-200">
-              <th class="text-left px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">#</th>
-              <th class="text-left px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Student</th>
-              <th class="text-left px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Adm No.</th>
-              <th class="text-left px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Grade</th>
-              <th class="text-right px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Expected</th>
-              <th class="text-right px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Paid</th>
-              <th class="text-right px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Credit</th>
-              <th class="text-right px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">Outstanding</th>
+              <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">#</th>
+              <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Student</th>
+              <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Adm No.</th>
+              <th class="text-left px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Grade</th>
+              <th class="text-right px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Expected</th>
+              <th class="text-right px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Paid</th>
+              <th class="text-right px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Credit</th>
+              <th class="text-right px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">Outstanding</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">

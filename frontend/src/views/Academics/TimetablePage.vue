@@ -2,16 +2,16 @@
   <div class="max-w-7xl mx-auto space-y-6">
 
     <!-- Controls -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-5 print:hidden">
+    <div class="bg-white rounded-xl border border-border p-5 print:hidden">
       <div class="flex flex-wrap items-end gap-4">
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
           <select v-model="selectedGrade" @change="loadTimetable" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
             <option v-for="g in grades" :key="g" :value="g">{{ g }}</option>
           </select>
         </div>
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Term</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Term</label>
           <select v-model="selectedTerm" @change="loadTimetable" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
             <option value="Term 1">Term 1</option>
             <option value="Term 2">Term 2</option>
@@ -29,7 +29,7 @@
     </div>
 
     <!-- Grid -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+    <div class="bg-white rounded-xl border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50">
         <h3 class="font-bold text-slate-800">{{ selectedGrade }} · {{ selectedTerm }} Timetable</h3>
       </div>
@@ -68,11 +68,11 @@
                   <button
                     v-if="canEdit"
                     @click.stop="deleteEntry(grid[day][period].id)"
-                    class="mt-1 text-school-red text-[10px] hover:underline print:hidden"
+                    class="mt-1 text-school-red text-xs hover:underline print:hidden"
                   >Remove</button>
                 </template>
                 <template v-else>
-                  <span class="text-slate-200 text-[10px] print:hidden">+ Add</span>
+                  <span class="text-slate-200 text-xs print:hidden">+ Add</span>
                 </template>
               </td>
             </tr>
@@ -93,31 +93,31 @@
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Day</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Day</label>
             <select v-model="modalForm.day_of_week" class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm outline-none">
               <option v-for="d in days" :key="d" :value="d">{{ d }}</option>
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Period</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Period</label>
             <select v-model.number="modalForm.period" class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm outline-none">
               <option v-for="p in periods" :key="p" :value="p">{{ p }}</option>
             </select>
           </div>
           <div class="col-span-2">
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Subject</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Subject</label>
             <input v-model="modalForm.subject" type="text" class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm outline-none" placeholder="e.g. Mathematics" />
           </div>
           <div class="col-span-2">
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Teacher (optional)</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Teacher (optional)</label>
             <input v-model="modalForm.teacher_name" type="text" class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm outline-none" placeholder="Teacher name" />
           </div>
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">Start Time</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Start Time</label>
             <input v-model="modalForm.start_time" type="time" class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm outline-none" />
           </div>
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">End Time</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">End Time</label>
             <input v-model="modalForm.end_time" type="time" class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm outline-none" />
           </div>
         </div>

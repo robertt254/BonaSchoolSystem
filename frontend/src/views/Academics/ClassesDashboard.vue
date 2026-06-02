@@ -12,10 +12,10 @@
         :key="cls.grade_level"
         @click="openClass(cls.grade_level)"
         :class="[
-          'bg-white rounded-[12px] border p-4 text-left hover:shadow-md transition-all group',
+          'bg-white rounded-xl border p-4 text-left hover:shadow-md transition-all group',
           selectedGrade === cls.grade_level
             ? 'border-school-purple ring-2 ring-school-purple/20'
-            : 'border-[#E2E8F0] hover:border-school-purple/40',
+            : 'border-border hover:border-school-purple/40',
         ]"
       >
         <div class="flex items-center justify-between mb-3">
@@ -23,10 +23,10 @@
             :style="{ background: gradeColor(cls.grade_level) }">
             {{ cls.grade_level.replace('Grade ', 'G').replace('Play Group', 'PG') }}
           </div>
-          <span class="text-[10px] font-bold uppercase text-slate-400">{{ cls.total }} pupils</span>
+          <span class="text-xs font-bold uppercase text-slate-400">{{ cls.total }} pupils</span>
         </div>
         <p class="font-bold text-slate-800 text-sm leading-tight">{{ cls.grade_level }}</p>
-        <div class="mt-2 grid grid-cols-2 gap-1 text-[10px] text-slate-500">
+        <div class="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-500">
           <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>{{ cls.male }}M</span>
           <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-pink-400"></span>{{ cls.female }}F</span>
         </div>
@@ -36,14 +36,14 @@
             :style="{ width: cls.total > 0 && cls.present_today > 0 ? `${Math.round(cls.present_today / cls.total * 100)}%` : '0%' }"
           ></div>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1">
+        <p class="text-xs text-slate-400 mt-1">
           {{ cls.present_today }}/{{ cls.total }} present today
         </p>
       </button>
     </div>
 
     <!-- Class detail panel -->
-    <div v-if="selectedGrade" class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+    <div v-if="selectedGrade" class="bg-white rounded-xl border border-border overflow-hidden">
 
       <!-- Tab header -->
       <div class="border-b border-slate-100 bg-slate-50 px-6 flex items-center justify-between min-h-[56px]">
@@ -60,7 +60,7 @@
             ]"
           >
             {{ tab.label }}
-            <span v-if="tab.id === 'subjects' && subjects.length" class="ml-1.5 text-[10px] font-bold bg-school-purple/10 text-school-purple rounded-full px-1.5 py-0.5">
+            <span v-if="tab.id === 'subjects' && subjects.length" class="ml-1.5 text-xs font-bold bg-school-purple/10 text-school-purple rounded-full px-1.5 py-0.5">
               {{ subjects.length }}
             </span>
           </button>
@@ -109,7 +109,7 @@
         <div v-else class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-400">
                 <th class="text-left px-6 py-3">#</th>
                 <th class="text-left px-6 py-3">Student</th>
                 <th class="text-left px-6 py-3">Adm No.</th>
@@ -167,7 +167,7 @@
                   {{ s.fee_balance > 0 ? formatCurrency(s.fee_balance) : 'Paid' }}
                 </td>
                 <td class="px-6 py-3.5 text-right">
-                  <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full"
+                  <span class="text-xs font-bold uppercase px-2 py-0.5 rounded-full"
                     :class="s.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'">
                     {{ s.status }}
                   </span>
@@ -228,13 +228,13 @@
             </div>
 
             <div class="flex-1 min-w-0">
-              <p class="font-bold text-slate-800 text-[14px] leading-tight truncate">{{ subject.name }}</p>
+              <p class="font-bold text-slate-800 text-sm leading-tight truncate">{{ subject.name }}</p>
               <div class="mt-1 flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
                 </svg>
-                <span v-if="subject.teacher_name" class="text-[12px] text-slate-600 font-medium truncate">{{ subject.teacher_name }}</span>
-                <span v-else class="text-[12px] text-slate-400 italic">No teacher assigned</span>
+                <span v-if="subject.teacher_name" class="text-xs text-slate-600 font-medium truncate">{{ subject.teacher_name }}</span>
+                <span v-else class="text-xs text-slate-400 italic">No teacher assigned</span>
               </div>
             </div>
 
@@ -254,7 +254,7 @@
       </div>
     </div>
 
-    <div v-else-if="!loadingSummary" class="bg-white rounded-[12px] border border-[#E2E8F0] py-16 text-center text-slate-400 text-sm">
+    <div v-else-if="!loadingSummary" class="bg-white rounded-xl border border-border py-16 text-center text-slate-400 text-sm">
       Select a class above to view the roster and subjects.
     </div>
 
@@ -275,7 +275,7 @@
 
         <form @submit.prevent="saveSubject" class="p-6 space-y-4">
           <div v-if="!editingSubject">
-            <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">Subject Name</label>
+            <label class="block text-xs font-bold uppercase tracking-[0.07em] text-text-muted mb-1.5">Subject Name</label>
             <input
               v-model="subjectForm.name"
               type="text"
@@ -286,12 +286,12 @@
           </div>
 
           <div v-else>
-            <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">Subject</label>
+            <label class="block text-xs font-bold uppercase tracking-[0.07em] text-text-muted mb-1.5">Subject</label>
             <p class="font-bold text-slate-800">{{ editingSubject.name }}</p>
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-[0.07em] text-[#94A3B8] mb-1.5">Assigned Teacher</label>
+            <label class="block text-xs font-bold uppercase tracking-[0.07em] text-text-muted mb-1.5">Assigned Teacher</label>
             <select
               v-model="subjectForm.teacher_id"
               class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple bg-white cursor-pointer"
@@ -303,7 +303,7 @@
             </select>
           </div>
 
-          <div v-if="subjectModalError" class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-[13px] font-medium text-red-700">
+          <div v-if="subjectModalError" class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm font-medium text-red-700">
             {{ subjectModalError }}
           </div>
 

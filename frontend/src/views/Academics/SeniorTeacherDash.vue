@@ -2,10 +2,10 @@
   <div class="max-w-7xl mx-auto space-y-6">
 
     <!-- Controls bar -->
-    <div class="bg-white rounded-[12px] border border-[#E2E8F0] p-4 flex flex-col gap-4">
+    <div class="bg-white rounded-xl border border-border p-4 flex flex-col gap-4">
       <div class="flex flex-wrap gap-2">
         <button v-for="grade in cbcGrades" :key="grade" @click="selectGrade(grade)"
-          :class="['px-4 py-2.5 rounded-[10px] text-sm font-bold whitespace-nowrap transition-all',
+          :class="['px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all',
             selectedGrade === grade ? 'bg-school-navy text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900']">
           {{ grade }}
         </button>
@@ -13,7 +13,7 @@
 
       <div class="flex flex-wrap items-end gap-4">
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
           <select v-model="selectedArea" @change="onAreaChange"
             class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
             <option v-for="a in learningAreas" :key="a" :value="a">{{ a }}</option>
@@ -33,20 +33,20 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
           <input v-model="searchQuery" type="text" placeholder="Search student…"
-            class="pl-9 pr-4 py-2.5 text-sm border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple w-56" />
+            class="pl-9 pr-4 py-2.5 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple w-56" />
         </div>
       </div>
 
       <!-- Strand indicator -->
       <div v-if="activeStrands.length > 0" class="flex flex-wrap gap-2">
-        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 self-center">Strands:</span>
+        <span class="text-xs font-bold uppercase tracking-widest text-slate-400 self-center">Strands:</span>
         <span v-for="s in activeStrands" :key="s"
           class="bg-school-purple/10 text-school-purple text-xs font-semibold px-2.5 py-1 rounded-full">{{ s }}</span>
       </div>
     </div>
 
     <!-- BULK ENTRY GRID -->
-    <div v-if="viewMode === 'bulk'" class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+    <div v-if="viewMode === 'bulk'" class="bg-white rounded-xl border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50 flex items-center justify-between">
         <div>
           <h3 class="font-bold text-slate-800">{{ selectedGrade }} · {{ appStore.currentTerm }} · {{ selectedArea }}</h3>
@@ -70,7 +70,7 @@
       <div v-else class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
-            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-400">
               <th class="text-left px-6 py-3 w-8">#</th>
               <th class="text-left px-6 py-3">Student</th>
               <!-- Single score (no strands) -->
@@ -137,7 +137,7 @@
     </div>
 
     <!-- STUDENT LIST VIEW -->
-    <div v-else class="bg-white rounded-[12px] border border-[#E2E8F0] overflow-hidden">
+    <div v-else class="bg-white rounded-xl border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50">
         <h3 class="font-bold text-slate-800">{{ selectedGrade }} Students</h3>
       </div>
@@ -176,10 +176,10 @@
 
     <!-- Single-student grade modal -->
     <div v-if="showModal" class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-[12px] shadow-2xl w-full max-w-lg overflow-hidden border border-[#E2E8F0]">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-border">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <div>
-            <h2 class="text-lg font-bold text-[#0F172A]">Record Assessment</h2>
+            <h2 class="text-lg font-bold text-text-primary">Record Assessment</h2>
             <p class="text-xs text-slate-500 mt-0.5">{{ modalStudent?.student_name }} · {{ appStore.currentTerm }} · {{ appStore.currentYear }}</p>
           </div>
           <button @click="showModal = false" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
@@ -189,7 +189,7 @@
 
         <form @submit.prevent="submitSingle" class="p-6 space-y-4">
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
             <select v-model="modalForm.learning_area" @change="modalForm.strand = ''" required
               class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none">
               <option disabled value="">Select Area</option>
@@ -197,7 +197,7 @@
             </select>
           </div>
           <div v-if="modalStrands.length > 0">
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Strand</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Strand</label>
             <select v-model="modalForm.strand" required
               class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none">
               <option disabled value="">Select Strand</option>
@@ -205,7 +205,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Score (CBC)</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Score (CBC)</label>
             <select v-model="modalForm.score" required
               class="w-full border border-slate-300 rounded-lg p-2.5 text-sm font-bold outline-none">
               <option disabled value="">Select Score</option>
@@ -216,7 +216,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Remarks (optional)</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Remarks (optional)</label>
             <textarea v-model="modalForm.remarks" rows="2"
               class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none resize-none"
               placeholder="Teacher's comments…"></textarea>
