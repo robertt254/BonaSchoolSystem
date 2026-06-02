@@ -191,7 +191,7 @@ def record_payment(
 
     receipt = _generate_receipt_number(db)
     new_fee = models.FeePayment(
-        **fee.model_dump(),
+        **fee.model_dump(exclude={'current_term'}),
         recorded_by=current_user.name,
         receipt_number=receipt,
     )
