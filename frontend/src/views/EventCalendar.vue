@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-6xl mx-auto space-y-5">
+  <div class="max-w-6xl mx-auto space-y-6">
 
     <div class="flex items-center justify-between">
       <div>
@@ -74,7 +74,7 @@
         </div>
 
         <!-- Event detail panel -->
-        <div v-if="selectedEvent" class="bg-white rounded-xl border border-slate-200 p-5">
+        <div v-if="selectedEvent" class="bg-white rounded-xl border border-slate-200 p-6">
           <div class="flex items-start justify-between mb-3">
             <div>
               <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full" :class="eventColor(selectedEvent.event_type)">
@@ -113,7 +113,7 @@
             <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Title *</label>
             <input v-model="form.title" type="text" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none" />
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Type</label>
               <select v-model="form.event_type" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none">

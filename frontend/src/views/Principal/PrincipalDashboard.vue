@@ -28,7 +28,7 @@
       </div>
 
       <!-- Term Fee Collection Progress -->
-      <div class="bg-white rounded-xl border border-slate-200 p-5">
+      <div class="bg-white rounded-xl border border-slate-200 p-6">
         <div class="flex items-center justify-between mb-4">
           <div>
             <p class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ appStore.currentTerm }} Fee Collection</p>
@@ -131,7 +131,7 @@
         <div class="px-5 py-4 border-b border-slate-100">
           <h3 class="font-bold text-slate-800 text-sm">Quick Reports</h3>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4">
           <router-link
             v-for="action in quickActions"
             :key="action.to"
@@ -168,7 +168,7 @@ const StatCard = defineComponent({
   props: { label: String, value: String, sub: String, color: String },
   setup(props) {
     const c = computed(() => CARD_COLORS[props.color] || CARD_COLORS.blue)
-    return () => h('div', { class: 'bg-white rounded-xl border border-slate-200 p-5 relative overflow-hidden' }, [
+    return () => h('div', { class: 'bg-white rounded-xl border border-slate-200 p-6 relative overflow-hidden' }, [
       h('span', { class: `absolute top-0 inset-x-0 h-0.5 rounded-t-xl bg-gradient-to-r ${c.value.bar}` }),
       h('p', { class: 'text-xs font-bold uppercase tracking-widest text-slate-400 mb-2' }, props.label),
       h('p', { class: 'text-3xl font-extrabold text-slate-800 leading-none mb-1' }, props.value),

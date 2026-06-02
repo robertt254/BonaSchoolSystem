@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-6xl mx-auto space-y-5">
+  <div class="max-w-6xl mx-auto space-y-6">
 
     <div>
       <h1 class="text-2xl font-extrabold text-slate-800">Report Builder</h1>
@@ -7,7 +7,7 @@
     </div>
 
     <!-- Report selector -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <button v-for="r in REPORTS" :key="r.id" @click="selectReport(r)"
         class="bg-white rounded-xl border p-4 text-left hover:border-school-purple/40 hover:shadow-sm transition"
         :class="selectedReport?.id === r.id ? 'border-school-purple shadow-sm' : 'border-slate-200'">
@@ -20,7 +20,7 @@
     </div>
 
     <!-- Filters for selected report -->
-    <div v-if="selectedReport" class="bg-white rounded-xl border border-slate-200 p-5 flex flex-wrap gap-4 items-end">
+    <div v-if="selectedReport" class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
       <template v-if="selectedReport.filters.includes('year')">
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Year</label>

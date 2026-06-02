@@ -70,24 +70,24 @@
 
       <!-- Quick metrics -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl border border-border p-5">
+        <div class="bg-white rounded-xl border border-border p-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Attendance</div>
           <div class="text-2xl font-extrabold text-school-navy">{{ profile.attendance_percentage }}%</div>
           <div class="text-xs text-slate-400 mt-1">{{ profile.days_present }}/{{ profile.total_days }} days</div>
         </div>
-        <div class="bg-white rounded-xl border border-border p-5">
+        <div class="bg-white rounded-xl border border-border p-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Fee Balance</div>
           <div class="text-2xl font-extrabold" :class="profile.fee_balance > 0 ? 'text-school-red' : 'text-emerald-600'">
             {{ formatCurrency(profile.fee_balance) }}
           </div>
           <div class="text-xs text-slate-400 mt-1">Paid {{ formatCurrency(profile.total_paid) }} this year</div>
         </div>
-        <div class="bg-white rounded-xl border border-border p-5">
+        <div class="bg-white rounded-xl border border-border p-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Subjects</div>
           <div class="text-2xl font-extrabold text-slate-800">{{ uniqueSubjects }}</div>
           <div class="text-xs text-slate-400 mt-1">Learning areas assessed</div>
         </div>
-        <div class="bg-white rounded-xl border border-border p-5">
+        <div class="bg-white rounded-xl border border-border p-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Payments</div>
           <div class="text-2xl font-extrabold text-slate-800">{{ profile.recent_payments.length }}</div>
           <div class="text-xs text-slate-400 mt-1">Recent transactions</div>

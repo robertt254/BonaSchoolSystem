@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto space-y-6">
 
     <!-- Controls -->
-    <div class="bg-white rounded-xl border border-border p-5 print:hidden">
+    <div class="bg-white rounded-xl border border-border p-6 print:hidden">
       <div class="flex flex-wrap items-end gap-4">
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>

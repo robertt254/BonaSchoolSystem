@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-6xl mx-auto space-y-5">
+  <div class="max-w-6xl mx-auto space-y-6">
 
     <div>
       <h1 class="text-2xl font-extrabold text-slate-800">Payroll</h1>
@@ -7,7 +7,7 @@
     </div>
 
     <!-- Month selector -->
-    <div class="bg-white rounded-xl border border-slate-200 p-5 flex flex-wrap gap-4 items-end">
+    <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
       <div>
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Payroll Month</label>
         <input v-model="selectedMonth" type="month" @change="loadData"

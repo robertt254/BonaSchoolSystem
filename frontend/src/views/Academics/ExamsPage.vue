@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-5">
+  <div class="max-w-7xl mx-auto space-y-6">
 
     <div>
       <h1 class="text-2xl font-extrabold text-slate-800">Exams & Marks</h1>
@@ -17,7 +17,7 @@
 
     <!-- ── TAB: Enter Marks ─────────────────────────────────────── -->
     <template v-if="activeTab === 'entry'">
-      <div class="bg-white rounded-xl border border-slate-200 p-5 flex flex-wrap gap-4 items-end">
+      <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
           <select v-model="form.grade_level" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none">
@@ -105,7 +105,7 @@
 
     <!-- ── TAB: Rankings ─────────────────────────────────────────── -->
     <template v-if="activeTab === 'rankings'">
-      <div class="bg-white rounded-xl border border-slate-200 p-5 flex flex-wrap gap-4 items-end">
+      <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
           <select v-model="rankForm.grade_level" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none">

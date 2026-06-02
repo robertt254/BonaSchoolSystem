@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-3xl mx-auto space-y-5">
+  <div class="max-w-3xl mx-auto space-y-6">
 
     <div>
       <h1 class="text-2xl font-extrabold text-slate-800">Academic Year Transition</h1>
@@ -58,7 +58,7 @@
     </div>
 
     <!-- Confirm action -->
-    <div v-if="summaryLoaded && !done" class="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
+    <div v-if="summaryLoaded && !done" class="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
       <p class="text-sm text-slate-600">Type <strong>CONFIRM</strong> to proceed with the year transition.</p>
       <input v-model="confirmText" type="text" placeholder="Type CONFIRM"
         class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none w-full" />

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto space-y-5">
+  <div class="max-w-5xl mx-auto space-y-6">
 
     <!-- Page header + tabs -->
     <div>
@@ -24,7 +24,7 @@
 
     <!-- ── TAB: Daily Roll Call ─────────────────────────────────────── -->
     <template v-if="activeTab === 'rollcall'">
-      <div class="bg-white rounded-xl border border-slate-200 p-5 flex flex-col sm:flex-row gap-4 items-end">
+      <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-col sm:flex-row gap-4 items-end">
         <div class="flex-1 max-w-xs">
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">CBC Grade</label>
           <select

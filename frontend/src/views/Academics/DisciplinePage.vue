@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-5">
+  <div class="max-w-7xl mx-auto space-y-6">
 
     <div class="flex items-center justify-between">
       <div>
@@ -15,19 +15,19 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="bg-white rounded-xl border border-slate-200 p-5">
+      <div class="bg-white rounded-xl border border-slate-200 p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Total Records</p>
         <p class="text-3xl font-extrabold text-slate-800">{{ records.length }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-slate-200 p-5">
+      <div class="bg-white rounded-xl border border-slate-200 p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Open</p>
         <p class="text-3xl font-extrabold text-red-500">{{ openCount }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-slate-200 p-5">
+      <div class="bg-white rounded-xl border border-slate-200 p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Serious</p>
         <p class="text-3xl font-extrabold text-orange-500">{{ seriousCount }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-slate-200 p-5">
+      <div class="bg-white rounded-xl border border-slate-200 p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Resolved</p>
         <p class="text-3xl font-extrabold text-emerald-600">{{ resolvedCount }}</p>
       </div>
@@ -129,7 +129,7 @@
           </button>
         </div>
         <div class="space-y-3 text-sm">
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-4">
             <div class="bg-slate-50 rounded-lg p-3">
               <p class="text-xs text-slate-400 mb-0.5">Student</p>
               <p class="font-semibold text-slate-800">{{ selectedRecord.student_name }}</p>
@@ -194,7 +194,7 @@
             </div>
             <p v-if="form.student_id" class="text-xs text-emerald-600 mt-1">Selected: {{ form.student_name }}</p>
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Date</label>
               <input v-model="form.incident_date" type="date" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none" />

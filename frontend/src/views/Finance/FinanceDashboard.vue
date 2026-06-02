@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
@@ -273,7 +273,7 @@
               v-model="feeForm.student_id"
               required
               @change="onFeeStudentChange"
-              class="w-full border border-border rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+              class="w-full border border-border rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
             >
               <option disabled value="">-- Choose a student --</option>
               <option v-for="student in students" :key="student.id" :value="student.id">
@@ -304,7 +304,7 @@
               </label>
               <select
                 v-model="feeForm.term"
-                class="w-full border border-border rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+                class="w-full border border-border rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
               >
                 <option v-for="t in allowedTerms" :key="t" :value="t">{{ t }}</option>
               </select>
@@ -316,7 +316,7 @@
               </label>
               <select
                 v-model="feeForm.payment_type"
-                class="w-full border border-border rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+                class="w-full border border-border rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
               >
                 <option value="Tuition">Tuition</option>
                 <option value="Transport">Transport</option>
@@ -335,7 +335,7 @@
               type="number"
               min="1"
               required
-              class="w-full border border-red-200 rounded-xl p-3 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
+              class="w-full border border-red-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
             />
           </div>
 
@@ -387,7 +387,7 @@
               v-model="expenseForm.category"
               type="text"
               placeholder="e.g. Maintenance, Utilities, Supplies"
-              class="w-full border border-border rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all"
+              class="w-full border border-border rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all"
             />
           </div>
 
@@ -400,7 +400,7 @@
               required
               rows="3"
               placeholder="Explain why this expense is necessary..."
-              class="w-full border border-border rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all resize-none"
+              class="w-full border border-border rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all resize-none"
             ></textarea>
           </div>
 
@@ -413,7 +413,7 @@
               type="number"
               min="1"
               required
-              class="w-full border border-red-200 rounded-xl p-3 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
+              class="w-full border border-red-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
             />
           </div>
 

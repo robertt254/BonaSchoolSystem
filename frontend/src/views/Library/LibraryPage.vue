@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-5">
+  <div class="max-w-7xl mx-auto space-y-6">
 
     <div class="flex items-center justify-between">
       <div>
@@ -19,7 +19,7 @@
 
     <!-- ── Books Tab ───────────────────────────────────────────────── -->
     <template v-if="activeTab === 'books'">
-      <div class="bg-white rounded-xl border border-slate-200 p-5 flex flex-wrap gap-3 items-end">
+      <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-3 items-end">
         <div class="flex-1 min-w-48">
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
           <input v-model="bookSearch" type="text" placeholder="Title, author, ISBN…"
@@ -87,7 +87,7 @@
 
     <!-- ── Borrows Tab ─────────────────────────────────────────────── -->
     <template v-if="activeTab === 'borrows'">
-      <div class="bg-white rounded-xl border border-slate-200 p-5 flex flex-wrap gap-3 items-end">
+      <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-3 items-end">
         <label class="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
           <input v-model="activeOnly" type="checkbox" @change="loadBorrows"
             class="rounded border-slate-300 text-school-purple" />
@@ -161,7 +161,7 @@
             <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Title *</label>
             <input v-model="bookForm.title" type="text" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none" />
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Author</label>
               <input v-model="bookForm.author" type="text" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none" />
@@ -171,7 +171,7 @@
               <input v-model="bookForm.isbn" type="text" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none" />
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Category</label>
               <input v-model="bookForm.category" type="text" placeholder="Textbook, Fiction…" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none" />
@@ -217,7 +217,7 @@
               <option v-for="b in availableBooks" :key="b.id" :value="b.id">{{ b.title }} ({{ b.available }} avail.)</option>
             </select>
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Borrower Type</label>
               <select v-model="borrowForm.borrower_type" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none">

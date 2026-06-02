@@ -14,7 +14,7 @@ import { computed } from 'vue'
 
 const props = defineProps({
   accent:  { type: String, default: null },  // blue | green | purple | amber | red
-  padding: { type: String, default: 'p-5' },
+  padding: { type: String, default: 'p-6' },
   hover:   Boolean,
 })
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto space-y-5">
+  <div class="max-w-5xl mx-auto space-y-6">
 
     <div class="flex items-center justify-between">
       <div>
@@ -120,7 +120,7 @@
             <input v-model="form.category" type="text" placeholder="e.g. Stationery, Utilities"
               class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none" />
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Term</label>
               <select v-model="form.term" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none">

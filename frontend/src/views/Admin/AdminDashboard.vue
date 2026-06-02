@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
     <!-- Page Header -->
     <div class="mb-8">
       <h1 class="font-heading text-2xl font-bold text-text-primary tracking-tight">

@@ -1,8 +1,8 @@
 <template>
-  <div class="max-w-4xl mx-auto space-y-5">
+  <div class="max-w-4xl mx-auto space-y-6">
 
     <!-- Mode toggle -->
-    <div class="bg-white rounded-xl border border-slate-200 p-5 print:hidden">
+    <div class="bg-white rounded-xl border border-slate-200 p-6 print:hidden">
       <div class="flex items-center justify-between mb-5">
         <div>
           <h2 class="font-bold text-slate-800 text-sm">CBC Report Cards</h2>

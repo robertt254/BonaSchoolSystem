@@ -40,7 +40,7 @@
     <!-- Skeleton loading state -->
     <div v-if="loading" class="space-y-4">
       <SkeletonLoader type="stats" :count="4" />
-      <div class="bg-surface border border-border rounded-card p-5">
+      <div class="bg-surface border border-border rounded-card p-6">
         <div class="skel h-3 w-40 mb-3" />
         <div class="skel h-2 w-full" />
       </div>
@@ -109,7 +109,7 @@
       <!-- Term Fee Collection Progress — finance roles only -->
       <div
         v-if="canViewFinance"
-        class="bg-white border border-slate-200 rounded-xl p-5"
+        class="bg-white border border-slate-200 rounded-xl p-6"
         style="animation: slideIn 0.4s 0.14s ease both"
       >
         <div class="flex items-center justify-between mb-4">
@@ -151,7 +151,7 @@
               <p class="text-xs text-text-muted mt-[1px]">Common tasks and shortcuts</p>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-3 p-4">
+          <div class="grid grid-cols-2 gap-4 p-4">
             <!-- Roll Call — teachers, secretary, principal, admin -->
             <router-link
               v-if="canMarkAttendance"

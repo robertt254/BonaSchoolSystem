@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto space-y-5">
+  <div class="max-w-4xl mx-auto space-y-6">
 
     <div class="flex items-center justify-between">
       <div>
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Balance card -->
-    <div class="bg-white rounded-xl border border-slate-200 p-5 flex items-center gap-6">
+    <div class="bg-white rounded-xl border border-slate-200 p-6 flex items-center gap-6">
       <div>
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Current Balance</p>
         <p class="text-3xl font-extrabold" :class="balance >= 0 ? 'text-emerald-600' : 'text-red-600'">
@@ -93,7 +93,7 @@
           </button>
         </div>
         <div class="space-y-3">
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Type</label>
               <select v-model="form.transaction_type" class="w-full border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none">

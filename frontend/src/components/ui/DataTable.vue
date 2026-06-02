@@ -1,7 +1,7 @@
 <template>
   <div class="bg-surface border border-border rounded-card overflow-hidden">
     <!-- Optional header slot -->
-    <div v-if="$slots.header" class="px-5 py-4 border-b border-border bg-surface-muted flex items-center justify-between gap-4">
+    <div v-if="$slots.header" class="px-5 py-3 border-b border-border bg-surface-muted flex items-center justify-between gap-4">
       <slot name="header" />
     </div>
 

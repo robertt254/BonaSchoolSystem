@@ -1,8 +1,8 @@
 <template>
-  <div class="max-w-3xl mx-auto space-y-5">
+  <div class="max-w-3xl mx-auto space-y-6">
 
     <!-- Controls (hidden when printing) -->
-    <div class="bg-white rounded-xl border border-slate-200 p-5 print:hidden">
+    <div class="bg-white rounded-xl border border-slate-200 p-6 print:hidden">
       <h2 class="text-base font-bold text-slate-800 mb-4">Generate Fee Statement</h2>
       <div class="flex flex-col sm:flex-row gap-4 items-end flex-wrap">
         <div class="flex-1 min-w-[200px]">
@@ -66,7 +66,7 @@
 
       <!-- Add form -->
       <div v-if="showCfForm" class="px-5 py-4 border-b border-slate-100 bg-amber-50/50">
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-3">
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Year</label>
             <select v-model="cfForm.academic_year"
