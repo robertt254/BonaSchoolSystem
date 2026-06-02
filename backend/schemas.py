@@ -116,7 +116,7 @@ class FeeBase(BaseModel):
 
 
 class FeeCreate(FeeBase):
-    pass
+    current_term: Optional[str] = None  # school's active term — used for future-term validation
 
 
 class BulkPaymentItem(BaseModel):

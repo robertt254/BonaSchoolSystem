@@ -20,11 +20,22 @@ FINANCE_ROLES = {"accountant", "admin", "principal", "secretary"}
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+ALL_TERMS = ["Term 1", "Term 2", "Term 3"]
+
+
 def _generate_receipt_number(db: Session) -> str:
     """Atomic receipt number using a PostgreSQL sequence — no race condition possible."""
     year = datetime.now().year
     seq = db.execute(text("SELECT nextval('receipt_number_seq')")).scalar()
     return f"BNS-{year}-{seq:05d}"
+
+
+def _term_index(term: str) -> int:
+    """Return 0-based position of a term string, -1 if unknown."""
+    try:
+        return ALL_TERMS.index(term)
+    except ValueError:
+        return -1
 
 
 def _get_expected_fee(db: Session, grade_level: str, term: str) -> float:
@@ -94,6 +105,56 @@ def compute_effective_term_collection(db: Session, students: list, term: str) ->
 
 # ── Payment endpoints ─────────────────────────────────────────────────────────
 
+@router.get("/smart-term/{student_id}")
+def get_smart_term(
+    student_id: int,
+    current_term: str = Query(..., description="The school's current active term"),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """
+    Returns the recommended payment term for a student.
+    Scans from Term 1 up to (and including) current_term for outstanding balances.
+    The first term with a positive outstanding becomes the recommended term.
+    Allowed terms are all terms ≤ current_term.
+    """
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    cur_idx = _term_index(current_term)
+    if cur_idx < 0:
+        raise HTTPException(status_code=400, detail=f"Invalid current_term: {current_term}")
+
+    allowed_terms = ALL_TERMS[: cur_idx + 1]
+
+    recommended_term = current_term
+    outstanding_balance = 0.0
+
+    for term in allowed_terms:
+        paid = float(
+            db.query(func.sum(models.FeePayment.amount))
+            .filter(models.FeePayment.student_id == student_id, models.FeePayment.term == term)
+            .scalar() or 0
+        )
+        expected = _get_expected_fee(db, None, term)  # grade resolved below
+        student = db.query(models.Student).filter(models.Student.id == student_id).first()
+        if not student:
+            raise HTTPException(status_code=404, detail="Student not found")
+        expected = _get_expected_fee(db, student.grade_level, term)
+        balance = round(expected - paid, 2)
+        if balance > 0:
+            recommended_term = term
+            outstanding_balance = balance
+            break
+
+    return {
+        "recommended_term": recommended_term,
+        "outstanding_balance": outstanding_balance,
+        "allowed_terms": allowed_terms,
+        "current_term": current_term,
+    }
+
+
 @router.post("/", response_model=schemas.FeeResponse)
 def record_payment(
     fee: schemas.FeeCreate,
@@ -103,6 +164,18 @@ def record_payment(
 ):
     if current_user.role not in {"accountant", "admin", "secretary", "principal"}:
         raise HTTPException(status_code=403, detail="Not authorized to record payments")
+
+    # Validate: cannot record a fee for a future term.
+    # The client sends current_term as a header or query param; fall back permissively
+    # if not supplied (backwards-compat) by checking TERM_ORDER.
+    if hasattr(fee, "current_term") and fee.current_term:
+        cur_idx = _term_index(fee.current_term)
+        pay_idx = _term_index(fee.term)
+        if cur_idx >= 0 and pay_idx > cur_idx:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Cannot record a fee for {fee.term} — the school is currently in {fee.current_term}.",
+            )
 
     student = (
         db.query(models.Student)

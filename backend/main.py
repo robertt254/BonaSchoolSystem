@@ -165,6 +165,22 @@ async def startup():
         "CREATE INDEX IF NOT EXISTS idx_fees_payment_date   ON fees(payment_date DESC)",
         # Atomic sequence for receipt numbers — replaces race-prone Python counter
         "CREATE SEQUENCE IF NOT EXISTS receipt_number_seq START 1",
+        # Advance the sequence past any receipts that were inserted before the sequence existed.
+        # setval(..., max_seq, false) means next nextval() returns max_seq+1.
+        # The SPLIT_PART extracts the numeric suffix from 'BNS-YYYY-NNNNN'.
+        """
+        SELECT setval(
+            'receipt_number_seq',
+            COALESCE((
+                SELECT MAX(
+                    CAST(SPLIT_PART(receipt_number, '-', 3) AS INTEGER)
+                )
+                FROM fees
+                WHERE receipt_number ~ '^BNS-[0-9]+-[0-9]+$'
+            ), 0),
+            false
+        )
+        """,
         # ── Unique constraints (will fail silently if duplicates exist) ────────
         # Use CREATE UNIQUE INDEX so the constraint is advisory; duplicates cause a
         # warning, not a server crash. Application-level checks prevent new dupes.

@@ -272,6 +272,7 @@
             <select
               v-model="feeForm.student_id"
               required
+              @change="onFeeStudentChange"
               class="w-full border border-border rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
             >
               <option disabled value="">-- Choose a student --</option>
@@ -279,6 +280,21 @@
                 {{ student.first_name }} {{ student.last_name }} ({{ student.admission_number }})
               </option>
             </select>
+          </div>
+
+          <!-- Previous term balance notice -->
+          <div v-if="smartTerm && smartTerm.outstanding_balance > 0 && smartTerm.recommended_term !== appStore.currentTerm"
+            class="flex items-start gap-2.5 bg-warning-bg border border-warning-border rounded-xl p-3 text-xs text-warning-text">
+            <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+            <span>
+              Outstanding balance of <strong>KES {{ smartTerm.outstanding_balance.toLocaleString() }}</strong>
+              from <strong>{{ smartTerm.recommended_term }}</strong>. Payment will be applied to clear this balance first.
+            </span>
+          </div>
+          <div v-else-if="smartTermLoading" class="text-xs text-text-muted animate-pulse">
+            Checking balance…
           </div>
 
           <div class="grid grid-cols-2 gap-4">
@@ -290,10 +306,9 @@
                 v-model="feeForm.term"
                 class="w-full border border-border rounded-xl p-3 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
               >
-                <option value="Term 1">Term 1</option>
-                <option value="Term 2">Term 2</option>
-                <option value="Term 3">Term 3</option>
+                <option v-for="t in allowedTerms" :key="t" :value="t">{{ t }}</option>
               </select>
+              <p class="text-xs text-text-muted mt-1">Only current or overdue terms shown.</p>
             </div>
             <div>
               <label class="block text-xs font-bold uppercase tracking-[0.07em] text-text-muted mb-1.5">
@@ -426,6 +441,7 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
 import { Chart, BarElement, BarController, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js'
+import { apiFetch } from '@/services/api'
 import feeService from '@/services/feeService'
 import studentService from '@/services/studentService'
 import staffService from '@/services/staffService'
@@ -461,6 +477,18 @@ const feeForm = reactive({
   amount: 0,
   payment_type: 'Tuition',
   term: appStore.currentTerm,
+})
+
+// Smart-term state for fee modal
+const smartTerm        = ref(null)   // { recommended_term, outstanding_balance, allowed_terms }
+const smartTermLoading = ref(false)
+
+const ALL_TERMS = ['Term 1', 'Term 2', 'Term 3']
+const allowedTerms = computed(() => {
+  if (smartTerm.value) return smartTerm.value.allowed_terms
+  // fallback: only terms up to and including current term
+  const idx = ALL_TERMS.indexOf(appStore.currentTerm)
+  return idx >= 0 ? ALL_TERMS.slice(0, idx + 1) : ALL_TERMS
 })
 
 const expenseForm = reactive({
@@ -600,16 +628,35 @@ const openFeeModal = () => {
   feeForm.amount = 0
   feeForm.payment_type = 'Tuition'
   feeForm.term = appStore.currentTerm
+  smartTerm.value = null
   showFeeModal.value = true
 }
 
 const closeFeeModal = () => {
   showFeeModal.value = false
+  smartTerm.value = null
+}
+
+const onFeeStudentChange = async () => {
+  if (!feeForm.student_id) { smartTerm.value = null; return }
+  smartTermLoading.value = true
+  try {
+    const data = await apiFetch(
+      `/api/fees/smart-term/${feeForm.student_id}?current_term=${encodeURIComponent(appStore.currentTerm)}`
+    )
+    smartTerm.value = data
+    feeForm.term = data.recommended_term
+  } catch {
+    // fallback — just use current term
+    feeForm.term = appStore.currentTerm
+  } finally {
+    smartTermLoading.value = false
+  }
 }
 
 const submitFee = async () => {
   try {
-    await feeService.recordFee(feeForm)
+    await feeService.recordFee({ ...feeForm, current_term: appStore.currentTerm })
     closeFeeModal()
     toast.success('Fee payment recorded successfully.')
     await loadData()
