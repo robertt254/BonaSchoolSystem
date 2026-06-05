@@ -81,7 +81,7 @@ const router = createRouter({
           path: 'academics/report-card',
           name: 'report-card',
           component: () => import('../views/ReportCard.vue'),
-          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin', 'secretary'] },
         },
         {
           path: 'academics/attendance',
@@ -111,7 +111,7 @@ const router = createRouter({
           path: 'academics/timetable',
           name: 'timetable',
           component: () => import('../views/Academics/TimetablePage.vue'),
-          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin'] },
+          meta: { requiresAuth: true, roles: ['teacher', 'senior_teacher', 'principal', 'admin', 'secretary'] },
         },
         {
           path: 'academics/students',

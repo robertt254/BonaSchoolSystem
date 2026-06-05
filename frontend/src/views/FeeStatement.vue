@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-3xl mx-auto space-y-6">
+  <div class="max-w-5xl mx-auto space-y-6">
 
     <!-- Controls (hidden when printing) -->
     <div class="bg-white rounded-xl border border-slate-200 p-6 print:hidden">
