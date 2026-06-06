@@ -64,7 +64,7 @@
           <NavItem to="/finance" icon="account_balance">Dashboard</NavItem>
           <NavItem to="/finance/statements" icon="receipt_long">Statements</NavItem>
           <NavItem to="/finance/defaulters" icon="warning">Defaulters</NavItem>
-          <NavItem v-if="['admin','principal'].includes(userRole)" to="/finance/fee-structure" icon="list_alt">Fee Structure</NavItem>
+          <NavItem v-if="['admin','principal','accountant','secretary'].includes(userRole)" to="/finance/fee-structure" icon="list_alt">Fee Structure</NavItem>
           <NavItem v-if="['accountant','admin'].includes(userRole)" to="/finance/payslips" icon="payments">Payroll</NavItem>
           <NavItem v-if="userRole !== 'secretary'" to="/finance/petty-cash" icon="savings">Petty Cash</NavItem>
           <NavItem v-if="userRole !== 'secretary'" to="/finance/budget" icon="bar_chart">Budget</NavItem>

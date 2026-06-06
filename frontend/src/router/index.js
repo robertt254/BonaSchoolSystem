@@ -105,7 +105,7 @@ const router = createRouter({
           path: 'finance/fee-structure',
           name: 'fee-structure',
           component: () => import('../views/Finance/FeeStructureConfig.vue'),
-          meta: { requiresAuth: true, roles: ['admin', 'principal'] },
+          meta: { requiresAuth: true, roles: ['admin', 'principal', 'accountant', 'secretary'] },
         },
         {
           path: 'academics/timetable',

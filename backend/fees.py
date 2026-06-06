@@ -8,7 +8,7 @@ from database import get_db
 import models, schemas, auth
 from audit import log_action
 from notifications import notify_payment
-from constants import CBC_TERMLY_FEES, TERM_ORDER, TERM_BY_NUM
+from constants import CBC_TERMLY_FEES, TERM_ORDER, TERM_BY_NUM, fee_structure_template_rows
 
 router = APIRouter(prefix="/api/fees", tags=["Finance & Fees"])
 
@@ -46,6 +46,7 @@ def _get_expected_fee(db: Session, grade_level: str, term: str) -> float:
             models.FeeStructure.grade_level == grade_level,
             models.FeeStructure.term == term,
             models.FeeStructure.academic_year == year,
+            models.FeeStructure.fee_type == "Tuition",
         )
         .first()
     )
@@ -754,6 +755,54 @@ def get_fee_structure(
         models.FeeStructure.academic_year.desc(),
         models.FeeStructure.grade_level,
     ).all()
+
+
+@router.get("/structure/template")
+def get_fee_structure_template(
+    year: int = Query(...),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Default fee-structure rows for a year (the standard Bona School sheet),
+    used to preload the editor when a year has no saved structure. Not persisted."""
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    return fee_structure_template_rows(year)
+
+
+@router.post("/structure/bulk")
+def bulk_upsert_fee_structure(
+    entries: List[schemas.FeeStructureCreate],
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Save the whole fee structure for a year in one go (principal/admin only).
+    Upserts by (grade_level, term, fee_type, academic_year)."""
+    if current_user.role not in {"admin", "principal"}:
+        raise HTTPException(status_code=403, detail="Only admins and the principal can set the fee structure")
+    if len(entries) > 500:
+        raise HTTPException(status_code=400, detail="Too many entries in one request")
+
+    saved = 0
+    years = set()
+    for e in entries:
+        years.add(e.academic_year)
+        row = db.query(models.FeeStructure).filter(
+            models.FeeStructure.grade_level == e.grade_level,
+            models.FeeStructure.term == e.term,
+            models.FeeStructure.fee_type == e.fee_type,
+            models.FeeStructure.academic_year == e.academic_year,
+        ).first()
+        if row:
+            row.amount = e.amount
+        else:
+            db.add(models.FeeStructure(**e.model_dump()))
+        saved += 1
+
+    log_action(db, current_user.id, "UPDATE", "fee_structure", None,
+               {"bulk": saved, "years": sorted(years)})
+    db.commit()
+    return {"saved": saved}
 
 
 @router.post("/structure", response_model=schemas.FeeStructureResponse)

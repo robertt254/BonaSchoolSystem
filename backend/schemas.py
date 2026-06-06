@@ -314,10 +314,12 @@ class FeeCarryForwardResponse(BaseModel):
 
 
 class FeeStructureCreate(BaseModel):
-    grade_level: GradeLevel
-    term: Term
-    fee_type: PaymentType
-    amount: float = Field(..., gt=0)
+    # Free strings (not enums) so the structure can hold non-grade items such as
+    # Admission, Daycare and co-curricular activities, not just termly tuition.
+    grade_level: str = Field(..., max_length=20)
+    term: str = Field(..., max_length=10)
+    fee_type: str = Field(..., max_length=50)
+    amount: float = Field(..., ge=0)   # 0 allowed (e.g. unpriced optional activity)
     academic_year: int = Field(..., ge=2020, le=2100)
 
 
