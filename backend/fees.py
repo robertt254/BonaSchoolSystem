@@ -617,11 +617,14 @@ def get_defaulters(
     current_term_num = TERM_ORDER.get(term, 1)
     year = datetime.now().year
 
-    # ── 1. Load fee structures for this year in one query ──────────────────
+    # ── 1. Load termly tuition structures for this year in one query ───────
     fee_structs = {
         (fs.grade_level, fs.term): float(fs.amount)
         for fs in db.query(models.FeeStructure)
-        .filter(models.FeeStructure.academic_year == year).all()
+        .filter(
+            models.FeeStructure.academic_year == year,
+            models.FeeStructure.fee_type == "Tuition",
+        ).all()
     }
 
     def expected_fee(grade: str, t: str) -> float:

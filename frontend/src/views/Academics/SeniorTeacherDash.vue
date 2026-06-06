@@ -263,25 +263,6 @@ const AREAS_BY_GRADE = {
   'Grade 6': ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Creative Arts & Sports', 'Physical & Health Education', 'Pre-Technical Studies', 'Religious Education'],
 }
 
-// CBC strands per learning area — empty array = single overall score
-const CBC_STRANDS = {
-  'Psychomotor & Creative Activities': ['Movement Activities', 'Creative Activities'],
-  'Language Activities': ['Listening & Speaking', 'Reading Readiness', 'Writing Readiness'],
-  'Mathematical Activities': ['Numbers', 'Measurement', 'Spatial Reasoning'],
-  'Environmental Activities': ['Living Things', 'Non-Living Things', 'Weather & Environment'],
-  'Religious & Moral Education': [],
-  'English': ['Listening & Speaking', 'Reading', 'Writing', 'Grammar & Vocabulary'],
-  'Kiswahili': ['Kusikiliza na Kuzungumza', 'Kusoma', 'Kuandika', 'Sarufi na Msamiati'],
-  'Mathematics': ['Numbers', 'Measurement', 'Geometry', 'Data Handling'],
-  'Creative Arts': ['Music', 'Art & Craft'],
-  'Physical & Health Education': ['Physical Activity', 'Health Education'],
-  'Religious Education': [],
-  'Integrated Science': ['Living Things', 'Matter', 'Forces & Energy', 'Earth & Space'],
-  'Social Studies': ['Citizenship', 'Our Physical Environment', 'History & Culture'],
-  'Creative Arts & Sports': ['Visual Arts', 'Performing Arts', 'Games & Sports'],
-  'Pre-Technical Studies': ['Basic Technology', 'Agriculture', 'Home Science'],
-}
-
 const selectedGrade = ref('Grade 1')
 const selectedArea = ref('English')
 const viewMode = ref('bulk')
@@ -296,8 +277,9 @@ const modalStudent = ref(null)
 const modalForm = reactive({ learning_area: '', strand: '', score: '', remarks: '' })
 
 const learningAreas = computed(() => AREAS_BY_GRADE[selectedGrade.value] || AREAS_BY_GRADE['Grade 1'])
-const activeStrands = computed(() => CBC_STRANDS[selectedArea.value] || [])
-const modalStrands = computed(() => CBC_STRANDS[modalForm.learning_area] || [])
+// One overall grade per learning area — strand-level grading removed.
+const activeStrands = computed(() => [])
+const modalStrands = computed(() => [])
 const hasPendingChanges = computed(() => bulkRows.value.some(r => r._changed))
 
 const filteredBulk = computed(() => {
