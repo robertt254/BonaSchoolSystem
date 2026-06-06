@@ -53,7 +53,8 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; script-src 'self' 'unsafe-inline'; "
-        "style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; img-src 'self' data:;"
     )
     return response
 
@@ -102,6 +103,10 @@ async def startup():
         "ALTER TABLE students   ADD COLUMN IF NOT EXISTS guardian_name  VARCHAR(100)",
         "ALTER TABLE students   ADD COLUMN IF NOT EXISTS guardian_phone VARCHAR(20)",
         "ALTER TABLE fees       ADD COLUMN IF NOT EXISTS receipt_number VARCHAR(20)",
+        # term was added to the FeePayment model after the fees table existed on
+        # older deploys; without this the entire finance ledger 500s in prod.
+        "ALTER TABLE fees        ADD COLUMN IF NOT EXISTS term VARCHAR(10) NOT NULL DEFAULT 'Term 1'",
+        "ALTER TABLE assessments ADD COLUMN IF NOT EXISTS term VARCHAR(10) NOT NULL DEFAULT 'Term 1'",
         "ALTER TABLE assessments ADD COLUMN IF NOT EXISTS updated_at   TIMESTAMPTZ DEFAULT NOW()",
         # timetable & leave tables created via create_all; extra safety cols below
         "ALTER TABLE timetable       ADD COLUMN IF NOT EXISTS created_by   VARCHAR(100) NOT NULL DEFAULT 'system'",
