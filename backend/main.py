@@ -107,6 +107,8 @@ async def startup():
         # older deploys; without this the entire finance ledger 500s in prod.
         "ALTER TABLE fees        ADD COLUMN IF NOT EXISTS term VARCHAR(10) NOT NULL DEFAULT 'Term 1'",
         "ALTER TABLE assessments ADD COLUMN IF NOT EXISTS term VARCHAR(10) NOT NULL DEFAULT 'Term 1'",
+        # Per-payment waterfall allocation breakdown (JSON) shown on receipts.
+        "ALTER TABLE fees        ADD COLUMN IF NOT EXISTS allocation TEXT",
         "ALTER TABLE assessments ADD COLUMN IF NOT EXISTS updated_at   TIMESTAMPTZ DEFAULT NOW()",
         # timetable & leave tables created via create_all; extra safety cols below
         "ALTER TABLE timetable       ADD COLUMN IF NOT EXISTS created_by   VARCHAR(100) NOT NULL DEFAULT 'system'",
@@ -242,6 +244,7 @@ app.include_router(subjects.router)
 app.include_router(exams.router)
 app.include_router(library.router)
 app.include_router(events.router)
+app.include_router(events.cal_router)
 app.include_router(discipline.router)
 
 

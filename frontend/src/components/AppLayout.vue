@@ -255,7 +255,10 @@ const showChangePassword = ref(false)
 const now                = ref(Date.now())
 let nowTimer             = null
 
-onMounted(() => { nowTimer = setInterval(() => { now.value = Date.now() }, 30_000) })
+onMounted(() => {
+  nowTimer = setInterval(() => { now.value = Date.now() }, 30_000)
+  appStore.loadCurrentTerm()
+})
 onUnmounted(() => { clearInterval(nowTimer) })
 
 const sessionMinutesLeft = computed(() => {

@@ -1,3 +1,4 @@
+import json
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
 from datetime import datetime, date
@@ -126,14 +127,66 @@ class BulkPaymentItem(BaseModel):
     term: Term
 
 
+class FeeAllocationItem(BaseModel):
+    term: str
+    amount: float
+    kind: str  # 'arrears' (prior term) | 'current' (current term) | 'advance' (prepayment)
+
+
 class FeeResponse(FeeBase):
     id: int
     payment_date: datetime
     recorded_by: str
     receipt_number: Optional[str] = None
+    # Parsed from the FeePayment.allocation JSON column when present.
+    allocation: Optional[List[FeeAllocationItem]] = None
+
+    @field_validator("allocation", mode="before")
+    @classmethod
+    def _parse_allocation(cls, v):
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except (ValueError, TypeError):
+                return None
+        return v
 
     class Config:
         from_attributes = True
+
+
+class TermDateItem(BaseModel):
+    term: str
+    start_date: date
+    end_date: date
+
+
+class TermDatesPayload(BaseModel):
+    academic_year: int = Field(..., ge=2020, le=2100)
+    terms: List[TermDateItem]
+
+
+class TermDatesResponse(BaseModel):
+    academic_year: int
+    is_default: bool
+    terms: List[TermDateItem]
+
+
+class CurrentTermResponse(BaseModel):
+    academic_year: int
+    term: str
+    source: str  # 'configured' | 'default'
+
+
+class AllocationPreview(BaseModel):
+    student_id: int
+    student_name: str
+    grade_level: str
+    current_term: str
+    amount: float
+    allocation: List[FeeAllocationItem]
+    total_outstanding_before: float
+    remaining_after: float  # advance/credit left as prepayment on the current term
 
 
 class PasswordChange(BaseModel):

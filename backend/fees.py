@@ -79,6 +79,77 @@ def _get_carry_forward(db: Session, student_id: int, academic_year: str, term: s
     return float(total or 0.0)
 
 
+def _term_outstanding(db: Session, student, term: str, year_str: str) -> float:
+    """Outstanding balance for one term, using the same definition as the
+    student-balance endpoint (expected + carry-forward − paid − prior rollover)."""
+    expected = _get_expected_fee(db, student.grade_level, term)
+    total_paid = float(
+        db.query(func.sum(models.FeePayment.amount))
+        .filter(
+            models.FeePayment.student_id == student.id,
+            models.FeePayment.term == term,
+        )
+        .scalar() or 0.0
+    )
+    term_num = TERM_ORDER.get(term, 1)
+    rollover = _get_rollover_credit(db, student.id, student.grade_level, term_num)
+    carry = _get_carry_forward(db, student.id, year_str, term)
+    return round(max(0.0, expected + carry - total_paid - rollover), 2)
+
+
+def _compute_allocation(db: Session, student, amount: float, current_term: str):
+    """
+    Waterfall allocation: apply `amount` to outstanding balances OLDEST term
+    first, up to and including the current term. Any remainder beyond all
+    current obligations is recorded as a prepayment on the current term.
+
+    Returns (allocation, total_outstanding_before, advance):
+      allocation  — list of {term, amount, kind} where kind is 'arrears' for a
+                    prior term or 'current' for the current term.
+      total_outstanding_before — sum of balances across terms ≤ current (pre-payment).
+      advance     — amount left after clearing every term ≤ current (true prepayment).
+    """
+    cur_num = TERM_ORDER.get(current_term, 1)
+    year_str = str(datetime.now().year)
+    remaining = round(float(amount), 2)
+
+    outstanding = {}
+    total_outstanding_before = 0.0
+    for tnum in range(1, cur_num + 1):
+        t = TERM_BY_NUM[tnum]
+        bal = _term_outstanding(db, student, t, year_str)
+        outstanding[t] = bal
+        total_outstanding_before += bal
+
+    allocation = []
+    for tnum in range(1, cur_num + 1):
+        if remaining <= 0:
+            break
+        t = TERM_BY_NUM[tnum]
+        bal = outstanding[t]
+        if bal <= 0:
+            continue
+        portion = round(min(remaining, bal), 2)
+        allocation.append({
+            "term": t,
+            "amount": portion,
+            "kind": "arrears" if tnum < cur_num else "current",
+        })
+        remaining = round(remaining - portion, 2)
+
+    # Any remainder is a prepayment on the current term — kept as its own line so
+    # the allocation parts always sum exactly to the payment amount.
+    advance = round(remaining, 2)
+    if remaining > 0:
+        allocation.append({"term": current_term, "amount": remaining, "kind": "advance"})
+
+    # Guard: a positive payment always produces at least one allocation row.
+    if not allocation:
+        allocation.append({"term": current_term, "amount": round(float(amount), 2), "kind": "advance"})
+
+    return allocation, round(total_outstanding_before, 2), advance
+
+
 def compute_effective_term_collection(db: Session, students: list, term: str) -> float:
     """
     Compute the portion of payments that count toward `term`.
@@ -155,6 +226,40 @@ def get_smart_term(
     }
 
 
+@router.get("/allocation-preview", response_model=schemas.AllocationPreview)
+def allocation_preview(
+    student_id: int,
+    amount: float = Query(..., gt=0),
+    current_term: str = Query(..., description="The school's current active term"),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    """Preview how a payment would be split across terms, without recording it."""
+    if current_user.role not in FINANCE_ROLES:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    if _term_index(current_term) < 0:
+        raise HTTPException(status_code=400, detail=f"Invalid current_term: {current_term}")
+
+    student = db.query(models.Student).filter(
+        models.Student.id == student_id,
+        models.Student.is_deleted == False,
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    allocation, total_before, advance = _compute_allocation(db, student, amount, current_term)
+    return {
+        "student_id": student.id,
+        "student_name": f"{student.first_name} {student.last_name}",
+        "grade_level": student.grade_level,
+        "current_term": current_term,
+        "amount": round(float(amount), 2),
+        "allocation": allocation,
+        "total_outstanding_before": total_before,
+        "remaining_after": advance,
+    }
+
+
 @router.post("/", response_model=schemas.FeeResponse)
 def record_payment(
     fee: schemas.FeeCreate,
@@ -165,17 +270,11 @@ def record_payment(
     if current_user.role not in {"accountant", "admin", "secretary", "principal"}:
         raise HTTPException(status_code=403, detail="Not authorized to record payments")
 
-    # Validate: cannot record a fee for a future term.
-    # The client sends current_term as a header or query param; fall back permissively
-    # if not supplied (backwards-compat) by checking TERM_ORDER.
-    if hasattr(fee, "current_term") and fee.current_term:
-        cur_idx = _term_index(fee.current_term)
-        pay_idx = _term_index(fee.term)
-        if cur_idx >= 0 and pay_idx > cur_idx:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Cannot record a fee for {fee.term} — the school is currently in {fee.current_term}.",
-            )
+    # The school's active term drives the waterfall. Fall back to the payment's
+    # term for backwards-compatible callers that don't send current_term.
+    current_term = (fee.current_term or fee.term)
+    if _term_index(current_term) < 0:
+        raise HTTPException(status_code=400, detail=f"Invalid current_term: {current_term}")
 
     student = (
         db.query(models.Student)
@@ -189,16 +288,28 @@ def record_payment(
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
 
+    # Waterfall: clear oldest arrears first, carry remainder to the current term.
+    allocation, _total_before, _advance = _compute_allocation(
+        db, student, float(fee.amount), current_term
+    )
+    # Tag the row to the earliest term the payment touches so existing balance /
+    # rollover logic stays correct; the JSON allocation carries the full split.
+    primary_term = allocation[0]["term"]
+
+    data = fee.model_dump(exclude={"current_term"})
+    data["term"] = primary_term
     receipt = _generate_receipt_number(db)
     new_fee = models.FeePayment(
-        **fee.model_dump(exclude={'current_term'}),
+        **data,
         recorded_by=current_user.name,
         receipt_number=receipt,
+        allocation=json.dumps(allocation),
     )
     db.add(new_fee)
     db.flush()
     log_action(db, current_user.id, "CREATE", "fee", new_fee.id,
-               {"receipt": receipt, "amount": str(fee.amount), "student_id": fee.student_id})
+               {"receipt": receipt, "amount": str(fee.amount), "student_id": fee.student_id,
+                "allocation": allocation})
     db.commit()
     db.refresh(new_fee)
 
@@ -208,7 +319,7 @@ def record_payment(
             f"{student.first_name} {student.last_name}",
             student.guardian_phone,
             float(fee.amount),
-            fee.term,
+            primary_term,
             receipt,
         )
 

@@ -60,6 +60,11 @@ class FeePayment(Base):
     recorded_by = Column(String(100), nullable=False)
     # Sequential receipt number — format BNS-{YEAR}-{seq:05d}
     receipt_number = Column(String(20), unique=True, nullable=True, index=True)
+    # JSON breakdown of how this payment was applied across terms (waterfall:
+    # oldest arrears first, remainder to the current term). For receipt display.
+    # e.g. [{"term": "Term 1", "amount": 5000, "kind": "arrears"},
+    #       {"term": "Term 2", "amount": 3000, "kind": "current"}]
+    allocation = Column(Text, nullable=True)
 
 
 class FeeStructure(Base):
@@ -326,3 +331,21 @@ class PettyCashTransaction(Base):
     category = Column(String(100), nullable=True)
     recorded_by = Column(String(100), nullable=False)
     transaction_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
+
+
+class TermDate(Base):
+    """Configurable academic term start/end dates per year. Drives the
+    auto-detected 'current term' used across fees and reporting."""
+    __tablename__ = "term_dates"
+
+    id = Column(Integer, primary_key=True, index=True)
+    academic_year = Column(Integer, nullable=False, index=True)
+    term = Column(String(10), nullable=False)   # Term 1 | Term 2 | Term 3
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
+    updated_by = Column(String(100), nullable=True)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("academic_year", "term", name="uq_term_dates_year_term"),
+    )

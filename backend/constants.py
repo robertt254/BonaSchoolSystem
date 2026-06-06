@@ -18,3 +18,23 @@ CBC_GRADES = [
 
 TERM_ORDER = {"Term 1": 1, "Term 2": 2, "Term 3": 3}
 TERM_BY_NUM = {1: "Term 1", 2: "Term 2", 3: "Term 3"}
+
+
+# ── Academic calendar ─────────────────────────────────────────────────────────
+# Standard Kenyan school-term pattern, used as the fallback when no term dates
+# have been configured for a year. (month, day) tuples for (start, end).
+DEFAULT_TERM_PATTERN = {
+    "Term 1": ((1, 2),  (4, 11)),
+    "Term 2": ((4, 28), (8, 8)),
+    "Term 3": ((9, 1),  (11, 7)),
+}
+
+
+def default_term_dates(year: int):
+    """Return {term: (start_date, end_date)} for a given year using the standard
+    Kenyan calendar pattern."""
+    from datetime import date
+    return {
+        term: (date(year, sm, sd), date(year, em, ed))
+        for term, ((sm, sd), (em, ed)) in DEFAULT_TERM_PATTERN.items()
+    }

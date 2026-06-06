@@ -142,7 +142,13 @@
                   <p class="text-xs text-slate-400 truncate">{{ fee.term }} · {{ fee.payment_type }}</p>
                 </div>
               </div>
-              <span class="text-sm font-bold text-emerald-700 shrink-0 ml-2">{{ formatCurrency(fee.amount) }}</span>
+              <div class="flex items-center gap-1.5 shrink-0 ml-2">
+                <span class="text-sm font-bold text-emerald-700">{{ formatCurrency(fee.amount) }}</span>
+                <button @click="openReceiptFor(fee)" title="View / print receipt"
+                  class="w-7 h-7 flex items-center justify-center rounded text-slate-400 hover:text-school-navy hover:bg-slate-100 transition-colors">
+                  <span class="material-symbols-outlined" style="font-size:18px">receipt_long</span>
+                </button>
+              </div>
             </div>
             <div v-if="!recentFees.length" class="px-4 py-8 text-center text-slate-400 text-sm">No payments yet.</div>
           </div>
@@ -282,48 +288,25 @@
             </select>
           </div>
 
-          <!-- Previous term balance notice -->
-          <div v-if="smartTerm && smartTerm.outstanding_balance > 0 && smartTerm.recommended_term !== appStore.currentTerm"
-            class="flex items-start gap-2.5 bg-warning-bg border border-warning-border rounded p-3 text-xs text-warning-text">
-            <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-            </svg>
-            <span>
-              Outstanding balance of <strong>KES {{ smartTerm.outstanding_balance.toLocaleString() }}</strong>
-              from <strong>{{ smartTerm.recommended_term }}</strong>. Payment will be applied to clear this balance first.
-            </span>
-          </div>
-          <div v-else-if="smartTermLoading" class="text-xs text-text-muted animate-pulse">
-            Checking balance…
+          <!-- Current term indicator -->
+          <div class="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border rounded px-3 py-2.5">
+            <span class="material-symbols-outlined" style="font-size:16px">event</span>
+            <span>School is in <strong class="text-slate-700">{{ appStore.currentTerm }}</strong>. Payment auto-clears the oldest unpaid term first, then the current term.</span>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-[0.07em] text-text-muted mb-1.5">
-                Term
-              </label>
-              <select
-                v-model="feeForm.term"
-                class="w-full border border-border rounded px-3 py-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
-              >
-                <option v-for="t in allowedTerms" :key="t" :value="t">{{ t }}</option>
-              </select>
-              <p class="text-xs text-text-muted mt-1">Only current or overdue terms shown.</p>
-            </div>
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-[0.07em] text-text-muted mb-1.5">
-                Payment Type
-              </label>
-              <select
-                v-model="feeForm.payment_type"
-                class="w-full border border-border rounded px-3 py-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
-              >
-                <option value="Tuition">Tuition</option>
-                <option value="Transport">Transport</option>
-                <option value="Uniforms">Uniforms</option>
-                <option value="Exam Fees">Exam Fees</option>
-              </select>
-            </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-[0.07em] text-text-muted mb-1.5">
+              Payment Type
+            </label>
+            <select
+              v-model="feeForm.payment_type"
+              class="w-full border border-border rounded px-3 py-2.5 focus:ring-2 focus:ring-school-navy/20 focus:border-school-navy outline-none bg-slate-50 font-medium text-slate-700 transition-all cursor-pointer"
+            >
+              <option value="Tuition">Tuition</option>
+              <option value="Transport">Transport</option>
+              <option value="Uniforms">Uniforms</option>
+              <option value="Exam Fees">Exam Fees</option>
+            </select>
           </div>
 
           <div>
@@ -332,11 +315,32 @@
             </label>
             <input
               v-model.number="feeForm.amount"
+              @input="loadAllocation"
               type="number"
               min="1"
               required
               class="w-full border border-red-200 rounded px-3 py-2.5 focus:ring-2 focus:ring-school-red/20 focus:border-school-red outline-none bg-red-50/50 font-bold text-school-red transition-all"
             />
+          </div>
+
+          <!-- Live allocation preview -->
+          <div v-if="allocLoading" class="text-xs text-text-muted animate-pulse">Calculating allocation…</div>
+          <div v-else-if="allocPreview && allocPreview.allocation.length"
+            class="bg-slate-50 border border-border rounded p-4 space-y-2">
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-400">How this payment will be applied</p>
+            <div v-for="(a, idx) in allocPreview.allocation" :key="idx" class="flex items-center justify-between text-sm">
+              <span class="flex items-center gap-2">
+                <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-sm border" :class="allocBadge(a.kind)">
+                  {{ allocLabel(a.kind) }}
+                </span>
+                <span class="text-slate-700 font-medium">{{ a.term }}</span>
+              </span>
+              <span class="font-bold text-slate-800">{{ formatCurrency(a.amount) }}</span>
+            </div>
+            <div class="flex items-center justify-between text-sm pt-1.5 border-t border-slate-200">
+              <span class="font-bold text-slate-700">Total</span>
+              <span class="font-black text-slate-800">{{ formatCurrency(allocPreview.amount) }}</span>
+            </div>
           </div>
 
           <div class="flex justify-end space-x-3 pt-4 mt-2">
@@ -355,6 +359,58 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Payment Receipt Modal -->
+    <div v-if="showReceiptModal && receiptData" class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in print:bg-white print:p-0">
+      <div id="receipt-print" class="bg-white rounded shadow-2xl w-full max-w-md overflow-hidden border border-border print:shadow-none print:border-none print:max-w-full">
+        <div class="bg-school-navy text-white px-6 py-5 flex justify-between items-center">
+          <div>
+            <h2 class="text-lg font-black tracking-tight">Payment Receipt</h2>
+            <p class="text-xs opacity-80 font-mono">{{ receiptData.receipt_number }}</p>
+          </div>
+          <span class="material-symbols-outlined">receipt_long</span>
+        </div>
+        <div class="p-6 space-y-3">
+          <div class="flex justify-between text-sm">
+            <span class="text-text-muted">Student</span>
+            <span class="font-semibold text-slate-800">{{ receiptData.student_name }} <span class="text-text-muted">({{ receiptData.admission_number }})</span></span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-text-muted">Date</span>
+            <span class="font-medium text-slate-700">{{ new Date(receiptData.payment_date).toLocaleString('en-KE') }}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-text-muted">Payment Type</span>
+            <span class="font-medium text-slate-700">{{ receiptData.payment_type }}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-text-muted">Received By</span>
+            <span class="font-medium text-slate-700">{{ receiptData.recorded_by }}</span>
+          </div>
+          <div class="border-t border-slate-100 pt-3">
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Applied To</p>
+            <div v-for="(a, idx) in (receiptData.allocation || [])" :key="idx" class="flex justify-between items-center text-sm py-1">
+              <span class="flex items-center gap-2">
+                <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-sm border" :class="allocBadge(a.kind)">
+                  {{ allocLabel(a.kind) }}
+                </span>
+                <span class="text-slate-700 font-medium">{{ a.term }}</span>
+              </span>
+              <span class="font-bold text-slate-800">{{ formatCurrency(a.amount) }}</span>
+            </div>
+            <p v-if="!receiptData.allocation || !receiptData.allocation.length" class="text-sm text-text-muted">{{ receiptData.term }} — {{ formatCurrency(receiptData.amount) }}</p>
+          </div>
+          <div class="flex justify-between items-center border-t border-slate-200 pt-3">
+            <span class="font-bold text-slate-800">Total Paid</span>
+            <span class="text-xl font-black text-emerald-600">{{ formatCurrency(receiptData.amount) }}</span>
+          </div>
+        </div>
+        <div class="border-t border-slate-100 px-6 py-4 flex justify-end gap-3 print:hidden">
+          <button @click="showReceiptModal = false" class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded font-bold transition-colors text-sm">Close</button>
+          <button @click="printReceipt" class="px-5 py-2.5 bg-school-navy text-white rounded font-bold hover:bg-school-navy/90 transition-all text-sm">Print</button>
+        </div>
       </div>
     </div>
 
@@ -477,18 +533,6 @@ const feeForm = reactive({
   amount: 0,
   payment_type: 'Tuition',
   term: appStore.currentTerm,
-})
-
-// Smart-term state for fee modal
-const smartTerm        = ref(null)   // { recommended_term, outstanding_balance, allowed_terms }
-const smartTermLoading = ref(false)
-
-const ALL_TERMS = ['Term 1', 'Term 2', 'Term 3']
-const allowedTerms = computed(() => {
-  if (smartTerm.value) return smartTerm.value.allowed_terms
-  // fallback: only terms up to and including current term
-  const idx = ALL_TERMS.indexOf(appStore.currentTerm)
-  return idx >= 0 ? ALL_TERMS.slice(0, idx + 1) : ALL_TERMS
 })
 
 const expenseForm = reactive({
@@ -623,47 +667,91 @@ const formatCurrencyShort = (v) => {
 }
 
 // --- FEE MODAL ---
+const allocPreview  = ref(null)
+const allocLoading  = ref(false)
+let   allocTimer    = null
+
+const showReceiptModal = ref(false)
+const receiptData      = ref(null)
+
 const openFeeModal = () => {
   feeForm.student_id = ''
   feeForm.amount = 0
   feeForm.payment_type = 'Tuition'
   feeForm.term = appStore.currentTerm
-  smartTerm.value = null
+  allocPreview.value = null
   showFeeModal.value = true
 }
 
 const closeFeeModal = () => {
   showFeeModal.value = false
-  smartTerm.value = null
+  allocPreview.value = null
 }
 
-const onFeeStudentChange = async () => {
-  if (!feeForm.student_id) { smartTerm.value = null; return }
-  smartTermLoading.value = true
-  try {
-    const data = await apiFetch(
-      `/api/fees/smart-term/${feeForm.student_id}?current_term=${encodeURIComponent(appStore.currentTerm)}`
-    )
-    smartTerm.value = data
-    feeForm.term = data.recommended_term
-  } catch {
-    // fallback — just use current term
-    feeForm.term = appStore.currentTerm
-  } finally {
-    smartTermLoading.value = false
+// Debounced waterfall-allocation preview (oldest arrears first, then current term).
+const loadAllocation = () => {
+  clearTimeout(allocTimer)
+  if (!feeForm.student_id || !feeForm.amount || feeForm.amount <= 0) {
+    allocPreview.value = null
+    return
   }
+  allocLoading.value = true
+  allocTimer = setTimeout(async () => {
+    try {
+      allocPreview.value = await feeService.previewAllocation(
+        feeForm.student_id, feeForm.amount, appStore.currentTerm,
+      )
+    } catch {
+      allocPreview.value = null
+    } finally {
+      allocLoading.value = false
+    }
+  }, 300)
+}
+
+const onFeeStudentChange = () => {
+  feeForm.term = appStore.currentTerm
+  loadAllocation()
 }
 
 const submitFee = async () => {
   try {
-    await feeService.recordFee({ ...feeForm, current_term: appStore.currentTerm })
+    const res = await feeService.recordFee({ ...feeForm, current_term: appStore.currentTerm })
+    const student = students.value.find(s => s.id === feeForm.student_id)
+    receiptData.value = {
+      ...res,
+      student_name: student ? `${student.first_name} ${student.last_name}` : '',
+      admission_number: student?.admission_number || '',
+    }
     closeFeeModal()
+    showReceiptModal.value = true
     toast.success('Fee payment recorded successfully.')
     await loadData()
   } catch (error) {
     toast.error(error.message || 'Failed to record fee.')
   }
 }
+
+const printReceipt = () => window.print()
+
+// Re-open a printable receipt for an already-recorded payment.
+const openReceiptFor = (fee) => {
+  const student = students.value.find(s => s.id === fee.student_id)
+  receiptData.value = {
+    ...fee,
+    student_name: student ? `${student.first_name} ${student.last_name}` : getStudentName(fee.student_id),
+    admission_number: student?.admission_number || '',
+  }
+  showReceiptModal.value = true
+}
+
+const allocLabel = (k) => (k === 'arrears' ? 'Arrears' : k === 'advance' ? 'Advance' : 'Current')
+const allocBadge = (k) =>
+  k === 'arrears'
+    ? 'bg-amber-50 text-amber-700 border-amber-200'
+    : k === 'advance'
+      ? 'bg-blue-50 text-blue-700 border-blue-200'
+      : 'bg-emerald-50 text-emerald-700 border-emerald-200'
 
 // --- EXPENSE MODAL ---
 const openExpenseModal = () => {

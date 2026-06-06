@@ -3,6 +3,8 @@ import { apiFetch } from './api'
 export default {
   getAllFees: () => apiFetch('/api/fees/'),
   recordFee: (data) => apiFetch('/api/fees/', { method: 'POST', body: JSON.stringify(data) }),
+  previewAllocation: (studentId, amount, currentTerm) =>
+    apiFetch(`/api/fees/allocation-preview?student_id=${studentId}&amount=${amount}&current_term=${encodeURIComponent(currentTerm)}`),
   getStudentBalance: (studentId, term, academicYear) => {
     const qs = academicYear ? `?academic_year=${academicYear}` : ''
     return apiFetch(`/api/fees/balance/${studentId}/${encodeURIComponent(term)}${qs}`)

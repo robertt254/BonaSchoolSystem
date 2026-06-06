@@ -54,3 +54,16 @@ body {
 @media print {
   .print\:hidden { display: none !important; }
 }
+
+/* When a payment receipt is open, print only the receipt card. */
+@media print {
+  body:has(#receipt-print) * { visibility: hidden !important; }
+  #receipt-print, #receipt-print * { visibility: visible !important; }
+  #receipt-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+}

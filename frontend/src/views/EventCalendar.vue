@@ -13,6 +13,41 @@
       </button>
     </div>
 
+    <!-- Academic term dates -->
+    <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+      <div class="px-4 py-3 border-b border-slate-100 bg-slate-50 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h3 class="font-bold text-sm text-slate-700">Academic Term Dates</h3>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Current term:
+            <span class="font-semibold text-school-purple">{{ appStore.currentTerm }} · {{ appStore.currentYear }}</span>
+            <span v-if="appStore.termSource === 'default'"> · using default Kenyan calendar</span>
+          </p>
+        </div>
+        <select v-model.number="termYear" @change="loadTermDates"
+          class="border border-slate-300 rounded px-2 py-1.5 text-sm outline-none">
+          <option v-for="y in appStore.years" :key="y" :value="y">{{ y }}</option>
+        </select>
+      </div>
+      <div class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div v-for="t in termForm" :key="t.term" class="border border-slate-200 rounded p-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">{{ t.term }}</p>
+          <label class="block text-[11px] text-slate-400 mb-0.5">Start</label>
+          <input type="date" v-model="t.start_date" :disabled="!canEditTerms"
+            class="w-full border border-slate-300 rounded px-2 py-1.5 text-sm outline-none mb-2 disabled:bg-slate-50 disabled:text-slate-400" />
+          <label class="block text-[11px] text-slate-400 mb-0.5">End</label>
+          <input type="date" v-model="t.end_date" :disabled="!canEditTerms"
+            class="w-full border border-slate-300 rounded px-2 py-1.5 text-sm outline-none disabled:bg-slate-50 disabled:text-slate-400" />
+        </div>
+      </div>
+      <div v-if="canEditTerms" class="px-4 py-3 border-t border-slate-100 flex justify-end">
+        <button @click="saveTermDates" :disabled="savingTerms"
+          class="bg-school-navy text-white px-5 py-2 rounded text-sm font-semibold hover:bg-school-navy/90 disabled:opacity-50">
+          {{ savingTerms ? 'Saving…' : 'Save Term Dates' }}
+        </button>
+      </div>
+    </div>
+
     <!-- Month navigation -->
     <div class="bg-white rounded-lg border border-slate-200 p-4 flex items-center justify-between">
       <button @click="changeMonth(-1)" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 transition text-slate-600">
@@ -155,7 +190,42 @@
 import { ref, computed, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
 import { useToast } from '@/composables/useToast'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 const toast = useToast()
+const appStore = useAppStore()
+const authStore = useAuthStore()
+
+// ── Academic term dates ───────────────────────────────────────────────────────
+const canEditTerms = computed(() => ['admin', 'principal'].includes(authStore.user?.role))
+const termYear = ref(appStore.currentYear)
+const termForm = ref([])
+const savingTerms = ref(false)
+
+const loadTermDates = async () => {
+  try {
+    const data = await apiFetch(`/api/calendar/term-dates?year=${termYear.value}`)
+    termForm.value = (data.terms || []).map(t => ({
+      term: t.term, start_date: t.start_date, end_date: t.end_date,
+    }))
+  } catch { termForm.value = [] }
+}
+
+const saveTermDates = async () => {
+  savingTerms.value = true
+  try {
+    await apiFetch('/api/calendar/term-dates', {
+      method: 'PUT',
+      body: JSON.stringify({ academic_year: termYear.value, terms: termForm.value }),
+    })
+    await appStore.loadCurrentTerm()
+    toast.success('Term dates saved.')
+  } catch (e) {
+    toast.error(e?.message || 'Failed to save term dates.')
+  } finally {
+    savingTerms.value = false
+  }
+}
 
 
 const today = new Date()
@@ -275,5 +345,5 @@ const deleteEvent = async (id) => {
 
 const fmtDate = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''
 
-onMounted(loadEvents)
+onMounted(() => { loadEvents(); loadTermDates() })
 </script>
