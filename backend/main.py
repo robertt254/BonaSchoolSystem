@@ -9,6 +9,7 @@ from slowapi.errors import RateLimitExceeded
 from sqlalchemy import text
 
 import auth
+import admin
 import models
 import students
 import fees
@@ -246,6 +247,7 @@ app.include_router(library.router)
 app.include_router(events.router)
 app.include_router(events.cal_router)
 app.include_router(discipline.router)
+app.include_router(admin.router)
 
 
 # ── Health check (used by Render's healthCheckPath) ───────────────────────────

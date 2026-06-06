@@ -135,18 +135,108 @@
           </div>
         </div>
       </div>
+      <!-- Danger Zone -->
+      <div class="bg-white rounded-lg border-2 border-red-200 overflow-hidden">
+        <div class="border-b border-red-100 px-8 py-5 bg-red-50/50">
+          <h3 class="text-lg font-bold text-red-700 tracking-tight">Danger Zone</h3>
+          <p class="text-xs text-red-500 mt-0.5">Irreversible system maintenance</p>
+        </div>
+        <div class="px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <p class="text-sm font-semibold text-slate-800">Reset system data</p>
+            <p class="text-xs text-slate-500 mt-0.5 max-w-md">
+              Permanently deletes all students, fee payments, statements, grades, attendance and
+              activity logs. Keeps staff logins, fee structure and term dates. Cannot be undone.
+            </p>
+          </div>
+          <button @click="openReset"
+            class="shrink-0 bg-red-600 text-white px-5 py-2.5 rounded text-sm font-semibold hover:bg-red-700 transition">
+            Reset Data…
+          </button>
+        </div>
+      </div>
     </template>
+
+    <!-- Reset confirmation modal -->
+    <div v-if="showReset" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded shadow-2xl w-full max-w-md overflow-hidden border border-border">
+        <div class="px-6 py-5 border-b border-slate-100 bg-red-50">
+          <h2 class="text-lg font-bold text-red-700">Reset System Data</h2>
+          <p class="text-xs text-red-500 mt-0.5">This permanently deletes operational data and cannot be undone.</p>
+        </div>
+        <div class="p-6 space-y-4">
+          <ul class="text-xs text-slate-600 space-y-1 bg-slate-50 border border-slate-200 rounded p-3">
+            <li>• Students (and their grades, attendance, discipline, exam results)</li>
+            <li>• Fee payments, carry-forwards &amp; statements</li>
+            <li>• Activity / audit logs</li>
+            <li class="text-slate-400 pt-1">Kept: staff logins, fee structure, term dates</li>
+          </ul>
+          <label class="flex items-center gap-2 text-sm text-slate-700">
+            <input type="checkbox" v-model="resetWithFinance" class="rounded border-slate-300" />
+            Also clear expenses, payroll &amp; petty cash
+          </label>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+              Type <span class="text-red-600">RESET</span> to confirm
+            </label>
+            <input v-model="resetConfirm" type="text" placeholder="RESET"
+              class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500" />
+          </div>
+        </div>
+        <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
+          <button @click="showReset = false" class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded font-semibold text-sm">Cancel</button>
+          <button @click="doReset" :disabled="resetConfirm.trim().toUpperCase() !== 'RESET' || resetting"
+            class="px-5 py-2.5 bg-red-600 text-white rounded font-semibold text-sm hover:bg-red-700 disabled:opacity-40 transition">
+            {{ resetting ? 'Resetting…' : 'Permanently Delete' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { apiFetch } from '@/services/api'
+import { useToast } from '@/composables/useToast'
+
+const toast = useToast()
 
 const loading = ref(true)
 const stats = ref({ total_students: 0, total_staff: 0, total_revenue: 0 })
 const recentActivity = ref([])
 const lastSyncTime = ref('—')
+
+// ── Danger zone: reset system data ────────────────────────────────────────────
+const showReset = ref(false)
+const resetConfirm = ref('')
+const resetWithFinance = ref(false)
+const resetting = ref(false)
+
+const openReset = () => {
+  resetConfirm.value = ''
+  resetWithFinance.value = false
+  showReset.value = true
+}
+
+const doReset = async () => {
+  if (resetConfirm.value.trim().toUpperCase() !== 'RESET') return
+  resetting.value = true
+  try {
+    const res = await apiFetch('/api/admin/reset-data', {
+      method: 'POST',
+      body: JSON.stringify({ confirm: resetConfirm.value.trim(), with_finance: resetWithFinance.value }),
+    })
+    const total = Object.values(res.cleared || {}).reduce((a, b) => a + b, 0)
+    toast.success(`System data reset — ${total} record(s) cleared.`)
+    showReset.value = false
+    setTimeout(() => window.location.reload(), 900)
+  } catch (e) {
+    toast.error(e?.message || 'Reset failed.')
+  } finally {
+    resetting.value = false
+  }
+}
 
 const RESOURCE_STYLE = {
   student:    { avatar: 'bg-amber-100 text-amber-700',   dot: 'bg-amber-500' },
