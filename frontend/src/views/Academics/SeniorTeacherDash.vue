@@ -1,11 +1,19 @@
 <template>
   <div class="max-w-7xl mx-auto space-y-6">
 
+    <!-- Page header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div>
+        <h2 class="text-2xl font-bold" style="color:#1c1b1d;letter-spacing:-0.01em">Academic Assessment</h2>
+        <p class="text-sm mt-0.5" style="color:#46464c">Competency Based Curriculum (CBC) Scoring Entry</p>
+      </div>
+    </div>
+
     <!-- Controls bar -->
-    <div class="bg-white rounded-lg border border-border p-4 flex flex-col gap-4">
+    <div class="bg-white rounded border border-border p-4 flex flex-col gap-4">
       <div class="flex flex-wrap gap-2">
         <button v-for="grade in cbcGrades" :key="grade" @click="selectGrade(grade)"
-          :class="['px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all',
+          :class="['px-4 py-2.5 rounded text-sm font-bold whitespace-nowrap transition-all',
             selectedGrade === grade ? 'bg-school-navy text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900']">
           {{ grade }}
         </button>
@@ -15,17 +23,17 @@
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
           <select v-model="selectedArea" @change="onAreaChange"
-            class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
+            class="border border-slate-300 px-3 py-2.5 rounded text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
             <option v-for="a in learningAreas" :key="a" :value="a">{{ a }}</option>
           </select>
         </div>
         <div class="flex gap-2">
           <button @click="viewMode = 'bulk'"
             :class="viewMode === 'bulk' ? 'bg-school-purple text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-            class="px-4 py-2.5 rounded-lg text-sm font-bold transition">Bulk Entry</button>
+            class="px-4 py-2.5 rounded text-sm font-bold transition">Bulk Entry</button>
           <button @click="viewMode = 'list'"
             :class="viewMode === 'list' ? 'bg-school-purple text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-            class="px-4 py-2.5 rounded-lg text-sm font-bold transition">Student List</button>
+            class="px-4 py-2.5 rounded text-sm font-bold transition">Student List</button>
         </div>
         <div class="flex-1"></div>
         <div class="relative">
@@ -33,7 +41,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
           <input v-model="searchQuery" type="text" placeholder="Search student…"
-            class="pl-9 pr-4 py-2.5 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple w-56" />
+            class="pl-9 pr-4 py-2.5 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple w-56" />
         </div>
       </div>
 
@@ -46,14 +54,14 @@
     </div>
 
     <!-- BULK ENTRY GRID -->
-    <div v-if="viewMode === 'bulk'" class="bg-white rounded-lg border border-border overflow-hidden">
+    <div v-if="viewMode === 'bulk'" class="bg-white rounded border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50 flex items-center justify-between">
         <div>
           <h3 class="font-bold text-slate-800">{{ selectedGrade }} · {{ appStore.currentTerm }} · {{ selectedArea }}</h3>
           <p class="text-xs text-slate-400 mt-0.5">{{ filteredBulk.length }} students · Year {{ appStore.currentYear }}</p>
         </div>
         <button @click="saveBulk" :disabled="bulkSaving || !hasPendingChanges"
-          class="bg-school-purple text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-school-purple-l transition disabled:opacity-40 flex items-center gap-2">
+          class="bg-school-purple text-white px-5 py-2 rounded text-sm font-bold hover:bg-school-purple-l transition disabled:opacity-40 flex items-center gap-2">
           <svg v-if="bulkSaving" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-dasharray="50" stroke-dashoffset="50"/></svg>
           {{ bulkSaving ? 'Saving…' : 'Save All' }}
         </button>
@@ -96,7 +104,7 @@
               <template v-if="activeStrands.length === 0">
                 <td class="px-4 py-3">
                   <select v-model="row.strandScores['']" @change="row._changed = true"
-                    class="w-full border rounded-lg px-2 py-2.5 text-sm font-bold outline-none transition"
+                    class="w-full border rounded px-2 py-2.5 text-sm font-bold outline-none transition"
                     :class="scoreClass(row.strandScores[''])">
                     <option value="">—</option>
                     <option value="EE">EE – Exceeding</option>
@@ -110,7 +118,7 @@
               <template v-else>
                 <td v-for="strand in activeStrands" :key="strand" class="px-3 py-3">
                   <select v-model="row.strandScores[strand]" @change="row._changed = true"
-                    class="w-full border rounded-lg px-2 py-2 text-sm font-bold outline-none transition"
+                    class="w-full border rounded px-2 py-2 text-sm font-bold outline-none transition"
                     :class="scoreClass(row.strandScores[strand])">
                     <option value="">—</option>
                     <option value="EE">EE</option>
@@ -123,7 +131,7 @@
               <td class="px-4 py-3">
                 <input v-model="row.remarks" @input="row._changed = true" type="text"
                   placeholder="Optional remark…"
-                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple" />
+                  class="w-full border border-slate-200 rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple" />
               </td>
             </tr>
           </tbody>
@@ -137,7 +145,7 @@
     </div>
 
     <!-- STUDENT LIST VIEW -->
-    <div v-else class="bg-white rounded-lg border border-border overflow-hidden">
+    <div v-else class="bg-white rounded border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50">
         <h3 class="font-bold text-slate-800">{{ selectedGrade }} Students</h3>
       </div>
@@ -166,7 +174,7 @@
             </div>
           </div>
           <button @click="openModal(s)"
-            class="text-xs font-bold text-school-purple border border-school-purple/30 bg-school-purple/5 hover:bg-school-purple hover:text-white px-3 py-1.5 rounded-lg transition">
+            class="text-xs font-bold text-school-purple border border-school-purple/30 bg-school-purple/5 hover:bg-school-purple hover:text-white px-3 py-1.5 rounded transition">
             Grade
           </button>
         </div>
@@ -176,13 +184,13 @@
 
     <!-- Single-student grade modal -->
     <div v-if="showModal" class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg overflow-hidden border border-border">
+      <div class="bg-white rounded shadow-2xl w-full max-w-lg overflow-hidden border border-border">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <div>
             <h2 class="text-lg font-bold text-text-primary">Record Assessment</h2>
             <p class="text-xs text-slate-500 mt-0.5">{{ modalStudent?.student_name }} · {{ appStore.currentTerm }} · {{ appStore.currentYear }}</p>
           </div>
-          <button @click="showModal = false" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
+          <button @click="showModal = false" class="w-8 h-8 flex items-center justify-center rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
@@ -191,7 +199,7 @@
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Learning Area</label>
             <select v-model="modalForm.learning_area" @change="modalForm.strand = ''" required
-              class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none">
+              class="w-full border border-slate-300 rounded p-2.5 text-sm outline-none">
               <option disabled value="">Select Area</option>
               <option v-for="a in learningAreas" :key="a" :value="a">{{ a }}</option>
             </select>
@@ -199,7 +207,7 @@
           <div v-if="modalStrands.length > 0">
             <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Strand</label>
             <select v-model="modalForm.strand" required
-              class="w-full border border-slate-300 rounded-lg p-2.5 text-sm outline-none">
+              class="w-full border border-slate-300 rounded p-2.5 text-sm outline-none">
               <option disabled value="">Select Strand</option>
               <option v-for="s in modalStrands" :key="s" :value="s">{{ s }}</option>
             </select>
@@ -207,7 +215,7 @@
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Score (CBC)</label>
             <select v-model="modalForm.score" required
-              class="w-full border border-slate-300 rounded-lg p-2.5 text-sm font-bold outline-none">
+              class="w-full border border-slate-300 rounded p-2.5 text-sm font-bold outline-none">
               <option disabled value="">Select Score</option>
               <option value="EE">EE – Exceeding Expectations</option>
               <option value="ME">ME – Meeting Expectations</option>
@@ -218,10 +226,10 @@
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Remarks (optional)</label>
             <textarea v-model="modalForm.remarks" rows="2"
-              class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none resize-none"
+              class="w-full border border-slate-300 rounded px-3 py-2 text-sm outline-none resize-none"
               placeholder="Teacher's comments…"></textarea>
           </div>
-          <button type="submit" class="w-full py-3 bg-school-purple text-white rounded-lg font-bold hover:bg-school-purple-l transition text-sm">
+          <button type="submit" class="w-full py-3 bg-school-purple text-white rounded font-bold hover:bg-school-purple-l transition text-sm">
             Save Score
           </button>
         </form>

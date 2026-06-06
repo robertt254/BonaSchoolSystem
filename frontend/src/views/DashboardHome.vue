@@ -1,348 +1,231 @@
 <template>
-  <div class="max-w-7xl mx-auto space-y-6">
-    <!-- Welcome Banner -->
-    <div class="relative bg-sidebar rounded-2xl px-7 py-6 overflow-hidden flex flex-col sm:flex-row items-center justify-between shadow-card animate-slide-in">
-      <!-- Subtle dot grid -->
-      <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:22px_22px]" />
-      <!-- Brand accent glow -->
-      <div class="pointer-events-none absolute -top-12 -right-8 w-48 h-48 rounded-full bg-brand/20 blur-3xl" />
-
-      <div class="relative z-10 text-left w-full sm:w-auto">
-        <p class="text-xs font-bold uppercase tracking-widest text-white/40 mb-2">
-          {{ greeting }}, {{ userName }}
-        </p>
-        <h1 class="font-heading text-3xl font-extrabold text-white leading-tight mb-1.5">
-          Welcome to The Bona School
-        </h1>
-        <p class="text-sm text-white/50 max-w-sm leading-relaxed">
-          CBC Management System — {{ appStore.currentTerm }} is active.
-        </p>
-        <router-link to="/academics/timetable"
-          class="mt-4 inline-flex items-center gap-2 bg-white/10 border border-white/10 text-white/75 text-xs font-semibold px-5 py-2.5 rounded-card hover:bg-white/15 hover:text-white transition-all">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
-          View term schedule
+  <div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <h2 class="text-2xl font-semibold" style="color:#1e293b;letter-spacing:-0.01em">Dashboard Overview</h2>
+        <p class="text-sm mt-0.5" style="color:#64748b">{{ greeting }}, {{ userName }}. Here's what's happening today at The Bona School.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <router-link to="/admin/reports" v-if="canViewFinance"
+          class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold border rounded transition-all hover:bg-slate-50 active:scale-95"
+          style="border-color:#161b2b;color:#161b2b">
+          <span class="material-symbols-outlined" style="font-size:16px">cloud_download</span>
+          GENERATE REPORT
+        </router-link>
+        <router-link to="/academics/students" v-if="canAdmitStudents"
+          class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white rounded transition-all hover:opacity-90 active:scale-95 shadow-sm"
+          style="background:#712edd">
+          <span class="material-symbols-outlined" style="font-size:16px">add</span>
+          QUICK ACTION
         </router-link>
       </div>
+    </div>
 
-      <div class="relative z-10 hidden lg:flex">
-        <div class="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-          <svg class="w-9 h-9 text-white/60" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-          </svg>
+    <!-- Skeleton loading -->
+    <div v-if="loading" class="space-y-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div v-for="n in 4" :key="n" class="bg-white border border-slate-200 rounded p-6" style="min-height:120px">
+          <div class="skel h-8 w-8 rounded mb-4" />
+          <div class="skel h-3 w-20 rounded mb-2" />
+          <div class="skel h-6 w-16 rounded" />
         </div>
       </div>
     </div>
 
-    <!-- Skeleton loading state -->
-    <div v-if="loading" class="space-y-4">
-      <SkeletonLoader type="stats" :count="4" />
-      <div class="bg-surface border border-border rounded-card p-6">
-        <div class="skel h-3 w-40 mb-3" />
-        <div class="skel h-2 w-full" />
-      </div>
-    </div>
-
     <!-- Error Banner -->
-    <div
-      v-else-if="loadError"
-      class="bg-red-50 border border-red-200 rounded-xl p-5 flex items-center justify-between"
-    >
+    <div v-else-if="loadError" class="bg-red-50 border border-red-200 rounded p-5 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
+        <span class="material-symbols-outlined text-red-500" style="font-size:20px">error</span>
         <div>
           <p class="text-sm font-semibold text-red-700">Failed to load dashboard data</p>
           <p class="text-xs text-red-500 mt-0.5">{{ loadError }}</p>
         </div>
       </div>
-      <button
-        @click="retryLoad"
-        class="text-xs font-semibold text-red-600 border border-red-300 px-4 py-2 rounded-lg hover:bg-red-100 transition-colors"
-      >
-        Retry
-      </button>
+      <button @click="retryLoad" class="text-xs font-semibold text-red-600 border border-red-300 px-4 py-2 rounded hover:bg-red-100 transition-colors">Retry</button>
     </div>
 
-    <div v-else class="space-y-4">
-      <!-- Stats Grid -->
+    <template v-else>
+      <!-- Stat Cards — Stitch design -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Enrolled" :value="displayStudents" sub="Across all grades" accent="blue" animation="slideIn 0.4s 0.06s ease both">
-          <template #icon>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-          </template>
-        </StatCard>
-
-        <StatCard v-if="canViewFinance" label="Total Revenue" :value="formatCurrency(displayRevenue)" sub="Historical payments" accent="green" animation="slideIn 0.4s 0.14s ease both">
-          <template #icon>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
-            </svg>
-          </template>
-        </StatCard>
-
-        <StatCard v-if="canViewHR" label="Active Staff" :value="displayStaff" sub="Teachers & admin" accent="purple" animation="slideIn 0.4s 0.22s ease both">
-          <template #icon>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-          </template>
-        </StatCard>
-
-        <StatCard label="Today's Attendance" :value="todayAttendancePct !== null ? displayAttendance + '%' : '—'" :sub="todayAttendancePct !== null ? 'Students present' : 'Not marked yet'" accent="amber" animation="slideIn 0.4s 0.30s ease both">
-          <template #icon>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-            </svg>
-          </template>
-        </StatCard>
-      </div>
-
-      <!-- Term Fee Collection Progress — finance roles only -->
-      <div
-        v-if="canViewFinance"
-        class="bg-white border border-slate-200 rounded-lg p-6"
-        style="animation: slideIn 0.4s 0.14s ease both"
-      >
-        <div class="flex items-center justify-between mb-4">
+        <!-- Total Students -->
+        <div class="bg-white border border-slate-200 rounded p-6 flex flex-col justify-between" style="min-height:130px">
+          <div class="flex justify-between items-start mb-4">
+            <div class="p-2 rounded" style="background:rgba(113,46,221,0.1)">
+              <span class="material-symbols-outlined" style="color:#712edd;font-size:22px">group</span>
+            </div>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded" style="color:#16a34a;background:#f0fdf4">Active</span>
+          </div>
           <div>
-            <p class="text-xs font-bold uppercase tracking-[0.07em] text-text-muted">{{ appStore.currentTerm }} Fee Collection</p>
-            <h3 class="font-heading text-2xl font-extrabold text-slate-800 mt-0.5">{{ formatCurrency(termCollected) }}</h3>
+            <p class="text-xs font-semibold uppercase tracking-wider" style="color:#64748b">Total Students</p>
+            <h3 class="text-2xl font-bold mt-0.5" style="color:#1e293b">{{ displayStudents }}</h3>
           </div>
-          <div class="text-right">
-            <div class="text-2xl font-extrabold"
-              :class="termPct >= 80 ? 'text-emerald-600' : termPct >= 50 ? 'text-amber-500' : 'text-school-red'">
-              {{ termPct }}%
+        </div>
+
+        <!-- Monthly Revenue — finance roles -->
+        <div v-if="canViewFinance" class="bg-white border border-slate-200 rounded p-6 flex flex-col justify-between" style="min-height:130px">
+          <div class="flex justify-between items-start mb-4">
+            <div class="p-2 rounded" style="background:#dbeafe">
+              <span class="material-symbols-outlined" style="color:#2563eb;font-size:22px">payments</span>
             </div>
-            <div class="text-xs text-text-muted">Target: {{ formatCurrency(termExpected) }}</div>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded" style="color:#16a34a;background:#f0fdf4">YTD</span>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider" style="color:#64748b">Total Revenue</p>
+            <h3 class="text-xl font-bold mt-0.5" style="color:#1e293b">{{ formatCurrency(displayRevenue) }}</h3>
           </div>
         </div>
-        <div class="w-full bg-slate-100 rounded-full h-2 mb-3">
-          <div
-            class="h-2 rounded-full transition-all duration-1000"
-            :class="termPct >= 80 ? 'bg-emerald-500' : termPct >= 50 ? 'bg-amber-400' : 'bg-school-red'"
-            :style="{ width: Math.min(termPct, 100) + '%' }"
-          ></div>
+
+        <!-- Staff Count — HR roles -->
+        <div v-if="canViewHR" class="bg-white border border-slate-200 rounded p-6 flex flex-col justify-between" style="min-height:130px">
+          <div class="flex justify-between items-start mb-4">
+            <div class="p-2 rounded" style="background:#fef3c7">
+              <span class="material-symbols-outlined" style="color:#d97706;font-size:22px">badge</span>
+            </div>
+            <span class="text-xs font-semibold" style="color:#64748b">Stable</span>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider" style="color:#64748b">Staff Count</p>
+            <h3 class="text-2xl font-bold mt-0.5" style="color:#1e293b">{{ displayStaff }}</h3>
+          </div>
         </div>
-        <div class="flex items-center justify-between text-xs text-text-muted">
-          <span>{{ defaultersCount }} student{{ defaultersCount !== 1 ? 's' : '' }} with outstanding balance</span>
-          <router-link to="/finance" class="font-semibold text-school-purple hover:text-school-purple-l transition-colors">View Finance →</router-link>
+
+        <!-- Attendance -->
+        <div class="bg-white border border-slate-200 rounded p-6 flex flex-col justify-between" style="min-height:130px">
+          <div class="flex justify-between items-start mb-4">
+            <div class="p-2 rounded" style="background:#fce7f3">
+              <span class="material-symbols-outlined" style="color:#db2777;font-size:22px">how_to_reg</span>
+            </div>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded"
+              :style="todayAttendancePct !== null ? 'color:#16a34a;background:#f0fdf4' : 'color:#64748b;background:#f1f5f9'">
+              {{ todayAttendancePct !== null ? 'Live' : 'No Data' }}
+            </span>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider" style="color:#64748b">Today's Attendance</p>
+            <h3 class="text-2xl font-bold mt-0.5" style="color:#1e293b">{{ todayAttendancePct !== null ? displayAttendance + '%' : '—' }}</h3>
+          </div>
         </div>
       </div>
 
-      <!-- Two-Column Section -->
-      <div
-        class="grid grid-cols-1 lg:grid-cols-2 gap-4"
-        style="animation: slideIn 0.4s 0.18s ease both"
-      >
-        <!-- Quick Actions Panel -->
-        <div class="bg-white border border-border rounded-lg overflow-hidden">
-          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-            <div>
-              <h3 class="font-heading text-sm font-bold text-text-primary">Quick Actions</h3>
-              <p class="text-xs text-text-muted mt-[1px]">Common tasks and shortcuts</p>
-            </div>
+      <!-- Main Content Grid: Activity + Quick Actions + Finance -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        <!-- Recent Activity (2 cols) -->
+        <div class="lg:col-span-2 bg-white border border-slate-200 rounded overflow-hidden">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <h4 class="font-semibold text-sm" style="color:#1e293b">Recent Activity</h4>
+            <router-link to="/admin/reports" v-if="canViewFinance" class="text-xs font-semibold hover:underline" style="color:#712edd">View All</router-link>
           </div>
-          <div class="grid grid-cols-2 gap-4 p-4">
-            <!-- Roll Call — teachers, secretary, principal, admin -->
-            <router-link
-              v-if="canMarkAttendance"
-              to="/academics/attendance"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
-            >
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-[rgba(109,40,217,0.12)] text-school-purple">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <path d="M9 11l3 3L22 4" />
-                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-text-primary leading-tight">Roll Call</p>
-                <p class="text-xs text-text-muted mt-[1px]">Mark attendance</p>
-              </div>
-            </router-link>
-
-            <!-- Log Payment — accountant, secretary, principal, admin -->
-            <router-link
-              v-if="canRecordPayments"
-              to="/finance"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
-            >
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-success-bg text-success">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <rect x="2" y="5" width="20" height="14" rx="2" />
-                  <line x1="2" y1="10" x2="22" y2="10" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-text-primary leading-tight">Log Payment</p>
-                <p class="text-xs text-text-muted mt-[1px]">Record fees</p>
-              </div>
-            </router-link>
-
-            <!-- Enter Grades — teachers, principal, admin -->
-            <router-link
-              v-if="canEnterGrades"
-              to="/academics"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
-            >
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-info-bg text-info">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-text-primary leading-tight">Enter Grades</p>
-                <p class="text-xs text-text-muted mt-[1px]">CBC Assessments</p>
-              </div>
-            </router-link>
-
-            <!-- Admit Student — secretary, principal, admin -->
-            <router-link
-              v-if="canAdmitStudents"
-              to="/office"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
-            >
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-warning-bg text-warning">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="16" />
-                  <line x1="8" y1="12" x2="16" y2="12" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-text-primary leading-tight">Admit Student</p>
-                <p class="text-xs text-text-muted mt-[1px]">New enrollment</p>
-              </div>
-            </router-link>
-
-            <!-- Report Cards — teachers, principal, admin -->
-            <router-link
-              v-if="canEnterGrades"
-              to="/academics/report-card"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
-            >
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-[rgba(109,40,217,0.12)] text-school-purple">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="16" y1="13" x2="8" y2="13" />
-                  <line x1="16" y1="17" x2="8" y2="17" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-text-primary leading-tight">Report Cards</p>
-                <p class="text-xs text-text-muted mt-[1px]">Generate PDFs</p>
-              </div>
-            </router-link>
-
-            <!-- Fee Statements — accountant, principal, admin -->
-            <router-link
-              v-if="canViewFinance"
-              to="/finance/statements"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
-            >
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-info-bg text-info">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <line x1="18" y1="20" x2="18" y2="10" />
-                  <line x1="12" y1="20" x2="12" y2="4" />
-                  <line x1="6" y1="20" x2="6" y2="14" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-text-primary leading-tight">Statements</p>
-                <p class="text-xs text-text-muted mt-[1px]">Fee balances</p>
-              </div>
-            </router-link>
-
-            <!-- Bulk SMS — secretary, principal, admin -->
-            <router-link
-              v-if="canAdmitStudents"
-              to="/office/communications"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
-            >
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-success-bg text-success">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-text-primary leading-tight">Bulk SMS</p>
-                <p class="text-xs text-text-muted mt-[1px]">Notify parents</p>
-              </div>
-            </router-link>
-
-            <!-- HR Staff — admin, principal -->
-            <router-link
-              v-if="canViewHR"
-              to="/admin/staff"
-              class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer transition-all duration-150 hover:bg-white hover:border-school-purple/30 hover:shadow-sm"
-            >
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-[rgba(109,40,217,0.12)] text-school-purple">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-text-primary leading-tight">Staff HR</p>
-                <p class="text-xs text-text-muted mt-[1px]">Manage staff</p>
-              </div>
-            </router-link>
-          </div>
-        </div>
-
-        <!-- Activity Feed Panel -->
-        <div class="bg-white border border-border rounded-lg overflow-hidden">
-          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-            <div>
-              <h3 class="font-heading text-sm font-bold text-text-primary">Activity Feed</h3>
-              <p class="text-xs text-text-muted mt-[1px]">Latest system events</p>
-            </div>
-          </div>
-
-          <div class="flex flex-col">
-            <div
-              v-if="filteredActivity.length === 0"
-              class="px-5 py-8 text-center text-sm text-text-muted"
-            >
-              No recent activity
+          <div>
+            <div v-if="filteredActivity.length === 0" class="px-6 py-10 text-center text-sm" style="color:#94a3b8">
+              No recent activity recorded
             </div>
             <div
-              v-for="activity in filteredActivity"
+              v-for="activity in filteredActivity.slice(0, 6)"
               :key="activity.id"
-              class="flex items-start gap-3 px-5 py-3.5 border-b border-slate-100 last:border-b-0 transition-colors hover:bg-slate-50"
+              class="flex items-start gap-4 px-6 py-4 border-b border-slate-50 last:border-b-0 transition-colors cursor-default"
+              style="--hover-bg:#f8fafc"
+              onmouseover="this.style.background='#f8fafc'"
+              onmouseout="this.style.background=''"
             >
-              <div
-                class="w-8 h-8 rounded-full flex items-center justify-center font-heading font-bold text-sm flex-shrink-0 mt-[1px]"
-                :class="activity.avatarClass"
-              >
+              <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 mt-0.5"
+                :class="activity.avatarClass">
                 {{ activity.user.charAt(0) }}
               </div>
-
-              <div>
-                <p class="text-sm font-medium text-text-primary leading-[1.45]">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm" style="color:#1e293b">
                   <span class="font-semibold">{{ activity.user }}</span>
-                  <span class="font-normal text-text-secondary"> {{ activity.action }}</span>
+                  <span style="color:#475569"> {{ activity.action }}</span>
                 </p>
-                <p class="text-xs text-text-muted mt-[2px] flex items-center gap-1">
-                  <span class="w-[5px] h-[5px] rounded-full" :class="activity.dotClass"></span>
-                  {{ activity.time }} &middot; {{ activity.type }}
+                <p class="text-xs mt-1 flex items-center gap-1.5" style="color:#94a3b8">
+                  <span class="w-1.5 h-1.5 rounded-full inline-block" :class="activity.dotClass"></span>
+                  {{ activity.time }} · {{ activity.type }}
                 </p>
               </div>
+              <span class="material-symbols-outlined text-slate-300 shrink-0 mt-0.5" style="font-size:18px">more_vert</span>
             </div>
           </div>
         </div>
+
+        <!-- Right column -->
+        <div class="space-y-4">
+          <!-- Quick Actions -->
+          <div class="bg-white border border-slate-200 rounded overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100">
+              <h4 class="font-semibold text-sm" style="color:#1e293b">Quick Actions</h4>
+            </div>
+            <div class="p-4 space-y-2">
+              <router-link v-if="canAdmitStudents" to="/office"
+                class="flex items-center gap-3 px-4 py-3 rounded border transition-all hover:shadow-sm active:scale-[0.99]"
+                style="border-color:#e2e8f0">
+                <div class="w-9 h-9 rounded flex items-center justify-center shrink-0" style="background:rgba(113,46,221,0.1)">
+                  <span class="material-symbols-outlined" style="color:#712edd;font-size:18px">person_add</span>
+                </div>
+                <div>
+                  <p class="text-sm font-medium" style="color:#1e293b">Add Student</p>
+                  <p class="text-xs" style="color:#94a3b8">New enrollment</p>
+                </div>
+              </router-link>
+
+              <router-link v-if="canRecordPayments" to="/finance"
+                class="flex items-center gap-3 px-4 py-3 rounded border transition-all hover:shadow-sm active:scale-[0.99]"
+                style="border-color:#e2e8f0">
+                <div class="w-9 h-9 rounded flex items-center justify-center shrink-0" style="background:#f0fdf4">
+                  <span class="material-symbols-outlined" style="color:#16a34a;font-size:18px">payments</span>
+                </div>
+                <div>
+                  <p class="text-sm font-medium" style="color:#1e293b">Record Payment</p>
+                  <p class="text-xs" style="color:#94a3b8">Log fee collection</p>
+                </div>
+              </router-link>
+
+              <router-link v-if="canMarkAttendance" to="/academics/attendance"
+                class="flex items-center gap-3 px-4 py-3 rounded border transition-all hover:shadow-sm active:scale-[0.99]"
+                style="border-color:#e2e8f0">
+                <div class="w-9 h-9 rounded flex items-center justify-center shrink-0" style="background:#eff6ff">
+                  <span class="material-symbols-outlined" style="color:#2563eb;font-size:18px">how_to_reg</span>
+                </div>
+                <div>
+                  <p class="text-sm font-medium" style="color:#1e293b">Mark Attendance</p>
+                  <p class="text-xs" style="color:#94a3b8">Daily roll call</p>
+                </div>
+              </router-link>
+
+              <router-link v-if="canEnterGrades" to="/academics"
+                class="flex items-center gap-3 px-4 py-3 rounded border transition-all hover:shadow-sm active:scale-[0.99]"
+                style="border-color:#e2e8f0">
+                <div class="w-9 h-9 rounded flex items-center justify-center shrink-0" style="background:#fef3c7">
+                  <span class="material-symbols-outlined" style="color:#d97706;font-size:18px">grade</span>
+                </div>
+                <div>
+                  <p class="text-sm font-medium" style="color:#1e293b">Enter Grades</p>
+                  <p class="text-xs" style="color:#94a3b8">CBC assessments</p>
+                </div>
+              </router-link>
+            </div>
+          </div>
+
+          <!-- Term Fee Progress (finance roles) -->
+          <div v-if="canViewFinance" class="bg-white border border-slate-200 rounded p-5">
+            <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#64748b">{{ appStore.currentTerm }} Collections</p>
+            <p class="text-xl font-bold mb-3" style="color:#1e293b">{{ formatCurrency(termCollected) }}</p>
+            <div class="w-full bg-slate-100 rounded-full h-2 mb-2">
+              <div class="h-2 rounded-full transition-all duration-1000"
+                :class="termPct >= 80 ? 'bg-emerald-500' : termPct >= 50 ? 'bg-amber-400' : 'bg-red-500'"
+                :style="{ width: Math.min(termPct, 100) + '%' }"></div>
+            </div>
+            <div class="flex items-center justify-between">
+              <p class="text-xs" style="color:#94a3b8">{{ defaultersCount }} with outstanding fees</p>
+              <span class="text-sm font-bold" :class="termPct >= 80 ? 'text-emerald-600' : termPct >= 50 ? 'text-amber-500' : 'text-red-500'">{{ termPct }}%</span>
+            </div>
+            <router-link to="/finance" class="mt-3 flex items-center gap-1 text-xs font-semibold hover:underline" style="color:#712edd">
+              View Finance <span class="material-symbols-outlined" style="font-size:14px">arrow_forward</span>
+            </router-link>
+          </div>
+        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 

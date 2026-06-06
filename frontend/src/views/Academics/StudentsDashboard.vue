@@ -1,34 +1,76 @@
 <template>
   <div class="max-w-7xl mx-auto space-y-6">
 
+    <!-- Page header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div>
+        <h2 class="text-2xl font-bold" style="color:#1c1b1d;letter-spacing:-0.01em">Student Directory</h2>
+        <p class="text-sm mt-0.5" style="color:#46464c">Manage and track student enrollment across all academic levels.</p>
+      </div>
+    </div>
+
     <!-- Header stats -->
     <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div v-for="n in 4" :key="n" class="bg-white rounded-lg border border-border p-6">
+      <div v-for="n in 4" :key="n" class="bg-white rounded border border-border p-6">
         <div class="skel h-2 w-24 rounded mb-3" />
         <div class="skel h-8 w-12 rounded" />
       </div>
     </div>
     <div v-else class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="bg-white rounded-lg border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.04s ease both">
-        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Total Students</p>
-        <p class="text-3xl font-extrabold text-slate-800">{{ displayTotal }}</p>
+      <!-- Total Students -->
+      <div class="bg-white border border-slate-200 rounded p-6 flex flex-col justify-between hover:shadow-sm transition-all duration-200" style="min-height:130px;animation:slideIn 0.4s 0.04s ease both">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2 rounded" style="background:rgba(113,46,221,0.1)">
+            <span class="material-symbols-outlined" style="color:#712edd;font-size:22px">group</span>
+          </div>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded" style="color:#64748b;background:#f1f5f9">All</span>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider" style="color:#64748b">Total Students</p>
+          <h3 class="text-2xl font-bold mt-0.5" style="color:#1c1b1d">{{ displayTotal }}</h3>
+        </div>
       </div>
-      <div class="bg-white rounded-lg border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.12s ease both">
-        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Active</p>
-        <p class="text-3xl font-extrabold text-emerald-600">{{ displayActive }}</p>
+      <!-- Active -->
+      <div class="bg-white border border-slate-200 rounded p-6 flex flex-col justify-between hover:shadow-sm transition-all duration-200" style="min-height:130px;animation:slideIn 0.4s 0.12s ease both">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2 rounded" style="background:#f0fdf4">
+            <span class="material-symbols-outlined" style="color:#16a34a;font-size:22px">how_to_reg</span>
+          </div>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded" style="color:#16a34a;background:#f0fdf4">Active</span>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider" style="color:#64748b">Active Enrollment</p>
+          <h3 class="text-2xl font-bold mt-0.5" style="color:#1c1b1d">{{ displayActive }}</h3>
+        </div>
       </div>
-      <div class="bg-white rounded-lg border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.20s ease both">
-        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Male</p>
-        <p class="text-3xl font-extrabold text-blue-600">{{ displayMale }}</p>
+      <!-- Male -->
+      <div class="bg-white border border-slate-200 rounded p-6 flex flex-col justify-between hover:shadow-sm transition-all duration-200" style="min-height:130px;animation:slideIn 0.4s 0.20s ease both">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2 rounded" style="background:#eff6ff">
+            <span class="material-symbols-outlined" style="color:#2563eb;font-size:22px">male</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider" style="color:#64748b">Male</p>
+          <h3 class="text-2xl font-bold mt-0.5" style="color:#1c1b1d">{{ displayMale }}</h3>
+        </div>
       </div>
-      <div class="bg-white rounded-lg border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.28s ease both">
-        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Female</p>
-        <p class="text-3xl font-extrabold text-pink-500">{{ displayFemale }}</p>
+      <!-- Female -->
+      <div class="bg-white border border-slate-200 rounded p-6 flex flex-col justify-between hover:shadow-sm transition-all duration-200" style="min-height:130px;animation:slideIn 0.4s 0.28s ease both">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-2 rounded" style="background:#fce7f3">
+            <span class="material-symbols-outlined" style="color:#db2777;font-size:22px">female</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider" style="color:#64748b">Female</p>
+          <h3 class="text-2xl font-bold mt-0.5" style="color:#1c1b1d">{{ displayFemale }}</h3>
+        </div>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-lg border border-border p-4 flex flex-wrap gap-3 items-end">
+    <div class="bg-white rounded border border-border p-4 flex flex-wrap gap-3 items-end">
       <div class="flex-1 min-w-48">
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
         <div class="relative">
@@ -39,20 +81,20 @@
             v-model="search"
             type="text"
             placeholder="Name or admission number…"
-            class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple"
+            class="w-full pl-9 pr-4 py-2.5 border border-slate-300 rounded text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple"
           />
         </div>
       </div>
       <div>
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
-        <select v-model="gradeFilter" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
+        <select v-model="gradeFilter" class="border border-slate-300 px-3 py-2.5 rounded text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
           <option value="">All Grades</option>
           <option v-for="g in grades" :key="g" :value="g">{{ g }}</option>
         </select>
       </div>
       <div>
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Status</label>
-        <select v-model="statusFilter" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
+        <select v-model="statusFilter" class="border border-slate-300 px-3 py-2.5 rounded text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
           <option value="">All</option>
           <option value="Active">Active</option>
           <option value="Graduated">Graduated</option>
@@ -61,7 +103,7 @@
       </div>
       <div>
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Gender</label>
-        <select v-model="genderFilter" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
+        <select v-model="genderFilter" class="border border-slate-300 px-3 py-2.5 rounded text-sm outline-none focus:ring-2 focus:ring-school-purple/20 focus:border-school-purple">
           <option value="">All</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
@@ -71,7 +113,7 @@
     </div>
 
     <!-- Student table -->
-    <div class="bg-white rounded-lg border border-border overflow-hidden">
+    <div class="bg-white rounded border border-border overflow-hidden">
       <div v-if="loading" class="p-4 space-y-2">
         <SkeletonLoader type="table" :count="8" />
       </div>
@@ -83,7 +125,7 @@
       <div v-else class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
-            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-400">
+            <tr class="text-xs font-semibold uppercase tracking-wider text-white" style="background:#161b2b">
               <th class="text-left px-6 py-3">#</th>
               <th class="text-left px-6 py-3">Student</th>
               <th class="text-left px-6 py-3">Adm No.</th>
@@ -105,7 +147,7 @@
               <td class="px-6 py-3.5 text-slate-400 text-xs">{{ i + 1 }}</td>
               <td class="px-6 py-3.5">
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0"
+                  <div class="w-9 h-9 rounded flex items-center justify-center font-bold text-xs shrink-0"
                     :class="s.gender === 'Female' ? 'bg-pink-100 text-pink-600' : 'bg-blue-100 text-blue-600'">
                     {{ s.first_name.charAt(0) }}{{ s.last_name.charAt(0) }}
                   </div>
@@ -118,8 +160,8 @@
               <td class="px-6 py-3.5 font-mono text-xs text-school-navy">{{ s.admission_number }}</td>
               <td class="px-6 py-3.5 text-slate-600">{{ s.grade_level }}</td>
               <td class="px-6 py-3.5">
-                <span v-if="s.gender" class="text-xs font-semibold px-2 py-0.5 rounded-full"
-                  :class="s.gender === 'Female' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'">
+                <span v-if="s.gender" class="text-[10px] font-bold uppercase tracking-tighter px-2 py-0.5 rounded-sm border"
+                  :class="s.gender === 'Female' ? 'bg-pink-50 text-pink-700 border-pink-200' : 'bg-blue-50 text-blue-700 border-blue-200'">
                   {{ s.gender }}
                 </span>
                 <span v-else class="text-slate-300">—</span>
@@ -134,8 +176,8 @@
                 <span v-if="!s.guardian_name" class="text-slate-300">—</span>
               </td>
               <td class="px-6 py-3.5">
-                <span class="text-xs font-bold uppercase px-2 py-0.5 rounded-full"
-                  :class="s.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'">
+                <span class="text-[10px] font-bold uppercase tracking-tighter px-2 py-0.5 rounded-sm border"
+                  :class="s.status === 'Active' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-slate-100 text-slate-500 border-slate-200'">
                   {{ s.status }}
                 </span>
               </td>

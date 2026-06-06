@@ -5,10 +5,10 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
   line-height: 1.6;
-  color: #0F172A;
-  background: #F8FAFC;
+  color: #1c1b1d;
+  background: #fcf8fa;
   -webkit-font-smoothing: antialiased;
 }
 

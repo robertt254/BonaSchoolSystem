@@ -7,8 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        heading: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans:    ['DM Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['DM Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
 
       colors: {
@@ -41,8 +41,9 @@ export default {
         danger:  { DEFAULT: '#E11D48', bg: '#FFF1F2', text: '#9F1239', border: '#FECDD3' },
         info:    { DEFAULT: '#2563EB', bg: '#EFF6FF', text: '#1E40AF', border: '#BFDBFE' },
 
-        // Sidebar
-        sidebar: '#0A0F1E',
+        // Sidebar / primary container (deep navy)
+        sidebar: '#161b2b',
+        'sidebar-active': '#712edd',
 
         // Backward-compat school.* aliases
         school: {
@@ -63,13 +64,13 @@ export default {
       },
 
       borderRadius: {
-        // Design-system radius scale (spec-aligned)
-        sm:   '0.25rem',   //  4px — chips, checkboxes
-        DEFAULT: '0.5rem', //  8px — buttons, inputs (Tailwind also has this as 'rounded')
-        md:   '0.75rem',   // 12px — cards
-        card: '0.75rem',   // 12px — alias used throughout codebase
-        lg:   '1rem',      // 16px — large widgets, featured panels
-        xl:   '1.5rem',    // 24px — modals, full-bleed banners
+        // Design-system radius scale — squared "EduAdmin Pro" / Stitch spec
+        sm:   '0.125rem',  //  2px — chips, checkboxes
+        DEFAULT: '0.25rem',//  4px — buttons, inputs, cards (Tailwind 'rounded')
+        md:   '0.375rem',  //  6px — medium surfaces
+        card: '0.5rem',    //  8px — cards (alias used throughout codebase)
+        lg:   '0.5rem',    //  8px — large widgets, featured panels
+        xl:   '0.75rem',   // 12px — modals, full-bleed banners
         full: '9999px',    // pill buttons, badges
       },
     },
