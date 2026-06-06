@@ -9,7 +9,7 @@
     <!-- Report selector -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <button v-for="r in REPORTS" :key="r.id" @click="selectReport(r)"
-        class="bg-white rounded-xl border p-4 text-left hover:border-school-purple/40 hover:shadow-sm transition"
+        class="bg-white rounded-lg border p-4 text-left hover:border-school-purple/40 hover:shadow-sm transition"
         :class="selectedReport?.id === r.id ? 'border-school-purple shadow-sm' : 'border-slate-200'">
         <div class="w-8 h-8 rounded-lg mb-3 flex items-center justify-center" :class="r.iconBg">
           <svg class="w-4 h-4" :class="r.iconColor" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" v-html="r.icon"></svg>
@@ -20,7 +20,7 @@
     </div>
 
     <!-- Filters for selected report -->
-    <div v-if="selectedReport" class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
+    <div v-if="selectedReport" class="bg-white rounded-lg border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
       <template v-if="selectedReport.filters.includes('year')">
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Year</label>
@@ -66,7 +66,7 @@
     </div>
 
     <!-- Report output -->
-    <div v-if="rows.length > 0" id="report-output" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div v-if="rows.length > 0" id="report-output" class="bg-white rounded-lg border border-slate-200 overflow-hidden">
       <div class="px-5 py-3.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between print:border-b print:border-slate-300">
         <h3 class="font-bold text-slate-700 text-sm">{{ selectedReport.label }}</h3>
         <span class="text-xs text-slate-400">{{ rows.length }} record(s)</span>
@@ -91,7 +91,7 @@
         </table>
       </div>
     </div>
-    <div v-else-if="ranReport" class="bg-white rounded-xl border border-slate-200 py-12 text-center text-slate-400 text-sm">
+    <div v-else-if="ranReport" class="bg-white rounded-lg border border-slate-200 py-12 text-center text-slate-400 text-sm">
       No data found for this selection.
     </div>
 

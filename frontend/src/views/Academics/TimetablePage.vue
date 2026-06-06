@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto space-y-6">
 
     <!-- Controls -->
-    <div class="bg-white rounded-xl border border-border p-6 print:hidden">
+    <div class="bg-white rounded-lg border border-border p-6 print:hidden">
       <div class="flex flex-wrap items-end gap-4">
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
@@ -29,7 +29,7 @@
     </div>
 
     <!-- Grid -->
-    <div class="bg-white rounded-xl border border-border overflow-hidden">
+    <div class="bg-white rounded-lg border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50">
         <h3 class="font-bold text-slate-800">{{ selectedGrade }} · {{ selectedTerm }} Timetable</h3>
       </div>

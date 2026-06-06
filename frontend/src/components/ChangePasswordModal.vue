@@ -1,6 +1,6 @@
 <template>
   <div class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-[200] p-4">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm border border-border">
+    <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm border border-border">
       <div class="flex items-center justify-between p-6 border-b border-slate-100">
         <h2 class="text-lg font-bold text-slate-800">Change Password</h2>
         <button @click="$emit('close')" class="text-slate-400 hover:text-slate-600 transition-colors">

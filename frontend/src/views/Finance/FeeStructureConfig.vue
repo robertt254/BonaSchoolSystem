@@ -2,7 +2,7 @@
   <div class="max-w-5xl mx-auto space-y-6">
 
     <!-- Add entry form -->
-    <div class="bg-white rounded-xl border border-border p-6">
+    <div class="bg-white rounded-lg border border-border p-6">
       <h2 class="text-base font-bold text-slate-800 mb-5">Add / Update Fee Entry</h2>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <div>
@@ -78,7 +78,7 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-xl border border-border overflow-hidden">
+    <div class="bg-white rounded-lg border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50 flex items-center justify-between">
         <h3 class="font-bold text-slate-800">Fee Schedule · {{ filterYear }}</h3>
         <span class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ filteredEntries.length }} entries</span>

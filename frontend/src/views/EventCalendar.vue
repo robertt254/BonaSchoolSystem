@@ -14,7 +14,7 @@
     </div>
 
     <!-- Month navigation -->
-    <div class="bg-white rounded-xl border border-slate-200 p-4 flex items-center justify-between">
+    <div class="bg-white rounded-lg border border-slate-200 p-4 flex items-center justify-between">
       <button @click="changeMonth(-1)" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 transition text-slate-600">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
@@ -26,7 +26,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
       <!-- Calendar grid -->
-      <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div class="lg:col-span-2 bg-white rounded-lg border border-slate-200 overflow-hidden">
         <div class="grid grid-cols-7 border-b border-slate-100">
           <div v-for="day in ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']" :key="day"
             class="px-2 py-3 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">{{ day }}</div>
@@ -55,7 +55,7 @@
 
       <!-- Event list + detail -->
       <div class="space-y-4">
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
           <div class="px-4 py-3 border-b border-slate-100 bg-slate-50">
             <h3 class="font-bold text-sm text-slate-700">{{ monthName }} Events</h3>
           </div>
@@ -74,7 +74,7 @@
         </div>
 
         <!-- Event detail panel -->
-        <div v-if="selectedEvent" class="bg-white rounded-xl border border-slate-200 p-6">
+        <div v-if="selectedEvent" class="bg-white rounded-lg border border-slate-200 p-6">
           <div class="flex items-start justify-between mb-3">
             <div>
               <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full" :class="eventColor(selectedEvent.event_type)">

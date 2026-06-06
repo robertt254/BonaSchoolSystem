@@ -19,7 +19,7 @@
 
     <!-- ── Books Tab ───────────────────────────────────────────────── -->
     <template v-if="activeTab === 'books'">
-      <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-3 items-end">
+      <div class="bg-white rounded-lg border border-slate-200 p-6 flex flex-wrap gap-3 items-end">
         <div class="flex-1 min-w-48">
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
           <input v-model="bookSearch" type="text" placeholder="Title, author, ISBN…"
@@ -32,7 +32,7 @@
         </button>
       </div>
 
-      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
         <div v-if="loadingBooks" class="py-16 flex justify-center">
           <div class="w-8 h-8 border-4 border-slate-200 border-t-school-purple rounded-full animate-spin"></div>
         </div>
@@ -87,7 +87,7 @@
 
     <!-- ── Borrows Tab ─────────────────────────────────────────────── -->
     <template v-if="activeTab === 'borrows'">
-      <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-3 items-end">
+      <div class="bg-white rounded-lg border border-slate-200 p-6 flex flex-wrap gap-3 items-end">
         <label class="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
           <input v-model="activeOnly" type="checkbox" @change="loadBorrows"
             class="rounded border-slate-300 text-school-purple" />
@@ -100,7 +100,7 @@
         </button>
       </div>
 
-      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
         <div v-if="loadingBorrows" class="py-16 flex justify-center">
           <div class="w-8 h-8 border-4 border-slate-200 border-t-school-navy rounded-full animate-spin"></div>
         </div>

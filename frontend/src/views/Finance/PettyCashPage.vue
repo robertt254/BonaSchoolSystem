@@ -21,7 +21,7 @@
     </div>
 
     <!-- Balance card -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 flex items-center gap-6">
+    <div class="bg-white rounded-lg border border-slate-200 p-6 flex items-center gap-6">
       <div>
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Current Balance</p>
         <p class="text-3xl font-extrabold" :class="balance >= 0 ? 'text-emerald-600' : 'text-red-600'">
@@ -41,7 +41,7 @@
     </div>
 
     <!-- Ledger -->
-    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>

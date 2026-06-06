@@ -15,26 +15,26 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="bg-white rounded-xl border border-slate-200 p-6">
+      <div class="bg-white rounded-lg border border-slate-200 p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Total Records</p>
         <p class="text-3xl font-extrabold text-slate-800">{{ records.length }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-slate-200 p-6">
+      <div class="bg-white rounded-lg border border-slate-200 p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Open</p>
         <p class="text-3xl font-extrabold text-red-500">{{ openCount }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-slate-200 p-6">
+      <div class="bg-white rounded-lg border border-slate-200 p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Serious</p>
         <p class="text-3xl font-extrabold text-orange-500">{{ seriousCount }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-slate-200 p-6">
+      <div class="bg-white rounded-lg border border-slate-200 p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Resolved</p>
         <p class="text-3xl font-extrabold text-emerald-600">{{ resolvedCount }}</p>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap gap-3 items-end">
+    <div class="bg-white rounded-lg border border-slate-200 p-4 flex flex-wrap gap-3 items-end">
       <div class="flex-1 min-w-40">
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search Student</label>
         <input v-model="searchQuery" type="text" placeholder="Name…"
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
       <div v-if="loading" class="py-16 flex justify-center">
         <div class="w-8 h-8 border-4 border-slate-200 border-t-red-400 rounded-full animate-spin"></div>
       </div>

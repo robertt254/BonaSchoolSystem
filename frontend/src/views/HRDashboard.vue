@@ -38,7 +38,7 @@
     </div>
 
     <!-- Search bar -->
-    <div class="bg-white rounded-xl border border-border p-4 flex flex-wrap gap-3 items-end">
+    <div class="bg-white rounded-lg border border-border p-4 flex flex-wrap gap-3 items-end">
       <div class="flex-1 min-w-56">
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search Staff</label>
         <div class="relative">
@@ -85,7 +85,7 @@
     <!-- Staff Table -->
     <div
       v-else
-      class="bg-white rounded-xl border border-border shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
+      class="bg-white rounded-lg border border-border shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden"
     >
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
@@ -192,7 +192,7 @@
       v-if="showModal"
       class="fixed inset-0 bg-slate-900/40 flex items-center justify-center py-3 px-5 z-50 animate-fade-in overflow-y-auto"
     >
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden my-8">
+      <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl overflow-hidden my-8">
         <div
           class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 sticky top-0 z-10"
         >
@@ -443,7 +443,7 @@
       v-if="showResetModal"
       class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in"
     >
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden border border-border">
+      <div class="bg-white rounded-lg shadow-2xl w-full max-w-sm overflow-hidden border border-border">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <div>
             <h2 class="text-lg font-black text-slate-800">Reset Password</h2>

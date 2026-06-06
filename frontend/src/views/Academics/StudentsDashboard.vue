@@ -3,32 +3,32 @@
 
     <!-- Header stats -->
     <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div v-for="n in 4" :key="n" class="bg-white rounded-xl border border-border p-6">
+      <div v-for="n in 4" :key="n" class="bg-white rounded-lg border border-border p-6">
         <div class="skel h-2 w-24 rounded mb-3" />
         <div class="skel h-8 w-12 rounded" />
       </div>
     </div>
     <div v-else class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="bg-white rounded-xl border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.04s ease both">
+      <div class="bg-white rounded-lg border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.04s ease both">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Total Students</p>
         <p class="text-3xl font-extrabold text-slate-800">{{ displayTotal }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.12s ease both">
+      <div class="bg-white rounded-lg border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.12s ease both">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Active</p>
         <p class="text-3xl font-extrabold text-emerald-600">{{ displayActive }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.20s ease both">
+      <div class="bg-white rounded-lg border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.20s ease both">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Male</p>
         <p class="text-3xl font-extrabold text-blue-600">{{ displayMale }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.28s ease both">
+      <div class="bg-white rounded-lg border border-border p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="animation:slideIn 0.4s 0.28s ease both">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Female</p>
         <p class="text-3xl font-extrabold text-pink-500">{{ displayFemale }}</p>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-xl border border-border p-4 flex flex-wrap gap-3 items-end">
+    <div class="bg-white rounded-lg border border-border p-4 flex flex-wrap gap-3 items-end">
       <div class="flex-1 min-w-48">
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
         <div class="relative">
@@ -71,7 +71,7 @@
     </div>
 
     <!-- Student table -->
-    <div class="bg-white rounded-xl border border-border overflow-hidden">
+    <div class="bg-white rounded-lg border border-border overflow-hidden">
       <div v-if="loading" class="p-4 space-y-2">
         <SkeletonLoader type="table" :count="8" />
       </div>

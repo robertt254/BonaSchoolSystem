@@ -12,7 +12,7 @@
       :class="[
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
         'fixed inset-y-0 left-0 z-50 md:relative md:translate-x-0',
-        'flex flex-col w-64 shrink-0 bg-school-navy transition-transform duration-300 ease-out',
+        'flex flex-col w-[280px] shrink-0 bg-school-navy transition-transform duration-300 ease-out',
         'print:hidden',
       ]"
     >

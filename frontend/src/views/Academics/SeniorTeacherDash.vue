@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto space-y-6">
 
     <!-- Controls bar -->
-    <div class="bg-white rounded-xl border border-border p-4 flex flex-col gap-4">
+    <div class="bg-white rounded-lg border border-border p-4 flex flex-col gap-4">
       <div class="flex flex-wrap gap-2">
         <button v-for="grade in cbcGrades" :key="grade" @click="selectGrade(grade)"
           :class="['px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all',
@@ -46,7 +46,7 @@
     </div>
 
     <!-- BULK ENTRY GRID -->
-    <div v-if="viewMode === 'bulk'" class="bg-white rounded-xl border border-border overflow-hidden">
+    <div v-if="viewMode === 'bulk'" class="bg-white rounded-lg border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50 flex items-center justify-between">
         <div>
           <h3 class="font-bold text-slate-800">{{ selectedGrade }} · {{ appStore.currentTerm }} · {{ selectedArea }}</h3>
@@ -137,7 +137,7 @@
     </div>
 
     <!-- STUDENT LIST VIEW -->
-    <div v-else class="bg-white rounded-xl border border-border overflow-hidden">
+    <div v-else class="bg-white rounded-lg border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50">
         <h3 class="font-bold text-slate-800">{{ selectedGrade }} Students</h3>
       </div>
@@ -176,7 +176,7 @@
 
     <!-- Single-student grade modal -->
     <div v-if="showModal" class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-border">
+      <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg overflow-hidden border border-border">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <div>
             <h2 class="text-lg font-bold text-text-primary">Record Assessment</h2>

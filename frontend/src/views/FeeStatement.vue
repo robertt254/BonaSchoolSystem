@@ -2,7 +2,7 @@
   <div class="max-w-5xl mx-auto space-y-6">
 
     <!-- Controls (hidden when printing) -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 print:hidden">
+    <div class="bg-white rounded-lg border border-slate-200 p-6 print:hidden">
       <h2 class="text-base font-bold text-slate-800 mb-4">Generate Fee Statement</h2>
       <div class="flex flex-col sm:flex-row gap-4 items-end flex-wrap">
         <div class="flex-1 min-w-[200px]">
@@ -49,7 +49,7 @@
     </div>
 
     <!-- Carry-Forward Adjustments panel (visible when student is selected) -->
-    <div v-if="selectedStudent" class="bg-white rounded-xl border border-slate-200 overflow-hidden print:hidden">
+    <div v-if="selectedStudent" class="bg-white rounded-lg border border-slate-200 overflow-hidden print:hidden">
       <div class="px-5 py-3.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
         <div>
           <h3 class="font-bold text-slate-800 text-sm">Balance Adjustments (Carry-Forward)</h3>
@@ -129,7 +129,7 @@
     <div
       v-if="statementData && !loading"
       id="fee-statement"
-      class="bg-white rounded-xl border border-slate-200 overflow-hidden print:rounded-none print:border-none"
+      class="bg-white rounded-lg border border-slate-200 overflow-hidden print:rounded-none print:border-none"
     >
       <!-- Header band -->
       <div class="bg-school-navy text-white px-8 py-7 print:py-5">
@@ -249,7 +249,7 @@
     </div>
 
     <!-- ── Payment Log ────────────────────────────────────────────────────── -->
-    <div class="bg-white rounded-xl border border-border overflow-hidden print:hidden">
+    <div class="bg-white rounded-lg border border-border overflow-hidden print:hidden">
       <div class="px-5 py-4 border-b border-border bg-surface-muted flex items-center justify-between">
         <div>
           <h3 class="font-bold text-text-primary text-sm">All Fee Payments Log</h3>
@@ -370,7 +370,7 @@
 
     <!-- Delete confirmation modal -->
     <div v-if="deleteTarget" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
-      <div class="bg-white rounded-xl shadow-modal border border-border w-full max-w-md overflow-hidden">
+      <div class="bg-white rounded-lg shadow-modal border border-border w-full max-w-md overflow-hidden">
         <div class="px-6 py-5 border-b border-border bg-danger-bg flex items-start gap-3">
           <svg class="w-5 h-5 text-danger shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>

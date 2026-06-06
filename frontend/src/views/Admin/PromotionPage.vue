@@ -7,7 +7,7 @@
     </div>
 
     <!-- Controls -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
+    <div class="bg-white rounded-lg border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
       <div>
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Current Grade</label>
         <select v-model="selectedGrade" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none">
@@ -27,7 +27,7 @@
     </div>
 
     <!-- Student table -->
-    <div v-if="students.length > 0" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div v-if="students.length > 0" class="bg-white rounded-lg border border-slate-200 overflow-hidden">
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-slate-50">
         <div class="flex items-center gap-3">
           <input type="checkbox" :checked="allSelected" @change="toggleAll"
@@ -63,7 +63,7 @@
       </table>
     </div>
 
-    <div v-else-if="loaded" class="bg-white rounded-xl border border-slate-200 py-12 text-center text-slate-400 text-sm">
+    <div v-else-if="loaded" class="bg-white rounded-lg border border-slate-200 py-12 text-center text-slate-400 text-sm">
       No active students found in {{ selectedGrade }}.
     </div>
 

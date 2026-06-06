@@ -109,7 +109,7 @@
       <!-- Term Fee Collection Progress — finance roles only -->
       <div
         v-if="canViewFinance"
-        class="bg-white border border-slate-200 rounded-xl p-6"
+        class="bg-white border border-slate-200 rounded-lg p-6"
         style="animation: slideIn 0.4s 0.14s ease both"
       >
         <div class="flex items-center justify-between mb-4">
@@ -144,7 +144,7 @@
         style="animation: slideIn 0.4s 0.18s ease both"
       >
         <!-- Quick Actions Panel -->
-        <div class="bg-white border border-border rounded-xl overflow-hidden">
+        <div class="bg-white border border-border rounded-lg overflow-hidden">
           <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
             <div>
               <h3 class="font-heading text-sm font-bold text-text-primary">Quick Actions</h3>
@@ -301,7 +301,7 @@
         </div>
 
         <!-- Activity Feed Panel -->
-        <div class="bg-white border border-border rounded-xl overflow-hidden">
+        <div class="bg-white border border-border rounded-lg overflow-hidden">
           <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
             <div>
               <h3 class="font-heading text-sm font-bold text-text-primary">Activity Feed</h3>

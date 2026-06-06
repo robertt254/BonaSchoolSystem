@@ -2,7 +2,7 @@
   <div class="max-w-5xl mx-auto space-y-6">
 
     <!-- Apply for leave -->
-    <div v-if="!isReviewer" class="bg-white rounded-xl border border-border p-6">
+    <div v-if="!isReviewer" class="bg-white rounded-lg border border-border p-6">
       <h2 class="text-base font-bold text-slate-800 mb-5">Apply for Leave</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
@@ -58,7 +58,7 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-xl border border-border overflow-hidden">
+    <div class="bg-white rounded-lg border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 bg-slate-50">
         <h3 class="font-bold text-slate-800">{{ isReviewer ? 'All Leave Requests' : 'My Leave Requests' }}</h3>
       </div>

@@ -2,7 +2,7 @@
   <div class="max-w-6xl mx-auto space-y-6">
 
     <!-- Controls -->
-    <div class="bg-white rounded-xl border border-border p-6">
+    <div class="bg-white rounded-lg border border-border p-6">
       <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4">
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Term</label>
@@ -45,22 +45,22 @@
 
     <!-- Summary strip -->
     <div class="grid grid-cols-3 gap-4">
-      <div class="bg-white rounded-xl border border-border p-6 text-center">
+      <div class="bg-white rounded-lg border border-border p-6 text-center">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Defaulters</p>
         <p class="text-3xl font-extrabold text-school-red">{{ filtered.length }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-border p-6 text-center">
+      <div class="bg-white rounded-lg border border-border p-6 text-center">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Total Outstanding</p>
         <p class="text-2xl font-extrabold text-school-red">{{ formatCurrency(totalOutstanding) }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-border p-6 text-center">
+      <div class="bg-white rounded-lg border border-border p-6 text-center">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Avg Per Student</p>
         <p class="text-2xl font-extrabold text-slate-700">{{ formatCurrency(avgBalance) }}</p>
       </div>
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-xl border border-border overflow-hidden">
+    <div class="bg-white rounded-lg border border-border overflow-hidden">
       <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between bg-slate-50">
         <h3 class="font-bold text-slate-800">Fee Defaulters · {{ selectedTerm }}</h3>
         <span class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ filtered.length }} students</span>

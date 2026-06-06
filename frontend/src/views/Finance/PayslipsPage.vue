@@ -7,7 +7,7 @@
     </div>
 
     <!-- Month selector -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
+    <div class="bg-white rounded-lg border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
       <div>
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Payroll Month</label>
         <input v-model="selectedMonth" type="month" @change="loadData"
@@ -44,12 +44,12 @@
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="bg-white rounded-xl border border-slate-200 p-12 text-center">
+    <div v-if="loading" class="bg-white rounded-lg border border-slate-200 p-12 text-center">
       <p class="text-slate-400 text-sm">Loading payroll data…</p>
     </div>
 
     <!-- Staff table -->
-    <div v-else-if="staffRows.length" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div v-else-if="staffRows.length" class="bg-white rounded-lg border border-slate-200 overflow-hidden">
       <div class="px-5 py-3.5 border-b border-slate-100 bg-slate-50 flex items-center gap-4">
         <div>
           <h3 class="font-bold text-slate-800 text-sm">{{ fmtMonthLabel(selectedMonth) }} Payroll</h3>

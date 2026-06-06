@@ -15,7 +15,7 @@
     <!-- Skeleton loading state -->
     <div v-if="loading" class="space-y-8">
       <SkeletonLoader type="stats" :count="3" />
-      <div class="bg-white rounded-xl border border-border p-8">
+      <div class="bg-white rounded-lg border border-border p-8">
         <div class="skel h-3 w-44 mb-6" />
         <div class="flex items-end gap-2 h-36">
           <div v-for="n in 12" :key="n" class="flex-1 skel rounded" :style="{ height: (30 + Math.random() * 70) + 'px' }" />
@@ -42,7 +42,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
         <!-- Goal Progress -->
         <div
-          class="bg-white p-8 rounded-xl border border-border shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] col-span-1 sm:col-span-2 relative overflow-hidden group"
+          class="bg-white p-8 rounded-lg border border-border shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] col-span-1 sm:col-span-2 relative overflow-hidden group"
         >
           <div
             class="absolute right-0 top-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"
@@ -76,7 +76,7 @@
 
         <!-- Total Revenue -->
         <div
-          class="bg-white p-8 rounded-xl border border-border shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
+          class="bg-white p-8 rounded-lg border border-border shadow-none hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] relative overflow-hidden group"
         >
           <div
             class="absolute right-0 top-0 w-24 h-24 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"
@@ -98,7 +98,7 @@
       </div>
 
       <!-- Monthly Collection Chart (Chart.js) -->
-      <div class="bg-white rounded-xl border border-border hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden transition-shadow">
+      <div class="bg-white rounded-lg border border-border hover:shadow-[0_8px_28px_rgba(0,0,0,0.06)] overflow-hidden transition-shadow">
         <div class="border-b border-slate-100 px-8 py-5 flex items-center justify-between bg-slate-50">
           <div>
             <h3 class="text-lg font-bold text-slate-800 tracking-tight">Monthly Collections</h3>
@@ -115,7 +115,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         <!-- Recent Fee Payments -->
-        <div class="bg-white rounded-xl border border-border overflow-hidden flex flex-col">
+        <div class="bg-white rounded-lg border border-border overflow-hidden flex flex-col">
           <div class="border-b border-slate-100 px-4 py-4 flex items-center justify-between bg-slate-50 shrink-0">
             <div>
               <h3 class="font-bold text-slate-800 text-sm">Fee Payments</h3>
@@ -149,7 +149,7 @@
         </div>
 
         <!-- Petty Cash -->
-        <div class="bg-white rounded-xl border border-border overflow-hidden flex flex-col">
+        <div class="bg-white rounded-lg border border-border overflow-hidden flex flex-col">
           <div class="border-b border-slate-100 px-4 py-4 flex items-center justify-between bg-slate-50 shrink-0">
             <div>
               <h3 class="font-bold text-slate-800 text-sm">Petty Cash</h3>
@@ -198,7 +198,7 @@
         </div>
 
         <!-- Expenses Ledger -->
-        <div class="bg-white rounded-xl border border-border overflow-hidden flex flex-col">
+        <div class="bg-white rounded-lg border border-border overflow-hidden flex flex-col">
           <div class="border-b border-slate-100 px-4 py-4 flex items-center justify-between bg-slate-50 shrink-0">
             <div>
               <h3 class="font-bold text-slate-800 text-sm">Expenses Ledger</h3>
@@ -250,7 +250,7 @@
       class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in"
     >
       <div
-        class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-border"
+        class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden border border-border"
       >
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <h2 class="text-xl font-black text-slate-800 tracking-tight">Record Fee Payment</h2>
@@ -364,7 +364,7 @@
       class="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50 animate-fade-in"
     >
       <div
-        class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-border"
+        class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden border border-border"
       >
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <h2 class="text-xl font-black text-slate-800 tracking-tight">Record Expense</h2>

@@ -11,7 +11,7 @@
     </div>
 
     <!-- Compose Card -->
-    <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
       <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
         <h2 class="font-heading text-sm font-bold text-text-primary">Compose Message</h2>
       </div>
@@ -117,7 +117,7 @@
     </div>
 
     <!-- Recent Broadcasts History (optional placeholder) -->
-    <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
       <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
         <h2 class="font-heading text-sm font-bold text-text-primary">Tips</h2>
       </div>

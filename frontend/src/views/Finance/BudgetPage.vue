@@ -21,7 +21,7 @@
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap gap-4 items-end">
+    <div class="bg-white rounded-lg border border-slate-200 p-4 flex flex-wrap gap-4 items-end">
       <div>
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Academic Year</label>
         <select v-model="filterYear" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none">
@@ -45,15 +45,15 @@
 
     <!-- Summary cards -->
     <div v-if="budgets.length > 0" class="grid grid-cols-3 gap-4">
-      <div class="bg-white rounded-xl border border-slate-200 p-4 text-center">
+      <div class="bg-white rounded-lg border border-slate-200 p-4 text-center">
         <p class="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-1">Total Budgeted</p>
         <p class="text-xl font-extrabold text-slate-800">KES {{ fmt(totalBudgeted) }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-slate-200 p-4 text-center">
+      <div class="bg-white rounded-lg border border-slate-200 p-4 text-center">
         <p class="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-1">Total Spent</p>
         <p class="text-xl font-extrabold text-slate-800">KES {{ fmt(totalSpent) }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-slate-200 p-4 text-center">
+      <div class="bg-white rounded-lg border border-slate-200 p-4 text-center">
         <p class="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-1">Remaining</p>
         <p class="text-xl font-extrabold" :class="totalRemaining >= 0 ? 'text-emerald-600' : 'text-red-600'">
           KES {{ fmt(totalRemaining) }}
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Table -->
-    <div v-if="budgets.length > 0" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div v-if="budgets.length > 0" class="bg-white rounded-lg border border-slate-200 overflow-hidden">
       <table class="w-full text-sm">
         <thead>
           <tr class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 bg-slate-50">
@@ -101,7 +101,7 @@
         </tbody>
       </table>
     </div>
-    <div v-else-if="loaded" class="bg-white rounded-xl border border-slate-200 py-12 text-center text-slate-400 text-sm">
+    <div v-else-if="loaded" class="bg-white rounded-lg border border-slate-200 py-12 text-center text-slate-400 text-sm">
       No budget entries for this selection.
     </div>
 

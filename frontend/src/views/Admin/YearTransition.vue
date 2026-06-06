@@ -18,7 +18,7 @@
     </div>
 
     <!-- Grade summary -->
-    <div v-if="summary.length > 0" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div v-if="summary.length > 0" class="bg-white rounded-lg border border-slate-200 overflow-hidden">
       <div class="px-5 py-3.5 border-b border-slate-100 bg-slate-50">
         <h3 class="font-bold text-sm text-slate-700">Current Enrollment by Grade</h3>
       </div>
@@ -58,7 +58,7 @@
     </div>
 
     <!-- Confirm action -->
-    <div v-if="summaryLoaded && !done" class="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+    <div v-if="summaryLoaded && !done" class="bg-white rounded-lg border border-slate-200 p-6 space-y-4">
       <p class="text-sm text-slate-600">Type <strong>CONFIRM</strong> to proceed with the year transition.</p>
       <input v-model="confirmText" type="text" placeholder="Type CONFIRM"
         class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none w-full" />

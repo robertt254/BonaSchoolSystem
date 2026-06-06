@@ -20,26 +20,26 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="bg-white rounded-xl border border-border p-6">
+      <div class="bg-white rounded-lg border border-border p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Total Students</p>
         <p class="text-3xl font-extrabold text-slate-800">{{ students.length }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-border p-6">
+      <div class="bg-white rounded-lg border border-border p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Active</p>
         <p class="text-3xl font-extrabold text-emerald-600">{{ activeCount }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-border p-6">
+      <div class="bg-white rounded-lg border border-border p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Male</p>
         <p class="text-3xl font-extrabold text-blue-600">{{ maleCount }}</p>
       </div>
-      <div class="bg-white rounded-xl border border-border p-6">
+      <div class="bg-white rounded-lg border border-border p-6">
         <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Female</p>
         <p class="text-3xl font-extrabold text-pink-500">{{ femaleCount }}</p>
       </div>
     </div>
 
     <!-- Search & Filter bar -->
-    <div class="bg-white rounded-xl border border-border p-4 flex flex-wrap gap-3 items-end">
+    <div class="bg-white rounded-lg border border-border p-4 flex flex-wrap gap-3 items-end">
       <div class="flex-1 min-w-48">
         <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Search</label>
         <div class="relative">
@@ -70,7 +70,7 @@
     </div>
 
     <!-- Student table -->
-    <div class="bg-white rounded-xl border border-border overflow-hidden">
+    <div class="bg-white rounded-lg border border-border overflow-hidden">
       <div v-if="loading" class="py-16 flex justify-center">
         <div class="w-8 h-8 border-4 border-slate-200 border-t-school-purple rounded-full animate-spin"></div>
       </div>
@@ -138,7 +138,7 @@
     </div>
 
     <!-- Pagination -->
-    <div v-if="totalCount > PAGE_SIZE" class="flex items-center justify-between bg-white rounded-xl border border-border px-5 py-3 text-sm">
+    <div v-if="totalCount > PAGE_SIZE" class="flex items-center justify-between bg-white rounded-lg border border-border px-5 py-3 text-sm">
       <span class="text-slate-400">Page {{ currentPage }} of {{ totalPages }}</span>
       <div class="flex gap-2">
         <button
@@ -159,7 +159,7 @@
       v-if="showModal"
       class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 animate-fade-in"
     >
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden max-h-[90vh] overflow-y-auto border border-border">
+      <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg overflow-hidden max-h-[90vh] overflow-y-auto border border-border">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 sticky top-0 z-10">
           <h2 class="text-lg font-extrabold text-slate-800">
             {{ isEditing ? 'Edit Student Record' : 'Enroll New Student' }}

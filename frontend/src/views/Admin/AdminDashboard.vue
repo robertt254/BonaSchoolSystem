@@ -18,7 +18,7 @@
       <!-- Stat Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <!-- Total Students -->
-        <div class="bg-white p-6 rounded-xl border border-border hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="bg-white p-6 rounded-lg border border-border hover:shadow-md transition-shadow relative overflow-hidden group">
           <div class="absolute right-0 top-0 w-20 h-20 bg-blue-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
           <div class="flex justify-between items-start relative z-10">
             <div>
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Active Staff -->
-        <div class="bg-white p-6 rounded-xl border border-border hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="bg-white p-6 rounded-lg border border-border hover:shadow-md transition-shadow relative overflow-hidden group">
           <div class="absolute right-0 top-0 w-20 h-20 bg-violet-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
           <div class="flex justify-between items-start relative z-10">
             <div>
@@ -52,7 +52,7 @@
         </div>
 
         <!-- Total Revenue -->
-        <div class="bg-white p-6 rounded-xl border border-border hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="bg-white p-6 rounded-lg border border-border hover:shadow-md transition-shadow relative overflow-hidden group">
           <div class="absolute right-0 top-0 w-20 h-20 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
           <div class="flex justify-between items-start relative z-10">
             <div>
@@ -69,7 +69,7 @@
         </div>
 
         <!-- System Status -->
-        <div class="bg-white p-6 rounded-xl border border-border hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="bg-white p-6 rounded-lg border border-border hover:shadow-md transition-shadow relative overflow-hidden group">
           <div class="absolute right-0 top-0 w-20 h-20 bg-emerald-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
           <div class="flex justify-between items-start relative z-10">
             <div>
@@ -93,7 +93,7 @@
       </div>
 
       <!-- Recent Activity -->
-      <div class="bg-white rounded-xl border border-border overflow-hidden">
+      <div class="bg-white rounded-lg border border-border overflow-hidden">
         <div class="border-b border-slate-100 px-8 py-5 flex items-center justify-between bg-slate-50">
           <div>
             <h3 class="text-lg font-bold text-slate-800 tracking-tight">Recent Activity</h3>

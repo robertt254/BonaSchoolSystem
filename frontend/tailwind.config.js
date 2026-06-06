@@ -7,8 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ['DM Sans', 'sans-serif'],
-        heading: ['Outfit', 'sans-serif'],
+        sans:    ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
 
       colors: {
@@ -63,7 +63,14 @@ export default {
       },
 
       borderRadius: {
-        card: '0.75rem',
+        // Design-system radius scale (spec-aligned)
+        sm:   '0.25rem',   //  4px — chips, checkboxes
+        DEFAULT: '0.5rem', //  8px — buttons, inputs (Tailwind also has this as 'rounded')
+        md:   '0.75rem',   // 12px — cards
+        card: '0.75rem',   // 12px — alias used throughout codebase
+        lg:   '1rem',      // 16px — large widgets, featured panels
+        xl:   '1.5rem',    // 24px — modals, full-bleed banners
+        full: '9999px',    // pill buttons, badges
       },
     },
   },

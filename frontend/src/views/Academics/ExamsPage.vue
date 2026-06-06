@@ -17,7 +17,7 @@
 
     <!-- ── TAB: Enter Marks ─────────────────────────────────────── -->
     <template v-if="activeTab === 'entry'">
-      <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
+      <div class="bg-white rounded-lg border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
           <select v-model="form.grade_level" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none">
@@ -59,7 +59,7 @@
         </button>
       </div>
 
-      <div v-if="marksList.length > 0" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div v-if="marksList.length > 0" class="bg-white rounded-lg border border-slate-200 overflow-hidden">
         <div class="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-slate-50">
           <span class="font-semibold text-sm text-slate-700">
             {{ form.grade_level }} · {{ form.exam_type }} · {{ form.subject }} · {{ form.term }}
@@ -105,7 +105,7 @@
 
     <!-- ── TAB: Rankings ─────────────────────────────────────────── -->
     <template v-if="activeTab === 'rankings'">
-      <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
+      <div class="bg-white rounded-lg border border-slate-200 p-6 flex flex-wrap gap-4 items-end">
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Grade</label>
           <select v-model="rankForm.grade_level" class="border border-slate-300 px-3 py-2.5 rounded-lg text-sm outline-none">
@@ -136,7 +136,7 @@
         </button>
       </div>
 
-      <div v-if="rankings.students.length > 0" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div v-if="rankings.students.length > 0" class="bg-white rounded-lg border border-slate-200 overflow-hidden">
         <div class="border-b border-slate-100 px-5 py-3.5 bg-slate-50 flex items-center justify-between">
           <h3 class="font-semibold text-sm text-slate-700">{{ rankForm.grade_level }} · {{ rankForm.term }} Rankings</h3>
           <button @click="exportRankings"
@@ -191,7 +191,7 @@
           </table>
         </div>
       </div>
-      <div v-else-if="rankingsLoaded" class="bg-white rounded-xl border border-slate-200 py-12 text-center text-slate-400 text-sm">
+      <div v-else-if="rankingsLoaded" class="bg-white rounded-lg border border-slate-200 py-12 text-center text-slate-400 text-sm">
         No exam results found for this selection.
       </div>
     </template>

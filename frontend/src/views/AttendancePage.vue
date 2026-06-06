@@ -24,7 +24,7 @@
 
     <!-- ── TAB: Daily Roll Call ─────────────────────────────────────── -->
     <template v-if="activeTab === 'rollcall'">
-      <div class="bg-white rounded-xl border border-slate-200 p-6 flex flex-col sm:flex-row gap-4 items-end">
+      <div class="bg-white rounded-lg border border-slate-200 p-6 flex flex-col sm:flex-row gap-4 items-end">
         <div class="flex-1 max-w-xs">
           <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">CBC Grade</label>
           <select
@@ -43,7 +43,7 @@
         </button>
       </div>
 
-      <div v-if="classList.length > 0" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div v-if="classList.length > 0" class="bg-white rounded-lg border border-slate-200 overflow-hidden">
         <div class="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-slate-50">
           <span class="font-semibold text-sm text-slate-700">{{ selectedGrade }} · {{ todayFormatted }}</span>
           <span class="text-xs font-bold text-slate-400">{{ classList.length }} students</span>
@@ -100,7 +100,7 @@
         </div>
       </div>
 
-      <div v-else-if="hasSearched && !loadingClass" class="bg-white rounded-xl border border-slate-200 py-12 text-center text-slate-400 text-sm">
+      <div v-else-if="hasSearched && !loadingClass" class="bg-white rounded-lg border border-slate-200 py-12 text-center text-slate-400 text-sm">
         No students found in {{ selectedGrade }}.
       </div>
     </template>
@@ -112,7 +112,7 @@
         <span class="text-sm">Loading summary…</span>
       </div>
 
-      <div v-else class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div v-else class="bg-white rounded-lg border border-slate-200 overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100">
           <h3 class="font-bold text-slate-800 text-sm">School-wide Attendance by Grade</h3>
           <p class="text-xs text-slate-400 mt-0.5">All records since the start of the system.</p>

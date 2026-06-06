@@ -12,7 +12,7 @@
         :key="cls.grade_level"
         @click="openClass(cls.grade_level)"
         :class="[
-          'bg-white rounded-xl border p-4 text-left hover:shadow-md transition-all group',
+          'bg-white rounded-lg border p-4 text-left hover:shadow-md transition-all group',
           selectedGrade === cls.grade_level
             ? 'border-school-purple ring-2 ring-school-purple/20'
             : 'border-border hover:border-school-purple/40',
@@ -43,7 +43,7 @@
     </div>
 
     <!-- Class detail panel -->
-    <div v-if="selectedGrade" class="bg-white rounded-xl border border-border overflow-hidden">
+    <div v-if="selectedGrade" class="bg-white rounded-lg border border-border overflow-hidden">
 
       <!-- Tab header -->
       <div class="border-b border-slate-100 bg-slate-50 px-6 flex items-center justify-between min-h-[56px]">
@@ -217,7 +217,7 @@
           <div
             v-for="subject in subjects"
             :key="subject.id"
-            class="bg-white border border-slate-200 rounded-xl p-4 flex items-start gap-4 hover:shadow-sm transition-all group"
+            class="bg-white border border-slate-200 rounded-lg p-4 flex items-start gap-4 hover:shadow-sm transition-all group"
           >
             <!-- Color dot / initial -->
             <div
@@ -254,7 +254,7 @@
       </div>
     </div>
 
-    <div v-else-if="!loadingSummary" class="bg-white rounded-xl border border-border py-16 text-center text-slate-400 text-sm">
+    <div v-else-if="!loadingSummary" class="bg-white rounded-lg border border-border py-16 text-center text-slate-400 text-sm">
       Select a class above to view the roster and subjects.
     </div>
 

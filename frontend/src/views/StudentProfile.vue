@@ -21,7 +21,7 @@
 
     <template v-else-if="profile">
       <!-- Profile header card -->
-      <div class="bg-white rounded-xl border border-border p-6 flex flex-col sm:flex-row sm:items-center gap-6 relative overflow-hidden">
+      <div class="bg-white rounded-lg border border-border p-6 flex flex-col sm:flex-row sm:items-center gap-6 relative overflow-hidden">
         <div class="absolute right-0 top-0 w-32 h-32 rounded-bl-full -mr-8 -mt-8 pointer-events-none"
           :class="profile.student.gender === 'Female' ? 'bg-pink-50' : 'bg-blue-50'"></div>
         <div class="w-20 h-20 rounded-full flex items-center justify-center font-bold text-2xl border-2 border-white shadow-sm z-10 shrink-0"
@@ -70,24 +70,24 @@
 
       <!-- Quick metrics -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl border border-border p-6">
+        <div class="bg-white rounded-lg border border-border p-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Attendance</div>
           <div class="text-2xl font-extrabold text-school-navy">{{ profile.attendance_percentage }}%</div>
           <div class="text-xs text-slate-400 mt-1">{{ profile.days_present }}/{{ profile.total_days }} days</div>
         </div>
-        <div class="bg-white rounded-xl border border-border p-6">
+        <div class="bg-white rounded-lg border border-border p-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Fee Balance</div>
           <div class="text-2xl font-extrabold" :class="profile.fee_balance > 0 ? 'text-school-red' : 'text-emerald-600'">
             {{ formatCurrency(profile.fee_balance) }}
           </div>
           <div class="text-xs text-slate-400 mt-1">Paid {{ formatCurrency(profile.total_paid) }} this year</div>
         </div>
-        <div class="bg-white rounded-xl border border-border p-6">
+        <div class="bg-white rounded-lg border border-border p-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Subjects</div>
           <div class="text-2xl font-extrabold text-slate-800">{{ uniqueSubjects }}</div>
           <div class="text-xs text-slate-400 mt-1">Learning areas assessed</div>
         </div>
-        <div class="bg-white rounded-xl border border-border p-6">
+        <div class="bg-white rounded-lg border border-border p-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Payments</div>
           <div class="text-2xl font-extrabold text-slate-800">{{ profile.recent_payments.length }}</div>
           <div class="text-xs text-slate-400 mt-1">Recent transactions</div>
@@ -95,7 +95,7 @@
       </div>
 
       <!-- Tabs -->
-      <div class="bg-white rounded-xl border border-border overflow-hidden">
+      <div class="bg-white rounded-lg border border-border overflow-hidden">
         <div class="flex border-b border-border">
           <button
             v-for="t in tabs"
@@ -255,7 +255,7 @@
 
     <!-- Deactivate confirmation modal -->
     <div v-if="showDeactivateModal" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
-      <div class="bg-white rounded-xl shadow-2xl border border-border w-full max-w-md overflow-hidden">
+      <div class="bg-white rounded-lg shadow-2xl border border-border w-full max-w-md overflow-hidden">
         <div class="p-6 border-b border-slate-100 bg-amber-50 flex items-start gap-3">
           <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>

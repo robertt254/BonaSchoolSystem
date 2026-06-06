@@ -2,7 +2,7 @@
   <div class="max-w-4xl mx-auto space-y-6">
 
     <!-- Mode toggle -->
-    <div class="bg-white rounded-xl border border-slate-200 p-6 print:hidden">
+    <div class="bg-white rounded-lg border border-slate-200 p-6 print:hidden">
       <div class="flex items-center justify-between mb-5">
         <div>
           <h2 class="font-bold text-slate-800 text-sm">CBC Report Cards</h2>
@@ -90,7 +90,7 @@
     <div
       v-if="mode === 'single' && reportData"
       id="report-card"
-      class="bg-white rounded-xl border border-slate-200 overflow-hidden print:rounded-none print:border-none print:shadow-none"
+      class="bg-white rounded-lg border border-slate-200 overflow-hidden print:rounded-none print:border-none print:shadow-none"
     >
       <ReportCardDoc :data="reportData" />
       <div class="border-t border-slate-100 px-8 py-4 flex justify-end print:hidden">
@@ -112,7 +112,7 @@
       <div
         v-for="(rpt, idx) in bulkReports"
         :key="rpt.student_id || idx"
-        class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-5 print:rounded-none print:border-none print:page-break-after-always print:mb-0"
+        class="bg-white rounded-lg border border-slate-200 overflow-hidden mb-5 print:rounded-none print:border-none print:page-break-after-always print:mb-0"
       >
         <ReportCardDoc :data="rpt" />
       </div>
