@@ -57,16 +57,23 @@ def _get_expected_fee(db: Session, grade_level: str, term: str) -> float:
 
 def _get_rollover_credit(db: Session, student_id: int, grade_level: str, up_to_term_num: int) -> float:
     """Return the cumulative overpayment from all terms before up_to_term_num (within same year)."""
+    if up_to_term_num <= 1:
+        return 0.0
+
     cumulative_expected = 0.0
-    cumulative_paid = 0.0
+    prior_terms = []
+
     for num in range(1, up_to_term_num):
         t = TERM_BY_NUM[num]
+        prior_terms.append(t)
         cumulative_expected += _get_expected_fee(db, grade_level, t)
-        paid = db.query(func.sum(models.FeePayment.amount)).filter(
-            models.FeePayment.student_id == student_id,
-            models.FeePayment.term == t,
-        ).scalar() or 0.0
-        cumulative_paid += float(paid)
+
+    paid = db.query(func.sum(models.FeePayment.amount)).filter(
+        models.FeePayment.student_id == student_id,
+        models.FeePayment.term.in_(prior_terms),
+    ).scalar() or 0.0
+
+    cumulative_paid = float(paid)
     return max(0.0, round(cumulative_paid - cumulative_expected, 2))
 
 
