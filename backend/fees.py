@@ -869,13 +869,17 @@ def record_bulk_payments(
     if len(payments) > 500:
         raise HTTPException(status_code=400, detail="Bulk limit is 500 payments per request")
 
+    # Fetch all valid student IDs in a single query to avoid N+1 problem
+    student_ids = {p.student_id for p in payments}
+    valid_students = db.query(models.Student.id).filter(
+        models.Student.id.in_(student_ids),
+        models.Student.is_deleted == False
+    ).all()
+    valid_student_ids = {s.id for s in valid_students}
+
     created = []
     for p in payments:
-        student = db.query(models.Student).filter(
-            models.Student.id == p.student_id,
-            models.Student.is_deleted == False,
-        ).first()
-        if not student:
+        if p.student_id not in valid_student_ids:
             continue
         receipt = _generate_receipt_number(db)
         new_fee = models.FeePayment(
