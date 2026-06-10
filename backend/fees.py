@@ -5,7 +5,9 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, text
 from database import get_db
-import models, schemas, auth
+import models
+import schemas
+import auth
 from audit import log_action
 from notifications import notify_payment
 from constants import CBC_TERMLY_FEES, TERM_ORDER, TERM_BY_NUM, fee_structure_template_rows
@@ -243,7 +245,7 @@ def allocation_preview(
 
     student = db.query(models.Student).filter(
         models.Student.id == student_id,
-        models.Student.is_deleted == False,
+        models.Student.is_deleted.is_(False),
     ).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -281,7 +283,7 @@ def record_payment(
         db.query(models.Student)
         .filter(
             models.Student.id == fee.student_id,
-            models.Student.is_deleted == False,
+            models.Student.is_deleted.is_(False),
         )
         .with_for_update()
         .first()
@@ -337,7 +339,7 @@ def get_student_payments(
         raise HTTPException(status_code=403, detail="Not authorized to view fee records")
     student = db.query(models.Student).filter(
         models.Student.id == student_id,
-        models.Student.is_deleted == False,
+        models.Student.is_deleted.is_(False),
     ).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -510,7 +512,7 @@ def get_student_balance(
 
     student = db.query(models.Student).filter(
         models.Student.id == student_id,
-        models.Student.is_deleted == False,
+        models.Student.is_deleted.is_(False),
     ).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -554,7 +556,7 @@ def get_term_summary(
         raise HTTPException(status_code=403, detail="Not authorized to view financials")
 
     students = db.query(models.Student).filter(
-        models.Student.is_deleted == False,
+        models.Student.is_deleted.is_(False),
         models.Student.status == "Active",
     ).all()
 
@@ -653,7 +655,7 @@ def get_defaulters(
         cf_map = {(r.student_id, r.term): float(r.total) for r in cf_rows}
 
     # ── 4. Compute balances in Python (no more per-student queries) ─────────
-    students = db.query(models.Student).filter(models.Student.is_deleted == False).all()
+    students = db.query(models.Student).filter(models.Student.is_deleted.is_(False)).all()
     prior_terms = [TERM_BY_NUM[n] for n in range(1, current_term_num)]
 
     defaulters = []
@@ -711,7 +713,7 @@ def create_carry_forward(
         raise HTTPException(status_code=403, detail="Not authorized")
     student = db.query(models.Student).filter(
         models.Student.id == payload.student_id,
-        models.Student.is_deleted == False,
+        models.Student.is_deleted.is_(False),
     ).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -787,15 +789,21 @@ def bulk_upsert_fee_structure(
         raise HTTPException(status_code=400, detail="Too many entries in one request")
 
     saved = 0
-    years = set()
+    years = {e.academic_year for e in entries}
+
+    # Fetch existing structures for these years upfront to avoid N+1
+    existing_structures = db.query(models.FeeStructure).filter(
+        models.FeeStructure.academic_year.in_(years)
+    ).all()
+
+    existing_map = {
+        (fs.grade_level, fs.term, fs.fee_type, fs.academic_year): fs
+        for fs in existing_structures
+    }
+
     for e in entries:
-        years.add(e.academic_year)
-        row = db.query(models.FeeStructure).filter(
-            models.FeeStructure.grade_level == e.grade_level,
-            models.FeeStructure.term == e.term,
-            models.FeeStructure.fee_type == e.fee_type,
-            models.FeeStructure.academic_year == e.academic_year,
-        ).first()
+        key = (e.grade_level, e.term, e.fee_type, e.academic_year)
+        row = existing_map.get(key)
         if row:
             row.amount = e.amount
         else:
@@ -873,7 +881,7 @@ def record_bulk_payments(
     for p in payments:
         student = db.query(models.Student).filter(
             models.Student.id == p.student_id,
-            models.Student.is_deleted == False,
+            models.Student.is_deleted.is_(False),
         ).first()
         if not student:
             continue
