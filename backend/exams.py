@@ -20,22 +20,29 @@ def record_exam_results(
     if current_user.role not in WRITE_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized")
 
+    student_ids = [entry.student_id for entry in payload.results]
+
+    valid_students_query = db.query(models.Student.id).filter(
+        models.Student.id.in_(student_ids),
+        models.Student.is_deleted == False,
+    ).all()
+    valid_student_ids = {s.id for s in valid_students_query}
+
+    existing_results_query = db.query(models.ExamResult).filter(
+        models.ExamResult.student_id.in_(student_ids),
+        models.ExamResult.subject == payload.subject,
+        models.ExamResult.exam_type == payload.exam_type,
+        models.ExamResult.term == payload.term,
+        models.ExamResult.academic_year == payload.academic_year,
+    ).all()
+    existing_results = {r.student_id: r for r in existing_results_query}
+
     upserted = 0
     for entry in payload.results:
-        student = db.query(models.Student).filter(
-            models.Student.id == entry.student_id,
-            models.Student.is_deleted == False,
-        ).first()
-        if not student:
+        if entry.student_id not in valid_student_ids:
             continue
 
-        existing = db.query(models.ExamResult).filter(
-            models.ExamResult.student_id == entry.student_id,
-            models.ExamResult.subject == payload.subject,
-            models.ExamResult.exam_type == payload.exam_type,
-            models.ExamResult.term == payload.term,
-            models.ExamResult.academic_year == payload.academic_year,
-        ).first()
+        existing = existing_results.get(entry.student_id)
 
         if existing:
             existing.marks = entry.marks
