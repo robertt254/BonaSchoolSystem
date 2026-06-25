@@ -4,7 +4,7 @@ from sqlalchemy import func
 from database import get_db
 import models, schemas, auth
 from audit import log_action
-from typing import List, Optional
+from typing import Optional
 
 router = APIRouter(prefix="/api/exams", tags=["Exams"])
 
