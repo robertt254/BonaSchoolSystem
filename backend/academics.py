@@ -75,19 +75,25 @@ def get_grade_assessments(
         .all()
     )
 
+    student_ids = [s.id for s in students]
+    q = db.query(models.Assessment).filter(
+        models.Assessment.student_id.in_(student_ids),
+        models.Assessment.term == term,
+    )
+    if academic_year:
+        q = q.filter(models.Assessment.academic_year == academic_year)
+    all_assessments = q.all()
+
+    assessments_by_student = {s_id: [] for s_id in student_ids}
+    for a in all_assessments:
+        if a.student_id in assessments_by_student:
+            assessments_by_student[a.student_id].append(a)
+
     result = []
     for s in students:
-        q = db.query(models.Assessment).filter(
-            models.Assessment.student_id == s.id,
-            models.Assessment.term == term,
-        )
-        if academic_year:
-            q = q.filter(models.Assessment.academic_year == academic_year)
-        assessments = q.all()
-
         # scores[learning_area][strand] = {score, remarks}
         scores: dict = {}
-        for a in assessments:
+        for a in assessments_by_student[s.id]:
             if a.learning_area not in scores:
                 scores[a.learning_area] = {}
             scores[a.learning_area][a.strand] = {
