@@ -199,19 +199,24 @@ def get_smart_term(
 
     allowed_terms = ALL_TERMS[: cur_idx + 1]
 
+    student = db.query(models.Student).filter(models.Student.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    payments = (
+        db.query(models.FeePayment.term, func.sum(models.FeePayment.amount))
+        .filter(models.FeePayment.student_id == student_id)
+        .filter(models.FeePayment.term.in_(allowed_terms))
+        .group_by(models.FeePayment.term)
+        .all()
+    )
+    payments_by_term = {term: float(amount or 0) for term, amount in payments}
+
     recommended_term = current_term
     outstanding_balance = 0.0
 
     for term in allowed_terms:
-        paid = float(
-            db.query(func.sum(models.FeePayment.amount))
-            .filter(models.FeePayment.student_id == student_id, models.FeePayment.term == term)
-            .scalar() or 0
-        )
-        expected = _get_expected_fee(db, None, term)  # grade resolved below
-        student = db.query(models.Student).filter(models.Student.id == student_id).first()
-        if not student:
-            raise HTTPException(status_code=404, detail="Student not found")
+        paid = payments_by_term.get(term, 0.0)
         expected = _get_expected_fee(db, student.grade_level, term)
         balance = round(expected - paid, 2)
         if balance > 0:
