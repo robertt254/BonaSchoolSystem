@@ -2,10 +2,12 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from database import get_db
-import models, schemas, auth
+import models
+import schemas
+import auth
 from audit import log_action
 from typing import Optional
-from constants import default_term_dates, TERM_ORDER
+from constants import default_term_dates
 
 router = APIRouter(prefix="/api/events", tags=["Events"])
 
