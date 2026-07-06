@@ -121,22 +121,25 @@ def run_month_payroll(
         .all()
     )
 
+    existing_payrolls = (
+        db.query(models.Payroll.staff_id)
+        .filter(
+            models.Payroll.staff_id.in_(list(entry_map.keys())),
+            models.Payroll.payment_month == payload.month,
+        )
+        .with_for_update()
+        .all()
+    )
+    existing_staff_ids = {row.staff_id for row in existing_payrolls}
+
     created_names, skipped_names = [], []
     for s in staff_list:
         basic = float(s.basic_salary or 0)
         if basic == 0:
             skipped_names.append(s.name)
             continue
-        existing = (
-            db.query(models.Payroll)
-            .filter(
-                models.Payroll.staff_id == s.id,
-                models.Payroll.payment_month == payload.month,
-            )
-            .with_for_update()
-            .first()
-        )
-        if existing:
+
+        if s.id in existing_staff_ids:
             skipped_names.append(s.name)
             continue
 
