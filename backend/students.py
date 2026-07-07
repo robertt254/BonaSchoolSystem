@@ -4,7 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, or_, case
 from database import get_db
-import models, schemas, auth
+import models
+import schemas
+import auth
 from audit import log_action
 from constants import CBC_TERMLY_FEES, CBC_GRADES
 
@@ -25,7 +27,7 @@ def get_classes_summary(
 
     # Single query for all active students
     all_students = db.query(models.Student).filter(
-        models.Student.is_deleted == False,
+        not models.Student.is_deleted,
         models.Student.status == "Active",
     ).all()
     if not all_students:
@@ -39,7 +41,7 @@ def get_classes_summary(
         for row in db.query(models.Attendance.student_id).filter(
             models.Attendance.student_id.in_(all_ids),
             models.Attendance.date == today,
-            models.Attendance.is_present == True,
+            models.Attendance.is_present,
         ).all()
     }
 
@@ -76,7 +78,7 @@ def get_class_roster(
     """Return all students in a grade with attendance % and current fee balance."""
     students = db.query(models.Student).filter(
         models.Student.grade_level == grade,
-        models.Student.is_deleted == False,
+        not models.Student.is_deleted,
     ).order_by(models.Student.last_name).all()
     if not students:
         return []
@@ -88,7 +90,7 @@ def get_class_roster(
     att_rows = db.query(
         models.Attendance.student_id,
         func.count(models.Attendance.id).label("total"),
-        func.sum(case((models.Attendance.is_present == True, 1), else_=0)).label("present"),
+        func.sum(case((models.Attendance.is_present, 1), else_=0)).label("present"),
     ).filter(models.Attendance.student_id.in_(ids)).group_by(models.Attendance.student_id).all()
     att = {r.student_id: (int(r.total), int(r.present)) for r in att_rows}
 
@@ -186,7 +188,7 @@ def get_all_students(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user),
 ):
-    q = db.query(models.Student).filter(models.Student.is_deleted == False)
+    q = db.query(models.Student).filter(not models.Student.is_deleted)
     if search:
         like = f"%{search}%"
         q = q.filter(
@@ -208,7 +210,7 @@ def get_archived_students(
 ):
     if current_user.role not in {"admin", "principal"}:
         raise HTTPException(status_code=403, detail="Only admins and the principal can view archived records")
-    return db.query(models.Student).filter(models.Student.is_deleted == True).all()
+    return db.query(models.Student).filter(models.Student.is_deleted).all()
 
 
 @router.get("/{student_id}/profile")
@@ -219,7 +221,7 @@ def get_student_profile(
 ):
     student = db.query(models.Student).filter(
         models.Student.id == student_id,
-        models.Student.is_deleted == False,
+        not models.Student.is_deleted,
     ).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -230,20 +232,24 @@ def get_student_profile(
     ).scalar() or 0
     days_present = db.query(func.count(models.Attendance.id)).filter(
         models.Attendance.student_id == student_id,
-        models.Attendance.is_present == True,
+        models.Attendance.is_present,
     ).scalar() or 0
     att_pct = round(days_present / total_days * 100) if total_days > 0 else 100
 
     # Annual fee balance (all three terms this academic year)
     year = datetime.now().year
     total_expected = 0.0
-    for term in ["Term 1", "Term 2", "Term 3"]:
-        fs = db.query(models.FeeStructure).filter(
-            models.FeeStructure.grade_level == student.grade_level,
-            models.FeeStructure.term == term,
-            models.FeeStructure.academic_year == year,
-        ).first()
-        total_expected += float(fs.amount) if fs else _CBC_FEES.get(student.grade_level, 0.0)
+    terms = ["Term 1", "Term 2", "Term 3"]
+
+    fee_structures = db.query(models.FeeStructure).filter(
+        models.FeeStructure.grade_level == student.grade_level,
+        models.FeeStructure.term.in_(terms),
+        models.FeeStructure.academic_year == year,
+    ).all()
+
+    found_terms = {fs.term: float(fs.amount) for fs in fee_structures}
+    for term in terms:
+        total_expected += found_terms.get(term, _CBC_FEES.get(student.grade_level, 0.0))
 
     total_paid = float(
         db.query(func.sum(models.FeePayment.amount)).filter(
@@ -291,7 +297,7 @@ def get_student(
 ):
     student = db.query(models.Student).filter(
         models.Student.id == student_id,
-        models.Student.is_deleted == False,
+        not models.Student.is_deleted,
     ).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -310,7 +316,7 @@ def update_student(
 
     db_student = db.query(models.Student).filter(
         models.Student.id == student_id,
-        models.Student.is_deleted == False,
+        not models.Student.is_deleted,
     ).first()
     if not db_student:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -336,7 +342,7 @@ def delete_student(
 
     db_student = db.query(models.Student).filter(
         models.Student.id == student_id,
-        models.Student.is_deleted == False,
+        not models.Student.is_deleted,
     ).first()
     if not db_student:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -364,7 +370,7 @@ def deactivate_student(
 
     db_student = db.query(models.Student).filter(
         models.Student.id == student_id,
-        models.Student.is_deleted == False,
+        not models.Student.is_deleted,
         models.Student.status == "Active",
     ).first()
     if not db_student:
@@ -416,7 +422,7 @@ def promote_students(
     for sid in payload.student_ids:
         student = db.query(models.Student).filter(
             models.Student.id == sid,
-            models.Student.is_deleted == False,
+            not models.Student.is_deleted,
         ).first()
         if not student:
             continue
@@ -451,7 +457,7 @@ def year_transition(
         raise HTTPException(status_code=403, detail="Only admin or principal can run year transition")
 
     students = db.query(models.Student).filter(
-        models.Student.is_deleted == False,
+        not models.Student.is_deleted,
         models.Student.status == "Active",
     ).all()
 
@@ -480,7 +486,7 @@ def enrollment_summary(
     current_user: models.User = Depends(auth.get_current_user),
 ):
     q = db.query(models.Student.grade_level, func.count(models.Student.id).label("count")).filter(
-        models.Student.is_deleted == False,
+        not models.Student.is_deleted,
         models.Student.status == "Active",
     )
     rows = q.group_by(models.Student.grade_level).all()
@@ -502,7 +508,7 @@ def restore_student(
 
     db_student = db.query(models.Student).filter(
         models.Student.id == student_id,
-        models.Student.is_deleted == True,
+        models.Student.is_deleted,
     ).first()
     if not db_student:
         raise HTTPException(status_code=404, detail="Archived student not found")
