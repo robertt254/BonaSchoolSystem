@@ -11,6 +11,9 @@ const devPlugins =
     : []
 
 export default defineConfig({
+  test: {
+    environment: "jsdom",
+  },
   plugins: [vue(), tailwindcss(), ...devPlugins],
   resolve: {
     alias: {
